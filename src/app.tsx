@@ -13,7 +13,7 @@ function App() {
       </Route>
       <Route element={<GlobalLayout />}>
         <Route path="/dashboard" element={<Dashboard />}></Route>
-        <Route path="/company/:id" element={<UserDetail />}></Route>
+        <Route path="/case-detail" element={<UserDetail />}></Route>
       </Route>
     </Routes>
   );

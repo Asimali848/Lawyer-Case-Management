@@ -24,11 +24,9 @@ const Login = () => {
 
   const onSubmit = async (_data: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
-    // Simulate form submission
     setTimeout(() => {
       setIsLoading(false);
       toast.success("Form submitted successfully!");
-      // Navigate to dashboard for UI demonstration
       navigate("/dashboard");
     }, 1000);
   };
@@ -38,7 +36,7 @@ const Login = () => {
       <div className="flex w-full flex-col items-center justify-center gap-3">
         <span className="w-full text-center font-bold text-[32px] leading-[32px] md:text-[48px] md:leading-[48px]">
           Welcome to
-          <br /> Culture Fit
+          <br /> JudgmentCalc
         </span>
         <span className="w-full text-center text-[#71717A] text-[14px] leading-[14px]">
           Enter your credentials to login.

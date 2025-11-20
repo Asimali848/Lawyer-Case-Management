@@ -3,25 +3,24 @@ import { ArrowDownAZ } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { truncateString } from "@/lib/utils";
 import { setSelectedCompany } from "@/store/slices/global";
 
 export const useRowColumns = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleRowClick = (companyId?: string, companyName?: string) => {
-    dispatch(setSelectedCompany(companyName));
+  const handleRowClick = (caseId?: string, caseName?: string) => {
+    dispatch(setSelectedCompany(caseName));
 
-    if (companyId) {
-      navigate(`/company/${companyId}`);
+    if (caseId) {
+      navigate(`/case-detail`);
     }
   };
 
   return [
     {
-        accessorKey: "client_name",
-      header: ({ column }: { column: Column<ClientInfo> }) => (
+        accessorKey: "case_name",
+      header: ({ column }: { column: Column<CaseGet> }) => (
         <Button
           variant="ghost"
           type="button"
@@ -30,52 +29,52 @@ export const useRowColumns = () => {
             column.toggleSorting(column.getIsSorted() === "asc");
           }}
         >
-          Company Name
+          Client Name
           <ArrowDownAZ className="ml-2" />
         </Button>
       ),
-      cell: ({ row }: { row: Row<ClientInfo> }) => (
+      cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() => handleRowClick(row.original.id, row.original.client_name)}
+          onClick={() => handleRowClick(row.original.id, row.original.case_name)}
           className="ml-3 w-full cursor-pointer font-medium hover:underline"
         >
-          {row.getValue("client_name") || "N/A"}
+          {row.getValue("case_name") || "N/A"}
         </span>
       ),
     },
     {
-      accessorKey: "client_email",
-      header: "Email",
-      cell: ({ row }: { row: Row<ClientInfo> }) => (
+      accessorKey: "court_name",
+      header: "Court Name",
+      cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() => handleRowClick(row.original.id, row.original.client_name)}
+          onClick={() => handleRowClick(row.original.id, row.original.court_name)}
           className="w-full cursor-pointer font-semibold text-[#71717A] text-sm hover:underline"
         >
-          {row.getValue("client_email") || "N/A"}
+          {row.getValue("court_name") || "N/A"}
         </span>
       ),
     },
     {
-      accessorKey: "client_address",
-      header: "Address",
-      cell: ({ row }: { row: Row<ClientInfo> }) => (
+      accessorKey: "court_case_number",
+      header: "Court Case Number",
+      cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() => handleRowClick(row.original.id, row.original.client_name)}
+          onClick={() => handleRowClick(row.original.id, row.original.court_case_number)}
           className="w-full cursor-pointer font-semibold text-[#71717A] text-sm hover:underline"
         >
-          {row.getValue("client_address") || "N/A"}
+          {row.getValue("court_case_number") || "N/A"}
         </span>
       ),
     },
     {
-        accessorKey: "client_description",
-      header: "Description",
-      cell: ({ row }: { row: Row<ClientInfo> }) => (
+        accessorKey: "judegment_amount",
+      header: "Judegment Amount",
+      cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() => handleRowClick(row.original.id, row.original.client_name)}
+          onClick={() => handleRowClick(row.original.id, row.original.judegment_amount)}
           className="w-full cursor-pointer font-semibold text-[#71717A] text-sm hover:underline"
         >
-          {truncateString(row.getValue("client_description"), 50) || "N/A"}
+          {row.getValue("judegment_amount") || "N/A"}
         </span>
       ),
     },

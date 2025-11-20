@@ -1,43 +1,45 @@
-import { MoreVertical } from "lucide-react";
+import { CreditCardIcon, HomeIcon, LogOutIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Logo from "@/assets/img/logo.jpg";
 import LogoBlack from "@/assets/img/logo-black.jpg";
-import {
+import {  
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { setMode, setToken } from "@/store/slices/global";
-import type { RootState } from "@/types/global";
+import { setUser, setToken } from "@/store/slices/global";
 import MaxWidthWrapper from "./max-width-wrapper";
 import { ModeToggle } from "./mode-toggle";
 import { useTheme } from "./theme-provider";
 import { Button } from "./ui/button";
-import { Switch } from "./ui/switch";
 import WarningModal from "./warning-modal";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const Navbar = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [open, setOpen] = useState<boolean>(false);
-  const { mode } = useSelector((state: RootState) => state.global);
 
-  const toggleValidationMode = () => {
-    if (mode === "employees") {
-      dispatch(setMode("candidates"));
-    } else {
-      dispatch(setMode("employees"));
-    }
+  const Profile =() => {
+    navigate("/profile");
+  };
+
+  const Home = () => {
+    navigate("/dashboard");
+  }
+
+  const Membership =() => {
+    navigate("/membership");
   };
 
   const logout = () => {
-    dispatch(setToken(null));
-    dispatch(setMode(""));
+    dispatch(setToken(""));
+    dispatch(setUser({} as User));
 
     navigate("/");
     toast.success("Logged out successfully!");
@@ -54,40 +56,47 @@ const Navbar = () => {
             onClick={() => navigate("/dashboard")}
           />
           <div className="flex items-center justify-center gap-2.5">
-            <div className="hidden items-center justify-center gap-2.5 sm:flex">
-              <div className="flex items-center justify-center gap-2.5 pr-3">
-                <span className="font-medium text-muted-foreground text-xs">Candidates</span>
-                <Switch checked={mode === "employees"} onCheckedChange={toggleValidationMode} />
-                <span className="font-medium text-muted-foreground text-xs">Employees</span>
-              </div>
+            {/* <div className="hidden items-center justify-center gap-2.5 sm:flex">
               <Button size="sm" variant="destructive" onClick={() => setOpen(true)}>
                 Logout
               </Button>
               <ModeToggle />
-            </div>
-            <div className="sm:hidden">
+            </div> */}
+            <div className="">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <MoreVertical />
+                  <Button variant="outline" size="icon" className="rounded-full">
+                    <Avatar>
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar> 
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-xs">Candidates</span>
-                      <Switch checked={mode === "employees"} onCheckedChange={toggleValidationMode} />
-                    </div>
+                  <DropdownMenuItem>
+                    <Button className="w-full" variant="default" size="sm" onClick={() => Home()} >
+                     <HomeIcon className="size-4 text-white" /> Home
+                    </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Button size="sm" className="w-full" variant="destructive" onClick={() => setOpen(true)}>
-                      Logout
+                    <Button className="w-full" variant="default" size="sm" onClick={() => Profile()} >
+                      <UserIcon className="size-4 text-white" /> Profile
+                    </Button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Button className="w-full" variant="default" size="sm" onClick={() => Membership()} >
+                      <CreditCardIcon className="size-4 text-white" /> Billing
+                    </Button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Button className="w-full" variant="destructive" size="sm" onClick={() => setOpen(true)}>
+                      <LogOutIcon className="size-4 text-white" /> Logout
                     </Button>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            <span className="sm:hidden">
+            <span className="">
               <ModeToggle />
             </span>
           </div>

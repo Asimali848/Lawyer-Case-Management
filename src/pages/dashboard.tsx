@@ -4,35 +4,40 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/data-table";
 import { useRowColumns } from "@/components/dashboard/columns";
-import CompanySheet from "@/components/dashboard/company-sheet";
 
 // Mock data for UI demonstration
-const mockClients: ClientInfo[] = [
+const mockCases: CaseGet[] = [
   {
     id: "1",
-    client_name: "Tech Corp",
-    client_email: "contact@techcorp.com",
-    client_website: "https://techcorp.com",
-    client_type: "Technology",
-    client_address: "123 Tech Street, San Francisco, CA",
-    client_description: "A leading technology company",
+    case_name: "Tech Corp",
+    court_name: "Tech Corp",
+    court_case_number: "1234567890",  
+    judegment_amount: "100000",
+    judgement_date: "2021-01-01",
+    last_payment_date: "2021-01-01",
+    total_payment_to_date: "100000",
+    interest_to_date: "100000",
+    today_payoff: "100000",
   },
   {
     id: "2",
-    client_name: "Design Studio",
-    client_email: "hello@designstudio.com",
-    client_website: "https://designstudio.com",
-    client_type: "Design",
-    client_address: "456 Design Avenue, New York, NY",
-    client_description: "Creative design solutions",
-  },
+    case_name: "Design Studio",
+    court_name: "Design Studio",
+    court_case_number: "1234567890",
+    judegment_amount: "100000",
+    judgement_date: "2021-01-01",
+    last_payment_date: "2021-01-01",
+    total_payment_to_date: "100000",
+    interest_to_date: "100000",
+    today_payoff: "100000",
+  }
 ];
 
 const Dashboard = () => {
   const columns = useRowColumns();
-  const [open, setOpen] = useState(false);
+  const [_open, setOpen] = useState(false);
   const [search, setSearch] = useState<string>("");
-  const clients = mockClients;
+  const cases = mockCases;
   return (
     <>
       <div className="flex h-full w-full flex-col items-start justify-start gap-5 md:overflow-hidden">
@@ -40,7 +45,7 @@ const Dashboard = () => {
           <span className="flex-1 text-left font-bold text-[32px] text-primary leading-[32px]">Clients</span>
           <div className="hidden flex-col gap-2.5 md:flex md:flex-row">
             <Button variant="default" size="sm" type="button" onClick={() => setOpen(true)}>
-              Add Client &nbsp;
+              Add Case &nbsp;
               <Building2 />
             </Button>
           </div>
@@ -62,12 +67,12 @@ const Dashboard = () => {
             columns={columns}
             data={
               search
-                ? (clients ?? []).filter((e) => e.client_name?.toLowerCase().includes(search.toLowerCase()))
-                : (clients ?? [])
+                ? (cases ?? []).filter((e) => e.case_name?.toLowerCase().includes(search.toLowerCase()))
+                : (cases ?? [])
             }
           />
         </div>
-        <CompanySheet open={open} setOpen={setOpen} />
+        {/* <CaseSheet open={open} setOpen={setOpen} /> */}
       </div>
     </>
   );

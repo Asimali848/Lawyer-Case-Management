@@ -5,42 +5,24 @@ export const loginSchema = z.object({
   password: z.string(),
 });
 
-export const companySchema = z.object({
-  company_name: z
-    .string()
-    .min(2, "Company name must be at least 2 characters")
-    .regex(/^[A-Za-z\s]+$/, "Company name must contain only alphabets"),
+export const caseSchema = z.object({
+  case_name: z.string().min(2, "Case name must be at least 2 characters"),
 
-  company_email: z.string().email("Invalid company email address"),
+  court_name: z.string().min(2, "Court name must be at least 2 characters"),
 
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  court_case_number: z.string().min(2, "Court case number must be at least 2 characters"),
 
-  owner_name: z
-    .string()
-    .min(2, "Owner name must be at least 2 characters")
-    .regex(/^[A-Za-z\s]+$/, "Owner name must contain only alphabets"),
+  judegment_amount: z.string().min(2, "Judegment amount must be at least 2 characters"),
 
-  owner_email: z.string().email("Invalid owner email address"),
+  judgement_date: z.string().min(2, "Judgement date must be at least 2 characters"),
 
-  company_size: z.string().optional(),
+  last_payment_date: z.string().min(2, "Last payment date must be at least 2 characters"),
 
-  company_type: z
-    .string()
-    .min(2, "Company type must be contain value")
-    .regex(/^[A-Za-z\s]+$/, "Company type must contain only alphabets")
-    .optional(),
+  total_payment_to_date: z.string().min(2, "Total payment to date must be at least 2 characters"),
 
-  company_website: z.string().url("Invalid company_website URL").optional(),
+  interest_to_date: z.string().min(2, "Interest to date must be at least 2 characters"),
 
-  phone_number: z
-    .string()
-    .min(10, "Phone number must be at least 10 digits")
-    .regex(/^\+?[0-9]{1,4}[\s-]?(\([0-9]{1,4}\))?([\s-]?[0-9]{1,15})+$/, "Phone number must contain only numbers")
-    .optional(),
-
-  company_address: z.string().min(5, "Company address must be at least 5 characters"),
-
-  company_description: z.string().min(10, "Description must be at least 10 characters").optional(),
+  today_payoff: z.string().min(2, "Today payoff must be at least 2 characters"),
 });
 
 export const employeesSchema = z.object({
@@ -84,4 +66,12 @@ export const employeesSchema = z.object({
   is_candidate: z.boolean().optional(),
 
   files: z.array(z.instanceof(File)).optional(),
+});
+
+export const transactionSchema = z.object({
+  payment_date: z.string().min(1, "Payment date is required"),
+  payment_amount: z.string().min(1, "Payment amount is required"),
+  payment_method: z.string().optional(),
+  payment_status: z.string().optional(),
+  payment_notes: z.string().optional(),
 });
