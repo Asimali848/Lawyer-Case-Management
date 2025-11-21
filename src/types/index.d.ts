@@ -60,7 +60,11 @@ declare type CaseGet = {
 declare type Payment = {
   id: string;
   payment_date: string;
+  transaction_type: "PAYMENT" | "COST";
   payment_amount: string;
+  accrued_interest: string;
+  principal_balance: string;
+  description: string;
   payment_method?: string;
   payment_status?: string;
   payment_notes?: string;

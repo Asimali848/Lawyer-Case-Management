@@ -1,61 +1,89 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { transactionSchema } from "@/lib/form-schemas";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../ui/sheet";
 import { Button } from "../ui/button";
-import { Loader2 } from "lucide-react";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../ui/sheet";
 
 interface TransactionSheetProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   caseId?: string;
-  transaction?: {
-    id?: string;
-    payment_date: string;
-    payment_amount: string;
-    payment_method?: string;
-    payment_status?: string;
-    payment_notes?: string;
-  };
+  caseName?: string;
+  transaction?: Payment;
 }
 
-const TransactionSheet = ({ open, setOpen, caseId, transaction }: TransactionSheetProps) => {
+const TransactionSheet = ({ open, setOpen, caseId, caseName, transaction }: TransactionSheetProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof transactionSchema>>({
     resolver: zodResolver(transactionSchema),
-    defaultValues: transaction
-      ? {
-          payment_date: transaction.payment_date,
-          payment_amount: transaction.payment_amount,
-          payment_method: transaction.payment_method || "",
-          payment_status: transaction.payment_status || "",
-          payment_notes: transaction.payment_notes || "",
-        }
-      : {
-          payment_date: "",
-          payment_amount: "",
-          payment_method: "",
-          payment_status: "",
-          payment_notes: "",
-        },
+    defaultValues: {
+      payment_date: "",
+      transaction_type: "PAYMENT",
+      payment_amount: "0",
+      description: "",
+    },
   });
+
+  useEffect(() => {
+    if (transaction && open) {
+      // Format date for input (YYYY-MM-DD)
+      let dateValue = "";
+      if (transaction.payment_date) {
+        try {
+          // Handle different date formats
+          const date = new Date(transaction.payment_date);
+          if (!isNaN(date.getTime())) {
+            dateValue = date.toISOString().split("T")[0];
+          } else {
+            // Try parsing M/D/YYYY format
+            const parts = transaction.payment_date.split("/");
+            if (parts.length === 3) {
+              const month = parts[0].padStart(2, "0");
+              const day = parts[1].padStart(2, "0");
+              const year = parts[2];
+              dateValue = `${year}-${month}-${day}`;
+            }
+          }
+        } catch {
+          dateValue = "";
+        }
+      }
+      form.reset({
+        payment_date: dateValue,
+        transaction_type: transaction.transaction_type || "PAYMENT",
+        payment_amount: transaction.payment_amount || "0",
+        description: transaction.description || "",
+      });
+    } else if (!transaction && open) {
+      // Set default date to today
+      const today = new Date().toISOString().split("T")[0];
+      form.reset({
+        payment_date: today,
+        transaction_type: "PAYMENT",
+        payment_amount: "0",
+        description: "",
+      });
+    }
+  }, [transaction, open, form]);
 
   const onSubmit = async (data: z.infer<typeof transactionSchema>) => {
     setIsLoading(true);
     try {
-      // TODO: Implement API call to create/update transaction
-      console.log("Transaction data:", data, "Case ID:", caseId);
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setOpen(false);
       form.reset();
-    } catch (error) {
-      console.error("Error submitting transaction:", error);
+    } catch (_error) {
+      toast.error("Failed to add transaction");
     } finally {
       setIsLoading(false);
     }
@@ -65,25 +93,36 @@ const TransactionSheet = ({ open, setOpen, caseId, transaction }: TransactionShe
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{transaction ? "Edit Transaction" : "Add Transaction"}</SheetTitle>
-          <SheetDescription>
-            {transaction ? "Update transaction details" : "Add a new transaction"}
-          </SheetDescription>
+          <SheetTitle>{transaction ? "Edit Transaction" : "Add New Transaction"}</SheetTitle>
+          {caseName && caseId && (
+            <SheetDescription className="font-medium text-base">
+              {caseName} - {caseId}
+            </SheetDescription>
+          )}
         </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex h-full flex-col gap-5 overflow-auto px-4 pb-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex h-full flex-col gap-6 overflow-auto px-4 pt-4 pb-6"
+          >
             <FormField
               control={form.control}
-              name="payment_date"
+              name="transaction_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Payment Date<span className="text-destructive">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
+                  <FormLabel>Transaction Type</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select transaction type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="PAYMENT">Payment</SelectItem>
+                      <SelectItem value="COST">Cost</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -93,11 +132,9 @@ const TransactionSheet = ({ open, setOpen, caseId, transaction }: TransactionShe
               name="payment_amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Payment Amount<span className="text-destructive">*</span>
-                  </FormLabel>
+                  <FormLabel>Amount</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="100000" {...field} />
+                    <Input type="number" step="0.01" placeholder="0" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -105,12 +142,12 @@ const TransactionSheet = ({ open, setOpen, caseId, transaction }: TransactionShe
             />
             <FormField
               control={form.control}
-              name="payment_method"
+              name="payment_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Payment Method</FormLabel>
+                  <FormLabel>Date</FormLabel>
                   <FormControl>
-                    <Input placeholder="Credit Card, Cash, etc." {...field} />
+                    <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -118,39 +155,43 @@ const TransactionSheet = ({ open, setOpen, caseId, transaction }: TransactionShe
             />
             <FormField
               control={form.control}
-              name="payment_status"
+              name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Payment Status</FormLabel>
+                  <FormLabel>Description (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Paid, Pending, etc." {...field} />
+                    <Textarea placeholder="Enter description..." className="min-h-[100px] resize-none" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="payment_notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Notes</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Additional notes..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+            <div className="mt-auto flex gap-3 pt-4">
+              {isLoading ? (
+                <Button type="submit" variant="default" className="flex-1 bg-green-600 hover:bg-green-700" disabled>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  {transaction ? "Updating..." : "Adding..."}
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  disabled={isLoading}
+                  variant="default"
+                >
+                  {transaction ? "Update Transaction" : "Add Transaction"}
+                </Button>
               )}
-            />
-            {isLoading ? (
-              <Button type="submit" variant="default" className="flex items-center justify-center" disabled>
-                <Loader2 className="size-4 animate-spin" />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                disabled={isLoading}
+                className="flex-1"
+              >
+                Cancel
               </Button>
-            ) : (
-              <Button type="submit" className="w-full" disabled={isLoading} variant="default">
-                {transaction ? "Update Transaction" : "Add Transaction"}
-              </Button>
-            )}
+            </div>
           </form>
         </Form>
       </SheetContent>
@@ -159,4 +200,3 @@ const TransactionSheet = ({ open, setOpen, caseId, transaction }: TransactionShe
 };
 
 export default TransactionSheet;
-

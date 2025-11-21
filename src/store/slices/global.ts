@@ -19,7 +19,7 @@ const globalSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
-  },  
+  },
 });
 
 export const { setSelectedCompany, setToken, setUser } = globalSlice.actions;

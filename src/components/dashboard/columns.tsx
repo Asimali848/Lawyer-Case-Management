@@ -19,7 +19,7 @@ export const useRowColumns = () => {
 
   return [
     {
-        accessorKey: "case_name",
+      accessorKey: "case_name",
       header: ({ column }: { column: Column<CaseGet> }) => (
         <Button
           variant="ghost"
@@ -67,7 +67,7 @@ export const useRowColumns = () => {
       ),
     },
     {
-        accessorKey: "judegment_amount",
+      accessorKey: "judegment_amount",
       header: "Judegment Amount",
       cell: ({ row }: { row: Row<CaseGet> }) => (
         <span

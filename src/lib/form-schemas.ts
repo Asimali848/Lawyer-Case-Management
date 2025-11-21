@@ -7,22 +7,33 @@ export const loginSchema = z.object({
 
 export const caseSchema = z.object({
   case_name: z.string().min(2, "Case name must be at least 2 characters"),
-
   court_name: z.string().min(2, "Court name must be at least 2 characters"),
-
   court_case_number: z.string().min(2, "Court case number must be at least 2 characters"),
+  judegment_amount: z.string().min(1, "Judgment amount is required"),
+  judgement_date: z.string().min(1, "Judgment date is required"),
+  // Optional fields for other use cases
+  last_payment_date: z.string().optional(),
+  total_payment_to_date: z.string().optional(),
+  interest_to_date: z.string().optional(),
+  today_payoff: z.string().optional(),
+});
 
-  judegment_amount: z.string().min(2, "Judegment amount must be at least 2 characters"),
-
-  judgement_date: z.string().min(2, "Judgement date must be at least 2 characters"),
-
-  last_payment_date: z.string().min(2, "Last payment date must be at least 2 characters"),
-
-  total_payment_to_date: z.string().min(2, "Total payment to date must be at least 2 characters"),
-
-  interest_to_date: z.string().min(2, "Interest to date must be at least 2 characters"),
-
-  today_payoff: z.string().min(2, "Today payoff must be at least 2 characters"),
+export const newCaseSchema = z.object({
+  // Judgment Information (Required)
+  case_name: z.string().min(2, "Case name must be at least 2 characters"),
+  court_name: z.string().min(2, "Court name must be at least 2 characters"),
+  court_case_number: z.string().min(2, "Court case number must be at least 2 characters"),
+  judegment_amount: z.string().min(1, "Judgment amount is required"),
+  interest_rate: z.string().min(1, "Interest rate is required"),
+  judgement_date: z.string().min(1, "Judgment date is required"),
+  // Debtor Contact Info (Optional)
+  firm_name: z.string().optional(),
+  street_address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zip_code: z.string().optional(),
+  phone_number: z.string().optional(),
+  email: z.string().email("Invalid email format").optional().or(z.literal("")),
 });
 
 export const employeesSchema = z.object({
@@ -70,7 +81,14 @@ export const employeesSchema = z.object({
 
 export const transactionSchema = z.object({
   payment_date: z.string().min(1, "Payment date is required"),
+  transaction_type: z.enum(["PAYMENT", "COST"], {
+    required_error: "Transaction type is required",
+  }),
   payment_amount: z.string().min(1, "Payment amount is required"),
+  description: z.string().optional(),
+  // These fields are calculated/auto-filled, not entered by user
+  accrued_interest: z.string().optional(),
+  principal_balance: z.string().optional(),
   payment_method: z.string().optional(),
   payment_status: z.string().optional(),
   payment_notes: z.string().optional(),

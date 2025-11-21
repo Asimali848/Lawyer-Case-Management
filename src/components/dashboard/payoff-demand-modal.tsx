@@ -1,4 +1,6 @@
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { Calendar, Download, Loader2 } from "lucide-react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,21 +9,54 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Download, Loader2 } from "lucide-react";
+import { downloadPayoffStatementPDF } from "@/lib/pdf-download";
 
 interface PayoffDemandModalProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   caseId?: string;
   caseName?: string;
+  principalBalance?: string;
+  accruedInterest?: string;
+  caseData?: {
+    id?: string;
+    case_name: string;
+    court_name: string;
+    court_case_number: string;
+    judegment_amount: string;
+    judgement_date: string;
+    last_payment_date: string;
+    total_payment_to_date: string;
+    interest_to_date: string;
+    today_payoff: string;
+  };
 }
 
-const PayoffDemandModal = ({ open, setOpen, caseId, caseName }: PayoffDemandModalProps) => {
+const PayoffDemandModal = ({
+  open,
+  setOpen,
+  caseName,
+  principalBalance = "0",
+  accruedInterest = "0",
+  caseData,
+}: PayoffDemandModalProps) => {
   const [date, setDate] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
+
+  // Set default date to today when modal opens
+  useEffect(() => {
+    if (open && !date) {
+      const today = new Date().toISOString().split("T")[0];
+      setDate(today);
+    }
+  }, [open, date]);
+
+  // Calculate total payoff
+  const principalBalanceNum = parseFloat(principalBalance || "0");
+  const accruedInterestNum = parseFloat(accruedInterest || "0");
+  const totalPayoff = principalBalanceNum + accruedInterestNum;
 
   const handleDownload = async () => {
     if (!date) {
@@ -29,50 +64,18 @@ const PayoffDemandModal = ({ open, setOpen, caseId, caseName }: PayoffDemandModa
       return;
     }
 
+    if (!caseData) {
+      alert("Case data is required to generate the PDF");
+      return;
+    }
+
     setIsDownloading(true);
     try {
-      // TODO: Implement API call to generate payoff demand document
-      console.log("Generating payoff demand for date:", date, "Case ID:", caseId);
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      // Create a simple markdown content for the payoff demand
-      const markdownContent = `# Payoff Demand Letter
-
-**Case:** ${caseName || "N/A"}
-**Date:** ${date}
-**Case ID:** ${caseId || "N/A"}
-
-## Payoff Demand
-
-This letter serves as a formal demand for payoff of the outstanding judgment amount.
-
-**Demand Date:** ${date}
-
-Please contact us to arrange for the full payoff of the judgment.
-
----
-
-*Generated on ${new Date().toLocaleDateString()}*
-`;
-
-      // Create a blob and download
-      const blob = new Blob([markdownContent], { type: "text/markdown" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `payoff-demand-${caseId || "case"}-${date}.md`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
+      await downloadPayoffStatementPDF(caseData, date, principalBalance, accruedInterest);
       setOpen(false);
       setDate("");
-    } catch (error) {
-      console.error("Error generating payoff demand:", error);
-      alert("Error generating payoff demand. Please try again.");
+    } catch (_error) {
+      alert("Error generating payoff statement PDF. Please try again.");
     } finally {
       setIsDownloading(false);
     }
@@ -82,28 +85,51 @@ Please contact us to arrange for the full payoff of the judgment.
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Payoff Demand</DialogTitle>
-          <DialogDescription>
-            Select a date and download the payoff demand document.
-          </DialogDescription>
+          <DialogTitle>Payoff Demand - {caseName || "Case"}</DialogTitle>
+          <DialogDescription>Enter the payoff date to generate the payoff statement.</DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4 py-4">
+        <div className="flex flex-col gap-6 py-4">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="date">Demand Date</Label>
-            <Input
-              id="date"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-            />
+            <Label htmlFor="date" className="font-semibold">
+              Payoff Date
+            </Label>
+            <div className="relative">
+              <Input
+                id="date"
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                required
+                className="pr-10"
+              />
+              <Calendar className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-3 size-4 text-muted-foreground" />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 rounded-lg border p-4">
+            <h3 className="font-semibold text-base">Payoff Summary</h3>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Principal Balance:</span>
+                <span className="font-medium">${principalBalanceNum.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Accrued Interest:</span>
+                <span className="font-medium">${accruedInterestNum.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between border-t pt-2">
+                <span className="font-semibold">Total Payoff:</span>
+                <span className="font-semibold text-green-600">${totalPayoff.toFixed(2)}</span>
+              </div>
+            </div>
           </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isDownloading}>
-            Cancel
-          </Button>
-          <Button onClick={handleDownload} disabled={isDownloading || !date}>
+        <DialogFooter className="sm:justify-start">
+          <Button
+            onClick={handleDownload}
+            disabled={isDownloading || !date}
+            className="w-full bg-green-600 hover:bg-green-700"
+          >
             {isDownloading ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />
@@ -112,7 +138,7 @@ Please contact us to arrange for the full payoff of the judgment.
             ) : (
               <>
                 <Download className="mr-2 size-4" />
-                Download
+                Download Statement
               </>
             )}
           </Button>
@@ -123,4 +149,3 @@ Please contact us to arrange for the full payoff of the judgment.
 };
 
 export default PayoffDemandModal;
-
