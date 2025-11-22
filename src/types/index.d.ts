@@ -202,6 +202,25 @@ declare type CalculationDetailResponse = CalculationResponse & {
   is_active?: boolean;
   created_at?: string;
   updated_at?: string;
+  transactions?: TransactionData[];
+  unpaid_interest?: number;
+};
+
+declare type TransactionData = {
+  id: string;
+  calculation_id: string;
+  transaction_date: string;
+  payment_amount: number;
+  cost_amount: number;
+  description?: string;
+  created_at?: string;
+};
+
+declare type TransactionRequest = {
+  transaction_date: string;
+  transaction_type: "payment" | "cost";
+  amount: number;
+  description?: string;
 };
 
 declare type CalculationDetail = {

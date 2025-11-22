@@ -22,6 +22,7 @@ import WarningModal from "@/components/warning-modal";
 import {
   useGetCalculationQuery,
   useDeleteCalculationMutation,
+  useDeleteTransactionMutation,
 } from "@/store/services/calculations";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -35,7 +36,7 @@ const UserDetail = () => {
   const [payoffDemandOpen, setPayoffDemandOpen] = useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [selectedTransaction, setSelectedTransaction] =
-    useState<Transaction | null>(null);
+    useState<TransactionData | null>(null);
   const [warningModalOpen, setWarningModalOpen] = useState<boolean>(false);
 
   // Fetch calculation details
@@ -43,24 +44,34 @@ const UserDetail = () => {
     data: calculation,
     isLoading,
     error,
+    refetch,
   } = useGetCalculationQuery(id || "", { skip: !id });
   const [deleteCalculation] = useDeleteCalculationMutation();
+  const [deleteTransaction] = useDeleteTransactionMutation();
 
-  // Transform transactions to Payment format for the table
+  // Debug: Log calculation data
+  console.log("Calculation data:", calculation);
+  console.log("Transactions from API:", calculation?.transactions);
+
+  // Transform transactions to Payment format for the table (for backward compatibility with UI)
   const transactions: Payment[] = (calculation?.transactions || []).map(
     (t) => ({
       id: t.id,
       payment_date: t.transaction_date,
-      transaction_type: t.transaction_type === "payment" ? "PAYMENT" : "COST",
-      payment_amount: t.amount.toFixed(2),
-      accrued_interest: "0.00", // You may want to calculate this
-      principal_balance: "0.00", // You may want to calculate this
-      description: t.transaction_type === "payment" ? "Payment" : "Cost",
+      transaction_type: t.payment_amount > 0 ? "PAYMENT" : "COST",
+      payment_amount: String(
+        t.payment_amount > 0 ? t.payment_amount : t.cost_amount
+      ),
+      accrued_interest: "0.00",
+      principal_balance: "0.00",
+      description: t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
     })
   );
 
+  console.log("Transformed transactions:", transactions);
+
   const handleEditTransaction = (transaction: Payment) => {
-    // Convert back to Transaction type
+    // Convert back to TransactionData type
     const trans = calculation?.transactions?.find(
       (t) => t.id === transaction.id
     );
@@ -81,10 +92,23 @@ const UserDetail = () => {
   };
 
   const confirmDelete = async () => {
-    // This would require a separate API endpoint to delete transactions
-    // For now, we'll just close the modal
-    setSelectedTransaction(null);
-    toast.info("Transaction deletion not yet implemented");
+    if (!id || !selectedTransaction?.id) {
+      toast.error("Invalid transaction or case ID");
+      return;
+    }
+
+    try {
+      await deleteTransaction({
+        calculationId: id,
+        transactionId: selectedTransaction.id,
+      }).unwrap();
+      toast.success("Transaction deleted successfully");
+      setSelectedTransaction(null);
+      setDeleteModalOpen(false);
+      refetch(); // Refresh the data
+    } catch (error: any) {
+      toast.error(error?.data?.detail || "Failed to delete transaction");
+    }
   };
 
   const handleAddTransaction = () => {

@@ -48,6 +48,51 @@ export const calculationsApi = api.injectEndpoints({
       }),
       invalidatesTags: ["calculations"],
     }),
+    addTransaction: build.mutation<
+      { message: string; transaction_id: string; calculation_id: string },
+      { calculationId: string; transaction: TransactionRequest }
+    >({
+      query: ({ calculationId, transaction }) => ({
+        url: `/api/calc/${calculationId}/transactions`,
+        method: "POST",
+        body: transaction,
+      }),
+      invalidatesTags: (_result, _error, { calculationId }) => [
+        { type: "calculations", id: calculationId },
+        "calculations",
+      ],
+    }),
+    updateTransaction: build.mutation<
+      { message: string; transaction_id: string; calculation_id: string },
+      {
+        calculationId: string;
+        transactionId: string;
+        transaction: TransactionRequest;
+      }
+    >({
+      query: ({ calculationId, transactionId, transaction }) => ({
+        url: `/api/calc/${calculationId}/transactions/${transactionId}`,
+        method: "PUT",
+        body: transaction,
+      }),
+      invalidatesTags: (_result, _error, { calculationId }) => [
+        { type: "calculations", id: calculationId },
+        "calculations",
+      ],
+    }),
+    deleteTransaction: build.mutation<
+      { message: string; transaction_id: string; calculation_id: string },
+      { calculationId: string; transactionId: string }
+    >({
+      query: ({ calculationId, transactionId }) => ({
+        url: `/api/calc/${calculationId}/transactions/${transactionId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_result, _error, { calculationId }) => [
+        { type: "calculations", id: calculationId },
+        "calculations",
+      ],
+    }),
   }),
 });
 
@@ -57,4 +102,7 @@ export const {
   useGetCalculationQuery,
   useUpdateCalculationMutation,
   useDeleteCalculationMutation,
+  useAddTransactionMutation,
+  useUpdateTransactionMutation,
+  useDeleteTransactionMutation,
 } = calculationsApi;

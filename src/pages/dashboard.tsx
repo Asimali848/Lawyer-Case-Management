@@ -17,43 +17,17 @@ const Dashboard = () => {
 
   // Transform calculation data to match CaseGet format for the table
   const cases: CaseGet[] = (data?.calculations || []).map((calc) => {
-    // Calculate latest values (you may want to get these from the calculation)
-    const lastTransaction = calc.transactions?.[calc.transactions.length - 1];
-    const lastPaymentDate =
-      lastTransaction?.transaction_date || calc.judgment_date;
-
-    // For now, we'll use simplified values. In a real scenario, you'd calculate these
-    const totalPayments =
-      calc.transactions
-        ?.filter((t) => t.transaction_type === "payment")
-        .reduce((sum, t) => sum + t.amount, 0) || 0;
-
-    const totalCosts =
-      calc.transactions
-        ?.filter((t) => t.transaction_type === "cost")
-        .reduce((sum, t) => sum + t.amount, 0) || 0;
-
-    // Simplified interest calculation
-    const daysElapsed = Math.floor(
-      (new Date().getTime() - new Date(calc.judgment_date).getTime()) /
-        (1000 * 60 * 60 * 24)
-    );
-    const dailyRate = calc.annual_interest_rate / 100 / 365;
-    const interestToDate = calc.judgment_amount * dailyRate * daysElapsed;
-    const todayPayoff =
-      calc.judgment_amount + interestToDate + totalCosts - totalPayments;
-
     return {
       id: calc.id,
-      case_name: calc.case_name,
-      court_name: calc.calculation_request?.court_name || "N/A",
-      court_case_number: calc.calculation_request?.court_number || "N/A",
-      judegment_amount: calc.judgment_amount.toFixed(2),
+      case_name: calc.case_name || "N/A",
+      court_name: calc.court_name || "N/A",
+      court_case_number: calc.court_number || "N/A",
+      judegment_amount: (calc.judgment_amount || 0).toFixed(2),
       judgement_date: calc.judgment_date,
-      last_payment_date: lastPaymentDate,
-      total_payment_to_date: totalPayments.toFixed(2),
-      interest_to_date: interestToDate.toFixed(2),
-      today_payoff: todayPayoff.toFixed(2),
+      last_payment_date: calc.end_date || calc.judgment_date,
+      total_payment_to_date: "0.00", // This would need calculation from transactions
+      interest_to_date: (calc.total_interest_accrued || 0).toFixed(2),
+      today_payoff: (calc.total_due || 0).toFixed(2),
     };
   });
 
