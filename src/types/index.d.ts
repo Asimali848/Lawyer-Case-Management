@@ -13,8 +13,102 @@ declare type User = {
   id: string;
   name: string;
   email: string;
-
+  phone_number?: string;
+  first_name?: string;
+  last_name?: string;
+  firm_name?: string;
+  street_address?: string;
+  city?: string;
+  state?: string;
+  zipcode?: string;
+  website?: string;
+  is_active?: boolean;
+  is_admin?: boolean;
+  is_verified?: boolean;
+  created_at?: string;
+  updated_at?: string;
 };
+
+// Auth Types
+declare type LoginRequest = {
+  email: string;
+  password: string;
+};
+
+declare type LoginResponse = {
+  access_token: string;
+  token_type: string;
+};
+
+declare type RegisterRequest = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  password: string;
+};
+
+declare type RegisterResponse = {
+  id: string;
+  name: string;
+  email: string;
+  phone_number: string;
+  first_name: string;
+  last_name: string;
+  is_active: boolean;
+  is_admin: boolean;
+  is_verified: boolean;
+  created_at: string;
+  updated_at: string;
+  message?: string;
+};
+
+declare type VerifyEmailRequest = {
+  email: string;
+  otp: string;
+};
+
+declare type VerifyEmailResponse = {
+  message: string;
+};
+
+declare type ResendOtpRequest = {
+  email: string;
+};
+
+declare type ResendOtpResponse = {
+  message: string;
+};
+
+declare type ForgotPasswordRequest = {
+  email: string;
+};
+
+declare type ForgotPasswordResponse = {
+  message: string;
+};
+
+declare type VerifyOtpRequest = {
+  email: string;
+  otp: string;
+};
+
+declare type VerifyOtpResponse = {
+  message: string;
+  reset_token: string;
+};
+
+declare type ResetPasswordRequest = {
+  email: string;
+  reset_token: string;
+  new_password: string;
+};
+
+declare type ResetPasswordResponse = {
+  message: string;
+};
+
+declare type UserResponse = User;
 
 declare type PostLoginResponse = {
   status: string;
