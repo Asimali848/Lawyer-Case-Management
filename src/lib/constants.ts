@@ -1,146 +1,27 @@
 export const policies = [
   {
     title: "Innovation First",
-    description: "We encourage creativity and innovative thinking in all aspects of work.",
+    description:
+      "We encourage creativity and innovative thinking in all aspects of work.",
   },
   {
     title: "Collaboration",
-    description: "Teamwork and open communication are key to building a strong culture.",
+    description:
+      "Teamwork and open communication are key to building a strong culture.",
   },
   {
     title: "Integrity",
-    description: "We act with honesty, fairness, and transparency in all situations.",
+    description:
+      "We act with honesty, fairness, and transparency in all situations.",
   },
   {
     title: "Continuous Learning",
-    description: "We support professional growth and learning for all team members.",
+    description:
+      "We support professional growth and learning for all team members.",
   },
   {
     title: "Work-Life Balance",
-    description: "We value mental health and ensure balance between work and personal life.",
-  },
-];
-
-export const mockCase: CaseGet = {
-  id: "1",
-  case_name: "Tech Corp",
-  court_name: "Tech Corp",
-  court_case_number: "1234567890",
-  judegment_amount: "100000",
-  judgement_date: "2021-01-01",
-  last_payment_date: "2021-01-01",
-  total_payment_to_date: "100000",
-  interest_to_date: "100000",
-  today_payoff: "100000",
-};
-
-export const mockPayments: Payment[] = [
-  {
-    id: "1",
-    payment_date: "2025-09-14",
-    transaction_type: "PAYMENT",
-    payment_amount: "0.20",
-    accrued_interest: "153.82",
-    principal_balance: "6.00",
-    description: "bnbnbnb",
-  },
-  {
-    id: "2",
-    payment_date: "2025-09-12",
-    transaction_type: "PAYMENT",
-    payment_amount: "30.00",
-    accrued_interest: "155.98",
-    principal_balance: "6.00",
-    description: "okokokok",
-  },
-  {
-    id: "3",
-    payment_date: "2025-09-11",
-    transaction_type: "COST",
-    payment_amount: "0.20",
-    accrued_interest: "153.82",
-    principal_balance: "6.20",
-    description: "gfgf",
-  },
-  {
-    id: "4",
-    payment_date: "2025-09-14",
-    transaction_type: "PAYMENT",
-    payment_amount: "0.20",
-    accrued_interest: "153.82",
-    principal_balance: "6.00",
-    description: "bnbnbnb",
-  },
-  {
-    id: "5",
-    payment_date: "2025-09-12",
-    transaction_type: "PAYMENT",
-    payment_amount: "30.00",
-    accrued_interest: "155.98",
-    principal_balance: "6.00",
-    description: "okokokok",
-  },
-  {
-    id: "6",
-    payment_date: "2025-09-11",
-    transaction_type: "COST",
-    payment_amount: "0.20",
-    accrued_interest: "153.82",
-    principal_balance: "6.20",
-    description: "gfgf",
-  },
-  {
-    id: "7",
-    payment_date: "2025-09-14",
-    transaction_type: "PAYMENT",
-    payment_amount: "0.20",
-    accrued_interest: "153.82",
-    principal_balance: "6.00",
-    description: "bnbnbnb",
-  },
-  {
-    id: "8",
-    payment_date: "2025-09-12",
-    transaction_type: "PAYMENT",
-    payment_amount: "30.00",
-    accrued_interest: "155.98",
-    principal_balance: "6.00",
-    description: "okokokok",
-  },
-  {
-    id: "9",
-    payment_date: "2025-09-11",
-    transaction_type: "COST",
-    payment_amount: "0.20",
-    accrued_interest: "153.82",
-    principal_balance: "6.20",
-    description: "gfgf",
-  },
-  {
-    id: "10",
-    payment_date: "2025-09-14",
-    transaction_type: "PAYMENT",
-    payment_amount: "0.20",
-    accrued_interest: "153.82",
-    principal_balance: "6.00",
-    description: "bnbnbnb",
-  },
-  {
-    id: "11",
-    payment_date: "2025-09-12",
-    transaction_type: "PAYMENT",
-    payment_amount: "30.00",
-    accrued_interest: "155.98",
-    principal_balance: "6.00",
-    description: "okokokok",
-  },
-  {
-    id: "12",
-    payment_date: "2025-09-11",
-    transaction_type: "COST",
-    payment_amount: "0.20",
-    accrued_interest: "153.82",
-    principal_balance: "6.20",
-    description: "gfgf",
+    description:
+      "We value mental health and ensure balance between work and personal life.",
   },
 ];

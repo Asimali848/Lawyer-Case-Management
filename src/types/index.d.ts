@@ -120,6 +120,131 @@ declare type PostLoginResponse = {
   };
 };
 
+// Calculation/Case Types
+declare type PaymentEvent = {
+  date: string;
+  amount: number;
+};
+
+declare type CostEvent = {
+  date: string;
+  amount: number;
+};
+
+declare type CalculationRequest = {
+  case_name?: string;
+  client_name?: string;
+  court_name?: string;
+  court_number?: string;
+  lawyer_name?: string;
+  firm_name?: string;
+  street_address?: string;
+  city?: string;
+  state?: string;
+  zipcode?: string;
+  lawyer_phone?: string;
+  lawyer_email?: string;
+  judgment_amount: number;
+  judgment_date: string;
+  end_date: string;
+  annual_interest_rate?: number;
+  payments?: PaymentEvent[];
+  costs?: CostEvent[];
+};
+
+declare type TimelineEntry = {
+  event_date: string;
+  event_type: string;
+  days_since_last_event: number;
+  interest_accrued: number;
+  payment_amount?: number;
+  cost_amount?: number;
+  applied_to_interest: number;
+  applied_to_principal: number;
+  remaining_principal: number;
+  unpaid_interest: number;
+};
+
+declare type CalculationResponse = {
+  initial_principal: number;
+  daily_interest: number;
+  days: number;
+  principal_reduction: number;
+  total_costs: number;
+  interest_to_date: number;
+  interest_accrued: number;
+  total_interest_accrued: number;
+  remaining_principal: number;
+  total_due: number;
+  timeline: TimelineEntry[];
+  disclaimer?: string;
+};
+
+declare type CalculationDetailResponse = CalculationResponse & {
+  id?: string;
+  case_name?: string;
+  client_name?: string;
+  court_name?: string;
+  court_number?: string;
+  lawyer_name?: string;
+  firm_name?: string;
+  street_address?: string;
+  city?: string;
+  state?: string;
+  zipcode?: string;
+  lawyer_phone?: string;
+  lawyer_email?: string;
+  judgment_amount: number;
+  judgment_date: string;
+  end_date: string;
+  annual_interest_rate: number;
+  external_id?: string;
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
+};
+
+declare type CalculationDetail = {
+  id: string;
+  case_name: string;
+  client_name?: string;
+  court_name?: string;
+  court_number?: string;
+  lawyer_name?: string;
+  firm_name?: string;
+  street_address?: string;
+  city?: string;
+  state?: string;
+  zipcode?: string;
+  lawyer_phone?: string;
+  lawyer_email?: string;
+  judgment_amount: number;
+  annual_interest_rate: number;
+  judgment_date: string;
+  end_date: string;
+  external_id?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  transactions?: Transaction[];
+  calculation_request?: CalculationRequest;
+};
+
+declare type Transaction = {
+  id: string;
+  calculation_id: string;
+  transaction_type: "payment" | "cost";
+  transaction_date: string;
+  amount: number;
+  created_at: string;
+};
+
+declare type GetCalculationsResponse = {
+  calculations: CalculationDetail[];
+  limit: number;
+  offset: number;
+};
+
 declare type CaseAdd = {
   id?: string;
   case_name: string;

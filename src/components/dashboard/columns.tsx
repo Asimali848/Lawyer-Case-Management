@@ -10,10 +10,10 @@ export const useRowColumns = () => {
   const dispatch = useDispatch();
 
   const handleRowClick = (caseId?: string, caseName?: string) => {
-    dispatch(setSelectedCompany(caseName));
+    dispatch(setSelectedCompany(caseName || ""));
 
     if (caseId) {
-      navigate(`/case-detail`);
+      navigate(`/case-detail/${caseId}`);
     }
   };
 
@@ -35,7 +35,9 @@ export const useRowColumns = () => {
       ),
       cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() => handleRowClick(row.original.id, row.original.case_name)}
+          onClick={() =>
+            handleRowClick(row.original.id, row.original.case_name)
+          }
           className="ml-3 w-full cursor-pointer font-medium hover:underline"
         >
           {row.getValue("case_name") || "N/A"}
@@ -47,7 +49,9 @@ export const useRowColumns = () => {
       header: "Court Name",
       cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() => handleRowClick(row.original.id, row.original.court_name)}
+          onClick={() =>
+            handleRowClick(row.original.id, row.original.court_name)
+          }
           className="w-full cursor-pointer font-semibold text-[#71717A] text-sm hover:underline"
         >
           {row.getValue("court_name") || "N/A"}
@@ -59,7 +63,9 @@ export const useRowColumns = () => {
       header: "Court Case Number",
       cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() => handleRowClick(row.original.id, row.original.court_case_number)}
+          onClick={() =>
+            handleRowClick(row.original.id, row.original.court_case_number)
+          }
           className="w-full cursor-pointer font-semibold text-[#71717A] text-sm hover:underline"
         >
           {row.getValue("court_case_number") || "N/A"}
@@ -71,7 +77,9 @@ export const useRowColumns = () => {
       header: "Judegment Amount",
       cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() => handleRowClick(row.original.id, row.original.judegment_amount)}
+          onClick={() =>
+            handleRowClick(row.original.id, row.original.judegment_amount)
+          }
           className="w-full cursor-pointer font-semibold text-[#71717A] text-sm hover:underline"
         >
           {row.getValue("judegment_amount") || "N/A"}

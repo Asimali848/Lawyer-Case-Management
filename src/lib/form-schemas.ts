@@ -59,21 +59,23 @@ export const caseSchema = z.object({
 export const newCaseSchema = z.object({
   // Judgment Information (Required)
   case_name: z.string().min(2, "Case name must be at least 2 characters"),
+  client_name: z.string().optional(),
   court_name: z.string().min(2, "Court name must be at least 2 characters"),
-  court_case_number: z
+  court_number: z
     .string()
-    .min(2, "Court case number must be at least 2 characters"),
+    .min(2, "Court number must be at least 2 characters"),
   judegment_amount: z.string().min(1, "Judgment amount is required"),
   interest_rate: z.string().min(1, "Interest rate is required"),
   judgement_date: z.string().min(1, "Judgment date is required"),
-  // Debtor Contact Info (Optional)
+  // Attorney/Lawyer Information (Optional)
+  lawyer_name: z.string().optional(),
   firm_name: z.string().optional(),
   street_address: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
-  zip_code: z.string().optional(),
-  phone_number: z.string().optional(),
-  email: z.string().email("Invalid email format").optional().or(z.literal("")),
+  zipcode: z.string().optional(),
+  lawyer_phone: z.string().optional(),
+  lawyer_email: z.string().email("Invalid email format").optional().or(z.literal("")),
 });
 
 export const employeesSchema = z.object({

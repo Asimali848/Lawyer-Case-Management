@@ -26,7 +26,7 @@ function App() {
       </Route>
       <Route element={<GlobalLayout />}>
         <Route path="/dashboard" element={<Dashboard />}></Route>
-        <Route path="/case-detail" element={<UserDetail />}></Route>
+        <Route path="/case-detail/:id" element={<UserDetail />}></Route>
         <Route path="/new-case" element={<NewCase />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/billing" element={<Billing />}></Route>
