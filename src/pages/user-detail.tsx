@@ -49,20 +49,36 @@ const UserDetail = () => {
   const [deleteCalculation] = useDeleteCalculationMutation();
   const [deleteTransaction] = useDeleteTransactionMutation();
 
-  // Transform transactions to Payment format for the table (for backward compatibility with UI)
-  const transactions: Payment[] = (calculation?.transactions || []).map(
-    (t) => ({
+  // Transform transactions to Payment format for the table with timeline data
+  const transactions: Payment[] = (calculation?.transactions || []).map((t) => {
+    // Find the corresponding timeline entry for this transaction
+    const timelineEntry = calculation?.timeline?.find((entry: any) => {
+      const entryDate = entry.event_date;
+      const transDate = t.transaction_date;
+      // Match by date and event type (payment or cost)
+      return (
+        entryDate === transDate &&
+        ((entry.event_type === "payment" && t.payment_amount > 0) ||
+          (entry.event_type === "cost" && t.cost_amount > 0))
+      );
+    });
+
+    return {
       id: t.id,
       payment_date: t.transaction_date,
       transaction_type: t.payment_amount > 0 ? "PAYMENT" : "COST",
       payment_amount: String(
         t.payment_amount > 0 ? t.payment_amount : t.cost_amount
       ),
-      accrued_interest: "0.00",
-      principal_balance: "0.00",
+      accrued_interest: timelineEntry
+        ? String((timelineEntry.interest_accrued || 0).toFixed(2))
+        : "0.00",
+      principal_balance: timelineEntry
+        ? String((timelineEntry.remaining_principal || 0).toFixed(2))
+        : "0.00",
       description: t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
-    })
-  );
+    };
+  });
 
   const handleEditTransaction = (transaction: Payment) => {
     // Convert back to TransactionData type
