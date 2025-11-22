@@ -49,10 +49,6 @@ const UserDetail = () => {
   const [deleteCalculation] = useDeleteCalculationMutation();
   const [deleteTransaction] = useDeleteTransactionMutation();
 
-  // Debug: Log calculation data
-  console.log("Calculation data:", calculation);
-  console.log("Transactions from API:", calculation?.transactions);
-
   // Transform transactions to Payment format for the table (for backward compatibility with UI)
   const transactions: Payment[] = (calculation?.transactions || []).map(
     (t) => ({
@@ -67,8 +63,6 @@ const UserDetail = () => {
       description: t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
     })
   );
-
-  console.log("Transformed transactions:", transactions);
 
   const handleEditTransaction = (transaction: Payment) => {
     // Convert back to TransactionData type
@@ -159,10 +153,14 @@ const UserDetail = () => {
     }).format(value);
   };
 
-  // Use values from the API calculation response
+  // Use values from the API calculation response matching official calculator display
   const totalPayments = calculation.principal_reduction || 0;
   const totalCosts = calculation.total_costs || 0;
-  const interestToDate = calculation.total_interest_accrued || 0;
+
+  // Total Interest for display
+  const totalInterest = calculation.total_interest_accrued || 0;
+
+  // Today's payoff is the total amount due
   const todayPayoff = calculation.total_due || 0;
 
   const lastTransaction = transactions[transactions.length - 1];
@@ -398,10 +396,10 @@ const UserDetail = () => {
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
                   <p className="font-semibold text-base sm:text-lg">
-                    Interest to Date
+                    Total Interest
                   </p>
                   <p className="text-muted-foreground text-sm">
-                    {formatCurrency(interestToDate)}
+                    {formatCurrency(totalInterest)}
                   </p>
                 </div>
                 <div className="col-span-1 flex flex-col rounded-lg border bg-primary/5 p-4 shadow sm:col-span-2 lg:col-span-4">
@@ -443,7 +441,7 @@ const UserDetail = () => {
               </CardContent>
             </Card>
           </div>
-          <div className="order-1 flex h-full flex-col gap-5 rounded-xl border p-4 sm:p-6 md:h-full lg:order-2 lg:col-span-3">
+          <div className="order-1 flex h-[600px] flex-col gap-5 rounded-xl border p-4 sm:p-6 md:h-[600px] lg:order-2 lg:col-span-3">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <span className="font-medium text-primary text-xl sm:text-2xl md:text-[28px]">
                 Transactions History
@@ -472,7 +470,11 @@ const UserDetail = () => {
           </div>
         </div>
       </div>
-      <CompanySheet company={calculation} open={edit} setOpen={setEdit} />
+      <CompanySheet
+        company={calculation as any}
+        open={edit}
+        setOpen={setEdit}
+      />
       <TransactionSheet
         open={transactionOpen}
         setOpen={(value) => {
@@ -491,8 +493,8 @@ const UserDetail = () => {
         caseId={id}
         caseName={calculation?.case_name}
         principalBalance={todayPayoff.toFixed(2)}
-        accruedInterest={interestToDate.toFixed(2)}
-        caseData={calculation}
+        accruedInterest={totalInterest.toFixed(2)}
+        caseData={calculation as any}
       />
       <DeleteConfirmationModal
         open={deleteModalOpen}

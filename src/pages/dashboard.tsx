@@ -16,7 +16,7 @@ const Dashboard = () => {
   const { data, isLoading, error } = useGetCalculationsQuery({});
 
   // Transform calculation data to match CaseGet format for the table
-  const cases: CaseGet[] = (data?.calculations || []).map((calc) => {
+  const cases: CaseGet[] = (data?.calculations || []).map((calc: any) => {
     return {
       id: calc.id,
       case_name: calc.case_name || "N/A",
