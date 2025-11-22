@@ -25,8 +25,12 @@ const Dashboard = () => {
       judegment_amount: (calc.judgment_amount || 0).toFixed(2),
       judgement_date: calc.judgment_date,
       last_payment_date: calc.end_date || calc.judgment_date,
-      total_payment_to_date: "0.00", // This would need calculation from transactions
-      interest_to_date: (calc.total_interest_accrued || 0).toFixed(2),
+      total_payment_to_date: "0.00",
+      interest_to_date: (
+        calc.totalInterest ||
+        calc.total_interest_accrued ||
+        0
+      ).toFixed(2),
       today_payoff: (calc.total_due || 0).toFixed(2),
     };
   });

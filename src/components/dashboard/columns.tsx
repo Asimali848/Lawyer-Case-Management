@@ -74,7 +74,7 @@ export const useRowColumns = () => {
     },
     {
       accessorKey: "judegment_amount",
-      header: "Judegment Amount",
+      header: "Judgment Amount",
       cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
           onClick={() =>
@@ -82,7 +82,21 @@ export const useRowColumns = () => {
           }
           className="w-full cursor-pointer font-semibold text-[#71717A] text-sm hover:underline"
         >
-          {row.getValue("judegment_amount") || "N/A"}
+          ${row.getValue("judegment_amount") || "0.00"}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "today_payoff",
+      header: "Grand Total",
+      cell: ({ row }: { row: Row<CaseGet> }) => (
+        <span
+          onClick={() =>
+            handleRowClick(row.original.id, row.original.today_payoff)
+          }
+          className="w-full cursor-pointer font-semibold text-green-600 text-sm hover:underline"
+        >
+          ${row.getValue("today_payoff") || "0.00"}
         </span>
       ),
     },
