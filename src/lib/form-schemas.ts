@@ -61,9 +61,7 @@ export const newCaseSchema = z.object({
   case_name: z.string().min(2, "Case name must be at least 2 characters"),
   client_name: z.string().optional(),
   court_name: z.string().min(2, "Court name must be at least 2 characters"),
-  court_number: z
-    .string()
-    .min(2, "Court number must be at least 2 characters"),
+  court_number: z.string().min(2, "Court number must be at least 2 characters"),
   judegment_amount: z.string().min(1, "Judgment amount is required"),
   interest_rate: z.string().min(1, "Interest rate is required"),
   judgement_date: z.string().min(1, "Judgment date is required"),
@@ -75,7 +73,11 @@ export const newCaseSchema = z.object({
   state: z.string().optional(),
   zipcode: z.string().optional(),
   lawyer_phone: z.string().optional(),
-  lawyer_email: z.string().email("Invalid email format").optional().or(z.literal("")),
+  lawyer_email: z
+    .string()
+    .email("Invalid email format")
+    .optional()
+    .or(z.literal("")),
 });
 
 export const employeesSchema = z.object({
@@ -132,9 +134,7 @@ export const employeesSchema = z.object({
 
 export const transactionSchema = z.object({
   payment_date: z.string().min(1, "Payment date is required"),
-  transaction_type: z.enum(["PAYMENT", "COST"], {
-    required_error: "Transaction type is required",
-  }),
+  transaction_type: z.enum(["PAYMENT", "COST"]),
   payment_amount: z.string().min(1, "Payment amount is required"),
   description: z.string().optional(),
   // These fields are calculated/auto-filled, not entered by user

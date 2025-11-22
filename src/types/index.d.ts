@@ -307,3 +307,62 @@ declare type Payment = {
   payment_status?: string;
   payment_notes?: string;
 };
+
+// Company and Employee types
+declare type CompanyInfo = {
+  id?: string;
+  name: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+declare type CompanyFile = {
+  id: string;
+  company_id?: string;
+  filename: string;
+  file_type: string;
+  file_path?: string;
+  upload_date: string;
+  created_at?: string;
+};
+
+declare type Policy = {
+  id: string;
+  company_id?: string;
+  title: string;
+  content: string;
+  version?: string;
+  is_active?: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+declare type Employees = {
+  id?: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  position?: string;
+  department?: string;
+  hire_date?: string;
+  is_active?: boolean;
+};
+
+declare type EmployeeResponse = Employees & {
+  id: string;
+  created_at: string;
+  updated_at?: string;
+};
+
+declare type EmployeeFile = {
+  id: string;
+  employee_id: string;
+  filename: string;
+  file_type: string;
+  file_path?: string;
+  upload_date: string;
+  created_at?: string;
+};

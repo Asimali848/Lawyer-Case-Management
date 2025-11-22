@@ -17,17 +17,25 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { newCaseSchema } from "@/lib/form-schemas";
-import { useCreateCalculationMutation, useUpdateCalculationMutation } from "@/store/services/calculations";
+import {
+  useCreateCalculationMutation,
+  useUpdateCalculationMutation,
+} from "@/store/services/calculations";
 
 const NewCase = () => {
   const navigate = useNavigate();
-  const [createCalculation, { isLoading: isCreating }] = useCreateCalculationMutation();
-  const [updateCalculation, { isLoading: isUpdating }] = useUpdateCalculationMutation();
-  const [calculationResult, setCalculationResult] = useState<CalculationResponse | null>(null);
+  const [createCalculation, { isLoading: isCreating }] =
+    useCreateCalculationMutation();
+  const [updateCalculation, { isLoading: isUpdating }] =
+    useUpdateCalculationMutation();
+  const [calculationResult, setCalculationResult] =
+    useState<CalculationResponse | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [savedCalculationId, setSavedCalculationId] = useState<string | null>(null);
-  const [lastCalculationRequest, setLastCalculationRequest] = useState<CalculationRequest | null>(null);
-  
+  const [savedCalculationId] = useState<string | null>(null);
+  const [, setLastCalculationRequest] = useState<CalculationRequest | null>(
+    null
+  );
+
   const isLoading = isCreating || isUpdating;
 
   const form = useForm<z.infer<typeof newCaseSchema>>({
@@ -86,7 +94,7 @@ const NewCase = () => {
   // Calculate function - calls backend API and saves the case (matches static files behavior)
   const handleCalculate = async () => {
     const data = form.getValues();
-    
+
     // Validate required fields
     if (!data.judegment_amount || parseFloat(data.judegment_amount) <= 0) {
       toast.error("Please enter a valid Judgment Amount");
@@ -115,7 +123,7 @@ const NewCase = () => {
 
     try {
       setIsCalculating(true);
-      
+
       // Get today's date as end_date ONCE and store it (matches static version behavior)
       // This ensures the same end_date is used for both calculation and saving
       const today = new Date().toISOString().split("T")[0];
@@ -150,7 +158,7 @@ const NewCase = () => {
       // This ensures the exact same calculation request is used for both calculation and saving
       // No timing differences, no double API calls - perfect sync!
       let result: CalculationResponse;
-      
+
       if (savedCalculationId) {
         // Update existing calculation using the EXACT same request
         result = await updateCalculation({
@@ -175,7 +183,7 @@ const NewCase = () => {
     }
   };
 
-  const onSubmit = async (data: z.infer<typeof newCaseSchema>) => {
+  const onSubmit = async (_data: z.infer<typeof newCaseSchema>) => {
     // If calculation was already done, just navigate to dashboard
     // The case is already saved from the Calculate button
     if (calculationResult) {
@@ -184,7 +192,9 @@ const NewCase = () => {
     }
 
     // If no calculation was done, show error
-    toast.error("Please click 'Calculate' first to calculate and save the case.");
+    toast.error(
+      "Please click 'Calculate' first to calculate and save the case."
+    );
   };
 
   return (
@@ -270,10 +280,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Court Number</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter court number"
-                          {...field}
-                        />
+                        <Input placeholder="Enter court number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -475,7 +482,9 @@ const NewCase = () => {
                         Judgment Amount
                       </span>
                       <span className="font-medium">
-                        {formatCurrency2Decimals(calculationResult.initial_principal)}
+                        {formatCurrency2Decimals(
+                          calculationResult.initial_principal
+                        )}
                       </span>
                     </div>
                     <div className="flex flex-col gap-1">
@@ -483,7 +492,9 @@ const NewCase = () => {
                         Principal Reduction
                       </span>
                       <span className="font-medium">
-                        {formatCurrency2Decimals(calculationResult.principal_reduction)}
+                        {formatCurrency2Decimals(
+                          calculationResult.principal_reduction
+                        )}
                       </span>
                     </div>
                     <div className="flex flex-col gap-1">
@@ -491,7 +502,9 @@ const NewCase = () => {
                         Principal Balance
                       </span>
                       <span className="font-medium">
-                        {formatCurrency2Decimals(calculationResult.remaining_principal)}
+                        {formatCurrency2Decimals(
+                          calculationResult.remaining_principal
+                        )}
                       </span>
                     </div>
                     <div className="flex flex-col gap-1">
@@ -511,7 +524,9 @@ const NewCase = () => {
                         Daily Interest
                       </span>
                       <span className="font-medium">
-                        {formatCurrency4Decimals(calculationResult.daily_interest)}
+                        {formatCurrency4Decimals(
+                          calculationResult.daily_interest
+                        )}
                       </span>
                     </div>
                     <div className="flex flex-col gap-1">
@@ -519,7 +534,9 @@ const NewCase = () => {
                         Interest Accrued
                       </span>
                       <span className="font-medium">
-                        {formatCurrency2Decimals(calculationResult.interest_accrued)}
+                        {formatCurrency2Decimals(
+                          calculationResult.interest_accrued
+                        )}
                       </span>
                     </div>
                     <div className="flex flex-col gap-1">
@@ -527,7 +544,9 @@ const NewCase = () => {
                         Interest to Date
                       </span>
                       <span className="font-medium">
-                        {formatCurrency2Decimals(calculationResult.interest_to_date)}
+                        {formatCurrency2Decimals(
+                          calculationResult.interest_to_date
+                        )}
                       </span>
                     </div>
                     <div className="flex flex-col gap-1">
@@ -535,7 +554,9 @@ const NewCase = () => {
                         Total Interest
                       </span>
                       <span className="font-medium">
-                        {formatCurrency2Decimals(calculationResult.total_interest_accrued)}
+                        {formatCurrency2Decimals(
+                          calculationResult.total_interest_accrued
+                        )}
                       </span>
                     </div>
                   </div>
@@ -543,8 +564,12 @@ const NewCase = () => {
                   {/* Right Column */}
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-sm">Days</span>
-                      <span className="font-medium">{calculationResult.days}</span>
+                      <span className="text-muted-foreground text-sm">
+                        Days
+                      </span>
+                      <span className="font-medium">
+                        {calculationResult.days}
+                      </span>
                     </div>
                     <div className="flex flex-col gap-1 border-t pt-4">
                       <span className="font-bold text-base">GRAND TOTAL</span>
@@ -582,10 +607,14 @@ const NewCase = () => {
               {isCalculating || isLoading ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
-                  {savedCalculationId ? "Updating..." : "Calculating & Saving..."}
+                  {savedCalculationId
+                    ? "Updating..."
+                    : "Calculating & Saving..."}
                 </>
+              ) : savedCalculationId ? (
+                "Recalculate & Update"
               ) : (
-                savedCalculationId ? "Recalculate & Update" : "Calculate & Save"
+                "Calculate & Save"
               )}
             </Button>
             {calculationResult && (
