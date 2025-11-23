@@ -3,8 +3,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import Logo from "@/assets/img/logo.jpg";
-import LogoBlack from "@/assets/img/logo-black.jpg";
+import Logo from "@/assets/img/logo.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,13 +13,11 @@ import {
 import { setToken, setUser } from "@/store/slices/global";
 import MaxWidthWrapper from "./max-width-wrapper";
 import { ModeToggle } from "./mode-toggle";
-import { useTheme } from "./theme-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import WarningModal from "./warning-modal";
 
 const Navbar = () => {
-  const { theme } = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [open, setOpen] = useState<boolean>(false);
@@ -50,18 +47,12 @@ const Navbar = () => {
       <nav className="fixed top-0 z-[2] h-16 w-full border-b backdrop-blur">
         <MaxWidthWrapper className="flex items-center justify-between px-5 py-2.5 xl:px-0">
           <img
-            src={theme === "dark" ? Logo : LogoBlack}
+            src={Logo}
             alt="logo"
-            className="h-full rounded-md"
+            className="h-full rounded-md dark:bg-white dark:px-1"
             onClick={() => navigate("/dashboard")}
           />
           <div className="flex items-center justify-center gap-2.5">
-            {/* <div className="hidden items-center justify-center gap-2.5 sm:flex">
-              <Button size="sm" variant="destructive" onClick={() => setOpen(true)}>
-                Logout
-              </Button>
-              <ModeToggle />
-            </div> */}
             <div className="">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
