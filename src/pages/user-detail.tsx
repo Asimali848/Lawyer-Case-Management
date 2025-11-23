@@ -39,13 +39,16 @@ const UserDetail = () => {
     useState<TransactionData | null>(null);
   const [warningModalOpen, setWarningModalOpen] = useState<boolean>(false);
 
-  // Fetch calculation details
+  // Fetch calculation details with current client date
   const {
     data: calculation,
     isLoading,
     error,
     refetch,
-  } = useGetCalculationQuery(id || "", { skip: !id });
+  } = useGetCalculationQuery(
+    { id: id || "", current_date: undefined },
+    { skip: !id }
+  );
   const [deleteCalculation] = useDeleteCalculationMutation();
   const [deleteTransaction] = useDeleteTransactionMutation();
 

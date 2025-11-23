@@ -12,7 +12,7 @@ const Dashboard = () => {
   const columns = useRowColumns();
   const [search, setSearch] = useState<string>("");
 
-  // Fetch calculations from API
+  // Fetch calculations from API with current client date
   const { data, isLoading, error } = useGetCalculationsQuery({});
 
   // Transform calculation data to match CaseGet format for the table

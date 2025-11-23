@@ -1,4 +1,5 @@
 import { api } from "./core";
+import { getCurrentDate } from "@/lib/utils";
 
 export const calculationsApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -12,20 +13,29 @@ export const calculationsApi = api.injectEndpoints({
     }),
     getCalculations: build.query<
       GetCalculationsResponse,
-      { limit?: number; offset?: number }
+      { limit?: number; offset?: number; current_date?: string }
     >({
-      query: ({ limit = 50, offset = 0 } = {}) => ({
-        url: `/api/calc/history?limit=${limit}&offset=${offset}`,
-        method: "GET",
-      }),
+      query: ({ limit = 50, offset = 0, current_date } = {}) => {
+        const date = current_date || getCurrentDate();
+        return {
+          url: `/api/calc/history?limit=${limit}&offset=${offset}&current_date=${date}`,
+          method: "GET",
+        };
+      },
       providesTags: ["calculations"],
     }),
-    getCalculation: build.query<CalculationDetailResponse, string>({
-      query: (id) => ({
-        url: `/api/calc/${id}`,
-        method: "GET",
-      }),
-      providesTags: (_result, _error, id) => [{ type: "calculations", id }],
+    getCalculation: build.query<
+      CalculationDetailResponse,
+      { id: string; current_date?: string }
+    >({
+      query: ({ id, current_date }) => {
+        const date = current_date || getCurrentDate();
+        return {
+          url: `/api/calc/${id}?current_date=${date}`,
+          method: "GET",
+        };
+      },
+      providesTags: (_result, _error, { id }) => [{ type: "calculations", id }],
     }),
     updateCalculation: build.mutation<
       CalculationResponse,
