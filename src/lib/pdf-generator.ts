@@ -43,7 +43,9 @@ function formatCurrency(amount: number): string {
 /**
  * Generates a payoff statement PDF with professional layout
  */
-export async function generatePayoffStatementPDF(data: PayoffStatementData): Promise<void> {
+export async function generatePayoffStatementPDF(
+  data: PayoffStatementData
+): Promise<void> {
   const pdf = new jsPDF({
     orientation: "portrait",
     unit: "mm",
@@ -53,7 +55,7 @@ export async function generatePayoffStatementPDF(data: PayoffStatementData): Pro
   const pageWidth = 210;
   const pageHeight = 297;
   const margin = 20;
-  const _contentWidth = pageWidth - 2 * margin;
+  // const _contentWidth = pageWidth - 2 * margin;
   let yPosition = margin + 10;
 
   // Set font
@@ -100,7 +102,11 @@ export async function generatePayoffStatementPDF(data: PayoffStatementData): Pro
     pdf.setFont("helvetica", "bold");
     pdf.text("Judgment Amount:", margin, yPosition);
     pdf.setFont("helvetica", "normal");
-    pdf.text(formatCurrency(parseFloat(data.judgmentAmount)), margin + 50, yPosition);
+    pdf.text(
+      formatCurrency(parseFloat(data.judgmentAmount)),
+      margin + 50,
+      yPosition
+    );
     yPosition += 8;
   }
 
@@ -139,7 +145,11 @@ export async function generatePayoffStatementPDF(data: PayoffStatementData): Pro
   pdf.text("Principal Balance:", margin, yPosition);
   pdf.setFont("helvetica", "bold");
   const principalText = formatCurrency(data.principalBalance);
-  pdf.text(principalText, pageWidth - margin - pdf.getTextWidth(principalText), yPosition);
+  pdf.text(
+    principalText,
+    pageWidth - margin - pdf.getTextWidth(principalText),
+    yPosition
+  );
   yPosition += 12;
 
   // Accrued Interest
@@ -147,7 +157,11 @@ export async function generatePayoffStatementPDF(data: PayoffStatementData): Pro
   pdf.text("Accrued Interest:", margin, yPosition);
   pdf.setFont("helvetica", "bold");
   const interestText = formatCurrency(data.accruedInterest);
-  pdf.text(interestText, pageWidth - margin - pdf.getTextWidth(interestText), yPosition);
+  pdf.text(
+    interestText,
+    pageWidth - margin - pdf.getTextWidth(interestText),
+    yPosition
+  );
   yPosition += 12;
 
   // Total Payoff
@@ -160,7 +174,11 @@ export async function generatePayoffStatementPDF(data: PayoffStatementData): Pro
   pdf.text("Total Payoff:", margin, yPosition);
   pdf.setFontSize(15);
   const totalText = formatCurrency(data.totalPayoff);
-  pdf.text(totalText, pageWidth - margin - pdf.getTextWidth(totalText), yPosition);
+  pdf.text(
+    totalText,
+    pageWidth - margin - pdf.getTextWidth(totalText),
+    yPosition
+  );
 
   // Footer
   const footerY = pageHeight - 15;
@@ -171,7 +189,7 @@ export async function generatePayoffStatementPDF(data: PayoffStatementData): Pro
     `Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`,
     pageWidth / 2,
     footerY,
-    { align: "center" },
+    { align: "center" }
   );
 
   // Reset text color
@@ -203,7 +221,7 @@ export function createPayoffStatementData(
   },
   payoffDate: string,
   principalBalance: number,
-  accruedInterest: number,
+  accruedInterest: number
 ): PayoffStatementData {
   return {
     caseName: caseData.case_name,

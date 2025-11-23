@@ -13,7 +13,11 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-const baseQueryWith401Handling: typeof baseQuery = async (args, api, extraOptions) => {
+const baseQueryWith401Handling: typeof baseQuery = async (
+  args,
+  api,
+  extraOptions
+) => {
   const result = await baseQuery(args, api, extraOptions);
 
   if (result.error?.status === 401 || result.error?.status === 403) {
@@ -28,14 +32,15 @@ const baseQueryWith401Handling: typeof baseQuery = async (args, api, extraOption
 export const api = createApi({
   baseQuery: baseQueryWith401Handling,
   keepUnusedDataFor: 5,
-  tagTypes: ["employees", "companies", "policies"],
+  tagTypes: ["employees", "companies", "policies", "calculations"],
   endpoints: (build) => ({
     healthCheck: build.query({
       query: () => ({
         url: "/",
         method: "GET",
       }),
-      transformResponse: (response: { status: string; message: string }) => response,
+      transformResponse: (response: { status: string; message: string }) =>
+        response,
     }),
   }),
 });

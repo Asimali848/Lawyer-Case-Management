@@ -14,30 +14,31 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginSchema } from "@/lib/form-schemas";
-import { useLoginMutation } from "@/store/services/auth";
+import { forgotPasswordSchema } from "@/lib/form-schemas";
+import { useForgotPasswordMutation } from "@/store/services/auth";
 
-const Login = () => {
+const ForgotPassword = () => {
   const navigate = useNavigate();
-  const [login, { isLoading }] = useLoginMutation();
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
 
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<z.infer<typeof forgotPasswordSchema>>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof loginSchema>) => {
+  const onSubmit = async (data: z.infer<typeof forgotPasswordSchema>) => {
     try {
-      await login(data).unwrap();
-      toast.success("Login successful!");
-      navigate("/dashboard");
+      const response = await forgotPassword(data).unwrap();
+      toast.success(
+        response.message || "Password reset OTP sent to your email!"
+      );
+      navigate(`/verify-otp?email=${encodeURIComponent(data.email)}`);
     } catch (error: any) {
-      const errorMessage =
-        error?.data?.detail || "Login failed. Please check your credentials.";
-      toast.error(errorMessage);
+      toast.error(
+        error?.data?.detail || "Failed to send reset email. Please try again."
+      );
     }
   };
 
@@ -45,11 +46,10 @@ const Login = () => {
     <div className="mx-auto flex w-[90%] flex-col items-center justify-center gap-8 lg:w-2/3 xl:w-1/2">
       <div className="flex w-full flex-col items-center justify-center gap-3">
         <span className="w-full text-center font-bold text-[32px] leading-[32px] md:text-[48px] md:leading-[48px]">
-          Welcome to
-          <br /> JudgmentCalc
+          Forgot Password?
         </span>
         <span className="w-full text-center text-[#71717A] text-[14px] leading-[14px]">
-          Enter your credentials to login.
+          Enter your email to receive a verification code
         </span>
       </div>
       <Form {...form}>
@@ -74,31 +74,6 @@ const Login = () => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="• • • • • • • •"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex w-full justify-end">
-            <Link
-              to="/forgot-password"
-              className="text-[14px] font-medium text-primary hover:underline"
-            >
-              Forgot Password?
-            </Link>
-          </div>
           <Button
             type="submit"
             className="w-full"
@@ -109,19 +84,19 @@ const Login = () => {
             {isLoading ? (
               <Loader2 className="animate-spin" />
             ) : (
-              "Sign In with Email"
+              "Send Verification Code"
             )}
           </Button>
         </form>
       </Form>
       <div className="flex w-full items-center justify-center gap-2 text-[14px]">
-        <span className="text-[#71717A]">Don't have an account?</span>
-        <Link to="/signup" className="font-medium text-primary hover:underline">
-          Sign Up
+        <span className="text-[#71717A]">Remember your password?</span>
+        <Link to="/" className="font-medium text-primary hover:underline">
+          Sign In
         </Link>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default ForgotPassword;

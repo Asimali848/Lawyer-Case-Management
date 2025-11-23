@@ -4,23 +4,54 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { transactionSchema } from "@/lib/form-schemas";
 import { Button } from "../ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "../ui/sheet";
+import {
+  useAddTransactionMutation,
+  useUpdateTransactionMutation,
+} from "@/store/services/calculations";
 
 interface TransactionSheetProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   caseId?: string;
   caseName?: string;
-  transaction?: Payment;
+  transaction?: TransactionData;
 }
 
-const TransactionSheet = ({ open, setOpen, caseId, caseName, transaction }: TransactionSheetProps) => {
+const TransactionSheet = ({
+  open,
+  setOpen,
+  caseId,
+  caseName,
+  transaction,
+}: TransactionSheetProps) => {
+  const [addTransaction] = useAddTransactionMutation();
+  const [updateTransaction] = useUpdateTransactionMutation();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof transactionSchema>>({
@@ -37,30 +68,28 @@ const TransactionSheet = ({ open, setOpen, caseId, caseName, transaction }: Tran
     if (transaction && open) {
       // Format date for input (YYYY-MM-DD)
       let dateValue = "";
-      if (transaction.payment_date) {
+      if (transaction.transaction_date) {
         try {
-          // Handle different date formats
-          const date = new Date(transaction.payment_date);
+          const date = new Date(transaction.transaction_date);
           if (!isNaN(date.getTime())) {
             dateValue = date.toISOString().split("T")[0];
-          } else {
-            // Try parsing M/D/YYYY format
-            const parts = transaction.payment_date.split("/");
-            if (parts.length === 3) {
-              const month = parts[0].padStart(2, "0");
-              const day = parts[1].padStart(2, "0");
-              const year = parts[2];
-              dateValue = `${year}-${month}-${day}`;
-            }
           }
         } catch {
           dateValue = "";
         }
       }
+
+      // Determine transaction type from amounts
+      const transType = transaction.payment_amount > 0 ? "PAYMENT" : "COST";
+      const amount =
+        transaction.payment_amount > 0
+          ? transaction.payment_amount
+          : transaction.cost_amount;
+
       form.reset({
         payment_date: dateValue,
-        transaction_type: transaction.transaction_type || "PAYMENT",
-        payment_amount: transaction.payment_amount || "0",
+        transaction_type: transType,
+        payment_amount: String(amount || "0"),
         description: transaction.description || "",
       });
     } else if (!transaction && open) {
@@ -76,14 +105,43 @@ const TransactionSheet = ({ open, setOpen, caseId, caseName, transaction }: Tran
   }, [transaction, open, form]);
 
   const onSubmit = async (data: z.infer<typeof transactionSchema>) => {
+    if (!caseId) {
+      toast.error("Case ID is missing");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const transactionRequest: TransactionRequest = {
+        transaction_date: data.payment_date,
+        transaction_type:
+          data.transaction_type === "PAYMENT" ? "payment" : "cost",
+        amount: parseFloat(data.payment_amount),
+        description: data.description || undefined,
+      };
+
+      if (transaction?.id) {
+        // Update existing transaction
+        await updateTransaction({
+          calculationId: caseId,
+          transactionId: transaction.id,
+          transaction: transactionRequest,
+        }).unwrap();
+        toast.success("Transaction updated successfully");
+      } else {
+        // Add new transaction
+        await addTransaction({
+          calculationId: caseId,
+          transaction: transactionRequest,
+        }).unwrap();
+        toast.success("Transaction added successfully");
+      }
+
       setOpen(false);
       form.reset();
-    } catch (_error) {
-      toast.error("Failed to add transaction");
+    } catch (error: any) {
+      console.error("Transaction error:", error);
+      toast.error(error?.data?.detail || "Failed to save transaction");
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +151,9 @@ const TransactionSheet = ({ open, setOpen, caseId, caseName, transaction }: Tran
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{transaction ? "Edit Transaction" : "Add New Transaction"}</SheetTitle>
+          <SheetTitle>
+            {transaction ? "Edit Transaction" : "Add New Transaction"}
+          </SheetTitle>
           {caseName && caseId && (
             <SheetDescription className="font-medium text-base">
               {caseName} - {caseId}
@@ -134,7 +194,12 @@ const TransactionSheet = ({ open, setOpen, caseId, caseName, transaction }: Tran
                 <FormItem>
                   <FormLabel>Amount</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="0" {...field} />
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -160,7 +225,11 @@ const TransactionSheet = ({ open, setOpen, caseId, caseName, transaction }: Tran
                 <FormItem>
                   <FormLabel>Description (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Enter description..." className="min-h-[100px] resize-none" {...field} />
+                    <Textarea
+                      placeholder="Enter description..."
+                      className="min-h-[100px] resize-none"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -168,7 +237,12 @@ const TransactionSheet = ({ open, setOpen, caseId, caseName, transaction }: Tran
             />
             <div className="mt-auto flex gap-3 pt-4">
               {isLoading ? (
-                <Button type="submit" variant="default" className="flex-1 bg-green-600 hover:bg-green-700" disabled>
+                <Button
+                  type="submit"
+                  variant="default"
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  disabled
+                >
                   <Loader2 className="mr-2 size-4 animate-spin" />
                   {transaction ? "Updating..." : "Adding..."}
                 </Button>

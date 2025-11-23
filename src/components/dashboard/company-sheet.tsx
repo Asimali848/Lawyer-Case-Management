@@ -4,11 +4,24 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { caseSchema } from "@/lib/form-schemas";
 import { Button } from "../ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "../ui/sheet";
 
 interface CaseSheetProps {
   id?: string;
@@ -84,7 +97,7 @@ const CaseSheet = ({ open, setOpen, company }: CaseSheetProps) => {
     }
   }, [company, open, form]);
 
-  const onSubmit = async (data: z.infer<typeof caseSchema>) => {
+  const onSubmit = async (_data: z.infer<typeof caseSchema>) => {
     setIsLoading(true);
     try {
       // Simulate API call
@@ -102,9 +115,15 @@ const CaseSheet = ({ open, setOpen, company }: CaseSheetProps) => {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{company ? `Edit Case - ${company.case_name || ""}` : "Add Case Details"}</SheetTitle>
+          <SheetTitle>
+            {company
+              ? `Edit Case - ${company.case_name || ""}`
+              : "Add Case Details"}
+          </SheetTitle>
           <SheetDescription>
-            {company ? "Update the details of this case." : "Add a new case to the system."}
+            {company
+              ? "Update the details of this case."
+              : "Add a new case to the system."}
           </SheetDescription>
         </SheetHeader>
 
@@ -188,11 +207,21 @@ const CaseSheet = ({ open, setOpen, company }: CaseSheetProps) => {
               )}
             />
             <div className="mt-auto flex justify-end gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                disabled={isLoading}
+              >
                 Cancel
               </Button>
               {isLoading ? (
-                <Button type="submit" variant="default" className="bg-green-600 hover:bg-green-700" disabled>
+                <Button
+                  type="submit"
+                  variant="default"
+                  className="bg-green-600 hover:bg-green-700"
+                  disabled
+                >
                   <Loader2 className="mr-2 size-4 animate-spin" />
                   Saving...
                 </Button>

@@ -1,14 +1,52 @@
 import * as z from "zod";
 
 export const loginSchema = z.object({
-  email: z.email(),
-  password: z.string(),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
 });
+
+export const signupSchema = z.object({
+  first_name: z.string().min(2, "First name must be at least 2 characters"),
+  last_name: z.string().min(2, "Last name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  phone_number: z.string().min(10, "Phone number must be at least 10 digits"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+export const verifyEmailSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  otp: z.string().length(6, "OTP must be 6 digits"),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+export const verifyOtpSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  otp: z.string().length(6, "OTP must be 6 digits"),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    email: z.string().email("Invalid email address"),
+    reset_token: z.string().min(1, "Reset token is required"),
+    new_password: z.string().min(8, "Password must be at least 8 characters"),
+    confirm_password: z
+      .string()
+      .min(8, "Password must be at least 8 characters"),
+  })
+  .refine((data) => data.new_password === data.confirm_password, {
+    message: "Passwords don't match",
+    path: ["confirm_password"],
+  });
 
 export const caseSchema = z.object({
   case_name: z.string().min(2, "Case name must be at least 2 characters"),
   court_name: z.string().min(2, "Court name must be at least 2 characters"),
-  court_case_number: z.string().min(2, "Court case number must be at least 2 characters"),
+  court_case_number: z
+    .string()
+    .min(2, "Court case number must be at least 2 characters"),
   judegment_amount: z.string().min(1, "Judgment amount is required"),
   judgement_date: z.string().min(1, "Judgment date is required"),
   // Optional fields for other use cases
@@ -21,19 +59,25 @@ export const caseSchema = z.object({
 export const newCaseSchema = z.object({
   // Judgment Information (Required)
   case_name: z.string().min(2, "Case name must be at least 2 characters"),
+  client_name: z.string().optional(),
   court_name: z.string().min(2, "Court name must be at least 2 characters"),
-  court_case_number: z.string().min(2, "Court case number must be at least 2 characters"),
+  court_number: z.string().min(2, "Court number must be at least 2 characters"),
   judegment_amount: z.string().min(1, "Judgment amount is required"),
   interest_rate: z.string().min(1, "Interest rate is required"),
   judgement_date: z.string().min(1, "Judgment date is required"),
-  // Debtor Contact Info (Optional)
+  // Attorney/Lawyer Information (Optional)
+  lawyer_name: z.string().optional(),
   firm_name: z.string().optional(),
   street_address: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
-  zip_code: z.string().optional(),
-  phone_number: z.string().optional(),
-  email: z.string().email("Invalid email format").optional().or(z.literal("")),
+  zipcode: z.string().optional(),
+  lawyer_phone: z.string().optional(),
+  lawyer_email: z
+    .string()
+    .email("Invalid email format")
+    .optional()
+    .or(z.literal("")),
 });
 
 export const employeesSchema = z.object({
@@ -47,7 +91,10 @@ export const employeesSchema = z.object({
     .min(1, "Email is required")
     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email format"),
 
-  password: z.string().min(6, "Password must be at least 6 characters").optional(),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .optional(),
 
   date_of_birth: z
     .string()
@@ -56,13 +103,19 @@ export const employeesSchema = z.object({
 
   user_phone_number: z
     .string()
-    .regex(/^\+?[0-9]{10,15}$/, "Phone number must be 10-15 digits and may start with +")
+    .regex(
+      /^\+?[0-9]{10,15}$/,
+      "Phone number must be 10-15 digits and may start with +"
+    )
     .optional(),
 
   user_designation: z
     .string()
     .min(2, "Designation is required")
-    .regex(/^[a-zA-Z\s\-_/]+$/, "Designation must only contain letters, spaces, -, /, or _")
+    .regex(
+      /^[a-zA-Z\s\-_/]+$/,
+      "Designation must only contain letters, spaces, -, /, or _"
+    )
     .optional(),
 
   department: z
@@ -81,9 +134,7 @@ export const employeesSchema = z.object({
 
 export const transactionSchema = z.object({
   payment_date: z.string().min(1, "Payment date is required"),
-  transaction_type: z.enum(["PAYMENT", "COST"], {
-    required_error: "Transaction type is required",
-  }),
+  transaction_type: z.enum(["PAYMENT", "COST"]),
   payment_amount: z.string().min(1, "Payment amount is required"),
   description: z.string().optional(),
   // These fields are calculated/auto-filled, not entered by user
