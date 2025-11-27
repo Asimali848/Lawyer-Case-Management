@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { getCurrentDate } from "@/lib/utils";
 import CompanySheet from "@/components/dashboard/company-sheet";
 import DeleteConfirmationModal from "@/components/dashboard/delete-confirmation-modal";
 import PayoffDemandModal from "@/components/dashboard/payoff-demand-modal";
@@ -46,7 +47,7 @@ const UserDetail = () => {
     error,
     refetch,
   } = useGetCalculationQuery(
-    { id: id || "", current_date: undefined },
+    { id: id || "", current_date: getCurrentDate() }, // Use client's current date
     { skip: !id }
   );
   const [deleteCalculation] = useDeleteCalculationMutation();
@@ -377,7 +378,7 @@ const UserDetail = () => {
                 <div className="flex flex-col rounded-lg border p-4 shadow">
                   <p className="font-semibold text-base sm:text-lg">End Date</p>
                   <p className="text-muted-foreground text-sm">
-                    {calculation?.end_date || "N/A"}
+                    {getCurrentDate()} {/* Always show current date */}
                   </p>
                 </div>
               </div>
