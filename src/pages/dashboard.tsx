@@ -6,6 +6,7 @@ import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useGetCalculationsQuery } from "@/store/services/calculations";
+import { getCurrentDate } from "@/lib/utils";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const Dashboard = () => {
     {
       limit: batchSize,
       offset: currentOffset,
+      current_date: getCurrentDate(), // Use client's current date for all calculations
     },
     {
       skip: !hasMoreData.current && currentOffset > 0,
