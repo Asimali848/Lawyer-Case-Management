@@ -17,6 +17,8 @@ export const calculationsApi = api.injectEndpoints({
     >({
       query: ({ limit = 50, offset = 0, current_date } = {}) => {
         const date = current_date || getCurrentDate();
+        console.log(date);
+        console.log(new Date());
         return {
           url: `/api/calc/history?limit=${limit}&offset=${offset}&current_date=${date}`,
           method: "GET",
