@@ -127,6 +127,8 @@ const NewCase = () => {
       // Get today's date as end_date ONCE and store it (matches static version behavior)
       // This ensures the same end_date is used for both calculation and saving
       const today = new Date().toISOString().split("T")[0];
+      console.log(today);
+      console.log(new Date());
 
       // Prepare calculation request (matches static version exactly)
       // Store this exact request to ensure consistency
