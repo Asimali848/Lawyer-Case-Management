@@ -70,9 +70,16 @@ const TransactionSheet = ({
       let dateValue = "";
       if (transaction.transaction_date) {
         try {
-          const date = new Date(transaction.transaction_date);
-          if (!isNaN(date.getTime())) {
-            dateValue = date.toISOString().split("T")[0];
+          // If already in YYYY-MM-DD format, use it directly
+          // This avoids timezone conversion issues
+          if (/^\d{4}-\d{2}-\d{2}$/.test(transaction.transaction_date)) {
+            dateValue = transaction.transaction_date;
+          } else {
+            // Fallback for other formats
+            const date = new Date(transaction.transaction_date);
+            if (!isNaN(date.getTime())) {
+              dateValue = date.toISOString().split("T")[0];
+            }
           }
         } catch {
           dateValue = "";
