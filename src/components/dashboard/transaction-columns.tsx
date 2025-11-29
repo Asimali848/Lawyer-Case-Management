@@ -8,21 +8,26 @@ interface TransactionColumnsProps {
   onDelete: (transaction: Payment) => void;
 }
 
-export const useTransactionColumns = ({ onEdit, onDelete }: TransactionColumnsProps) => {
+export const useTransactionColumns = ({
+  onEdit,
+  onDelete,
+}: TransactionColumnsProps) => {
   return [
     {
       accessorKey: "payment_date",
       header: "DATE",
       cell: ({ row }: { row: Row<Payment> }) => {
         const date = row.getValue("payment_date") as string;
-        if (!date) return <span className="font-medium text-green-600">N/A</span>;
+        if (!date)
+          return <span className="font-medium text-green-600">N/A</span>;
         try {
-          const dateObj = new Date(date);
-          const month = dateObj.getMonth() + 1;
-          const day = dateObj.getDate();
-          const year = dateObj.getFullYear();
+          // Parse date string directly to avoid timezone issues
+          // Date format is YYYY-MM-DD
+          const [year, month, day] = date.split("-").map(Number);
           const formattedDate = `${month}/${day}/${year}`;
-          return <span className="font-medium text-green-600">{formattedDate}</span>;
+          return (
+            <span className="font-medium text-green-600">{formattedDate}</span>
+          );
         } catch {
           return <span className="font-medium text-green-600">{date}</span>;
         }
@@ -68,7 +73,9 @@ export const useTransactionColumns = ({ onEdit, onDelete }: TransactionColumnsPr
       header: "PRINCIPAL BALANCE",
       cell: ({ row }: { row: Row<Payment> }) => {
         const balance = row.getValue("principal_balance") as string;
-        return <span className="font-bold">${parseFloat(balance).toFixed(2)}</span>;
+        return (
+          <span className="font-bold">${parseFloat(balance).toFixed(2)}</span>
+        );
       },
     },
     {
