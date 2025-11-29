@@ -1,4 +1,5 @@
 import {
+  ArrowLeft,
   CreditCard,
   FileText,
   Pencil,
@@ -191,9 +192,12 @@ const UserDetail = () => {
     <>
       <div className="flex h-full w-full flex-col gap-5 overflow-y-auto">
         <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center gap-2 cursor-pointer" onClick={() => navigate("/dashboard")}>
+          <ArrowLeft className="size-6 text-primary font-bold" />
           <Label className="font-bold text-primary text-xl sm:text-2xl md:text-3xl">
             {calculation?.case_name ?? "Case Not Found"}
           </Label>
+          </div>
           <div className="hidden flex-col gap-2.5 md:flex md:flex-row">
             <Button
               variant="default"
