@@ -1,14 +1,22 @@
-import { RefreshCw, MoreVertical, Printer } from "lucide-react";
+import { RefreshCw, MoreVertical, Printer, Plus, Pencil, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useGetCalculationQuery } from "@/store/services/calculations";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useGetCalculationQuery, useDeleteCalculationMutation } from "@/store/services/calculations";
 import { getCurrentDate } from "@/lib/utils";
 import { useTransactionColumns } from "@/components/dashboard/transaction-columns";
 import { DataTable } from "@/components/data-table";
 import TransactionSheet from "@/components/dashboard/transaction-sheet";
 import DeleteConfirmationModal from "@/components/dashboard/delete-confirmation-modal";
 import { useDeleteTransactionMutation } from "@/store/services/calculations";
+import EditCaseDialog from "@/components/dashboard/edit-case-dialog";
+import WarningModal from "@/components/warning-modal";
 import { toast } from "sonner";
 
 interface CaseListWithDetailsProps {
@@ -30,6 +38,8 @@ const CaseListWithDetails = ({
   const [transactionOpen, setTransactionOpen] = useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Payment | null>(null);
+  const [editCaseOpen, setEditCaseOpen] = useState<boolean>(false);
+  const [deleteCaseOpen, setDeleteCaseOpen] = useState<boolean>(false);
 
   // Fetch selected case details
   const {
@@ -42,6 +52,7 @@ const CaseListWithDetails = ({
   );
 
   const [deleteTransaction] = useDeleteTransactionMutation();
+  const [deleteCalculation, { isLoading: isDeletingCase }] = useDeleteCalculationMutation();
 
   // Auto-select first case if none selected
   useEffect(() => {
@@ -125,6 +136,48 @@ const CaseListWithDetails = ({
     } catch (error: any) {
       toast.error(error?.data?.detail || "Failed to delete transaction");
     }
+  };
+
+  const handleAddTransaction = () => {
+    setSelectedTransaction(null);
+    setTransactionOpen(true);
+  };
+
+  const handleEditCase = () => {
+    setEditCaseOpen(true);
+  };
+
+  const handleDeleteCase = async () => {
+    if (!selectedCaseId) {
+      toast.error("Invalid case ID");
+      return;
+    }
+
+    try {
+      await deleteCalculation(selectedCaseId).unwrap();
+      toast.success("Case deleted successfully!");
+      setDeleteCaseOpen(false);
+      // Clear selection and refresh - the parent component will handle refreshing the list
+      setSelectedCaseId(null);
+      // If there are other cases, select the first one
+      if (cases.length > 1) {
+        const remainingCases = cases.filter((c) => c.id !== selectedCaseId);
+        if (remainingCases.length > 0) {
+          setSelectedCaseId(remainingCases[0].id || null);
+        }
+      }
+    } catch (error: any) {
+      toast.error(error?.data?.detail || "Failed to delete case");
+    }
+  };
+
+  const handlePrintCase = () => {
+    // Placeholder for print functionality
+    toast.info("Print functionality will be implemented soon");
+  };
+
+  const handleEditCaseSuccess = () => {
+    refetchCase();
   };
 
   const formatCurrency = (value: number | string) => {
@@ -234,9 +287,34 @@ const CaseListWithDetails = ({
                   <CardTitle className="text-lg font-semibold">
                     Case Details
                   </CardTitle>
-                  <Button variant="default" size="icon" className="h-8 w-8">
-                    <MoreVertical className="size-4" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreVertical className="size-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={handleAddTransaction}>
+                        <Plus className="mr-2 size-4" />
+                        Add Transaction
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleEditCase}>
+                        <Pencil className="mr-2 size-4" />
+                        Edit Case
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setDeleteCaseOpen(true)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="mr-2 size-4" />
+                        Delete Case
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handlePrintCase}>
+                        <Printer className="mr-2 size-4" />
+                        Print Case
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </CardHeader>
                 <CardContent className="space-y-4 h-full">
                   <div className="text-2xl font-semibold text-green-600 mb-4 flex-1">
@@ -379,13 +457,33 @@ const CaseListWithDetails = ({
         />
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Confirmation Modal for Transaction */}
       <DeleteConfirmationModal
         open={deleteModalOpen}
         setOpen={setDeleteModalOpen}
         onConfirm={confirmDelete}
         title="Delete Transaction"
         description="Are you sure you want to delete this transaction? This action cannot be undone."
+      />
+
+      {/* Edit Case Dialog */}
+      {selectedCase && (
+        <EditCaseDialog
+          open={editCaseOpen}
+          setOpen={setEditCaseOpen}
+          caseData={selectedCase}
+          onSuccess={handleEditCaseSuccess}
+        />
+      )}
+
+      {/* Delete Case Warning Modal */}
+      <WarningModal
+        open={deleteCaseOpen}
+        setOpen={setDeleteCaseOpen}
+        title="Are you sure?"
+        text="You'll be deleting this Case and all associated transactions."
+        cta={handleDeleteCase}
+        isLoading={isDeletingCase}
       />
     </>
   );
