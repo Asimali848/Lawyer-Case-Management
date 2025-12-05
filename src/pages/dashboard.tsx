@@ -123,7 +123,7 @@ const Dashboard = () => {
           size="sm"
           type="button"
           onClick={() => navigate("/add-case")}
-          className="bg-green-600 hover:bg-green-700 text-white"
+          className="bg-primary hover:bg-primary/90 text-white"
         >
           <Plus className="size-4 mr-1" />
           Add New Case

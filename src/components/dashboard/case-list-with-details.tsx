@@ -163,9 +163,9 @@ const CaseListWithDetails = ({
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 h-full overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 h-full overflow-hidden">
         {/* Active Cases Section - Left */}
-        <div className="lg:col-span-1 flex flex-col gap-3 overflow-hidden">
+        <div className="lg:col-span-2 flex flex-col gap-3 overflow-hidden">
           <Card className="flex-1 flex flex-col overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="text-lg font-semibold">
@@ -192,11 +192,10 @@ const CaseListWithDetails = ({
                   <div
                     key={caseItem.id}
                     onClick={() => handleCaseClick(caseItem.id)}
-                    className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                      selectedCaseId === caseItem.id
+                    className={`p-4 rounded-lg border cursor-pointer transition-colors ${selectedCaseId === caseItem.id
                         ? "bg-green-50 border-green-300"
                         : "bg-white border-gray-200 hover:border-green-200"
-                    }`}
+                      }`}
                   >
                     <div className="font-semibold text-lg text-gray-900 mb-1">
                       {caseItem.case_name}
@@ -226,21 +225,21 @@ const CaseListWithDetails = ({
         </div>
 
         {/* Case Details and Transactions - Right */}
-        <div className="lg:col-span-2 flex flex-col gap-5 overflow-hidden">
+        <div className="lg:col-span-2 flex flex-col gap-5 overflow-hidden h-full">
           {selectedCaseId && selectedCase ? (
             <>
               {/* Case Details Section */}
-              <Card>
+              <Card className="h-full flex flex-col">
                 <CardHeader className="flex flex-row items-center justify-between pb-3">
                   <CardTitle className="text-lg font-semibold">
                     Case Details
                   </CardTitle>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button variant="default" size="icon" className="h-8 w-8">
                     <MoreVertical className="size-4" />
                   </Button>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-2xl font-semibold text-green-600 mb-4">
+                <CardContent className="space-y-4 h-full">
+                  <div className="text-2xl font-semibold text-green-600 mb-4 flex-1">
                     {selectedCase.case_name || "N/A"}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -304,42 +303,6 @@ const CaseListWithDetails = ({
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Recent Transactions Section */}
-              <Card className="flex-1 flex flex-col overflow-hidden">
-                <CardHeader className="flex flex-row items-center justify-between pb-3">
-                  <div>
-                    <CardTitle className="text-lg font-semibold">
-                      Recent Transactions
-                    </CardTitle>
-                    <div className="text-sm text-green-600 font-medium mt-1">
-                      {selectedCase.case_name || "N/A"}
-                    </div>
-                  </div>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    <Printer className="size-4 mr-1" />
-                    Print
-                  </Button>
-                </CardHeader>
-                <CardContent className="flex-1 overflow-y-auto">
-                  {transactions.length === 0 ? (
-                    <div className="flex items-center justify-center py-8">
-                      <p className="text-muted-foreground">
-                        No transactions found
-                      </p>
-                    </div>
-                  ) : (
-                    <DataTable
-                      columns={transactionColumns}
-                      data={transactions}
-                    />
-                  )}
-                </CardContent>
-              </Card>
             </>
           ) : isLoadingCase ? (
             <Card>
@@ -357,6 +320,41 @@ const CaseListWithDetails = ({
             </Card>
           )}
         </div>
+        {/* Recent Transactions Section */}
+        <Card className="flex-1 flex flex-col overflow-hidden col-span-4 h-[500px]" hidden={!selectedCaseId}>
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <div>
+              <CardTitle className="text-lg font-semibold">
+                Recent Transactions
+              </CardTitle>
+              <div className="text-sm text-green-600 font-medium mt-1">
+                {selectedCase?.case_name || "N/A"}
+              </div>
+            </div>
+            <Button
+              variant="default"
+              size="sm"
+              className="bg-primary hover:bg-primary/90 text-white"
+            >
+              <Printer className="size-4 mr-1" />
+              Print
+            </Button>
+          </CardHeader>
+          <CardContent className="flex-1 overflow-y-auto">
+            {transactions.length === 0 ? (
+              <div className="flex items-center justify-center py-8">
+                <p className="text-muted-foreground">
+                  No transactions found
+                </p>
+              </div>
+            ) : (
+              <DataTable
+                columns={transactionColumns}
+                data={transactions}
+              />
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Transaction Sheet */}
@@ -374,8 +372,8 @@ const CaseListWithDetails = ({
           transaction={
             selectedTransaction
               ? selectedCase?.transactions?.find(
-                  (t) => t.id === selectedTransaction.id
-                )
+                (t) => t.id === selectedTransaction.id
+              )
               : undefined
           }
         />
