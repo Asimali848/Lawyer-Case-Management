@@ -117,6 +117,7 @@ const EditCaseDialog = ({
       if (onSuccess) {
         onSuccess();
       }
+      window.location.reload();
     } catch (error: any) {
       toast.error(error?.data?.detail || "Failed to update case");
     } finally {

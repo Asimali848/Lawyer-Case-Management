@@ -63,20 +63,20 @@ const Navbar = () => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="w-36">
                   <DropdownMenuItem>
-                    <Button className="w-full" variant="default" size="sm" onClick={() => Home()}>
-                      <HomeIcon className="size-4 text-white" /> Home
+                    <Button className="w-full" variant="ghost" size="sm" onClick={() => Home()}>
+                      <HomeIcon className="size-4 text-primary" /> Home
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Button className="w-full" variant="default" size="sm" onClick={() => Profile()}>
-                      <UserIcon className="size-4 text-white" /> Profile
+                    <Button className="w-full" variant="ghost" size="sm" onClick={() => Profile()}>
+                      <UserIcon className="size-4 text-primary" /> Profile
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Button className="w-full" variant="default" size="sm" onClick={() => Membership()}>
-                      <CreditCardIcon className="size-4 text-white" /> Billing
+                    <Button className="w-full" variant="ghost" size="sm" onClick={() => Membership()}>
+                      <CreditCardIcon className="size-4 text-primary" /> Billing
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>

@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { useGetCalculationsQuery } from "@/store/services/calculations";
 import { getCurrentDate } from "@/lib/utils";
 import CaseListWithDetails from "@/components/dashboard/case-list-with-details";
+import Loader from "@/components/loader";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  
+
   const batchSize = useState<number>(50)[0];
   const [currentOffset, setCurrentOffset] = useState<number>(0);
   const [allCases, setAllCases] = useState<CaseGet[]>([]);
@@ -113,7 +114,6 @@ const Dashboard = () => {
     isLoadingMore,
   ]);
 
-
   return (
     <div className="flex h-full w-full flex-col gap-5 overflow-hidden p-5">
       <div className="flex w-full items-center justify-between mb-2">
@@ -129,13 +129,24 @@ const Dashboard = () => {
           Add New Case
         </Button>
       </div>
-      <CaseListWithDetails
-        cases={allCases}
-        isLoading={isLoading && currentOffset === 0}
-        error={error}
-        isLoadingMore={isLoadingMore}
-        totalCases={totalCases}
-      />
+      <div className="h-full w-full">
+        {isLoading && currentOffset === 0 && (
+          <div className="flex items-center justify-center py-8 h-full w-full">
+            <Loader />
+          </div>
+        )}
+        {allCases.length > 0 && (
+          <div className="h-full w-full">
+            <CaseListWithDetails
+              cases={allCases}
+              isLoading={isLoading && currentOffset === 0}
+              error={error}
+              isLoadingMore={isLoadingMore}
+              totalCases={totalCases}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

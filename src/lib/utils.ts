@@ -187,3 +187,25 @@ export function getCurrentDate(): string {
   const day = String(now.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
+
+
+export function formatCurrency(value: number | string) {
+  const num = typeof value === "string" ? parseFloat(value) : value;
+  if (isNaN(num)) return "$0.00";
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(num);
+}
+
+export function formatDate(dateString: string) {
+  if (!dateString) return "N/A";
+  try {
+    const [year, month, day] = dateString.split("-").map(Number);
+    return `${month}/${day}/${year}`;
+  } catch {
+    return dateString;
+  }
+}

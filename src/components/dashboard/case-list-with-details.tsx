@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useGetCalculationQuery, useDeleteCalculationMutation } from "@/store/services/calculations";
-import { getCurrentDate } from "@/lib/utils";
+import { formatCurrency, formatDate, getCurrentDate } from "@/lib/utils";
 import { useTransactionColumns } from "@/components/dashboard/transaction-columns";
 import { DataTable } from "@/components/data-table";
 import TransactionSheet from "@/components/dashboard/transaction-sheet";
@@ -133,6 +133,7 @@ const CaseListWithDetails = ({
       setSelectedTransaction(null);
       setDeleteModalOpen(false);
       refetchCase();
+      window.location.reload();
     } catch (error: any) {
       toast.error(error?.data?.detail || "Failed to delete transaction");
     }
@@ -157,15 +158,7 @@ const CaseListWithDetails = ({
       await deleteCalculation(selectedCaseId).unwrap();
       toast.success("Case deleted successfully!");
       setDeleteCaseOpen(false);
-      // Clear selection and refresh - the parent component will handle refreshing the list
-      setSelectedCaseId(null);
-      // If there are other cases, select the first one
-      if (cases.length > 1) {
-        const remainingCases = cases.filter((c) => c.id !== selectedCaseId);
-        if (remainingCases.length > 0) {
-          setSelectedCaseId(remainingCases[0].id || null);
-        }
-      }
+      window.location.reload();
     } catch (error: any) {
       toast.error(error?.data?.detail || "Failed to delete case");
     }
@@ -178,27 +171,6 @@ const CaseListWithDetails = ({
 
   const handleEditCaseSuccess = () => {
     refetchCase();
-  };
-
-  const formatCurrency = (value: number | string) => {
-    const num = typeof value === "string" ? parseFloat(value) : value;
-    if (isNaN(num)) return "$0.00";
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(num);
-  };
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A";
-    try {
-      const [year, month, day] = dateString.split("-").map(Number);
-      return `${month}/${day}/${year}`;
-    } catch {
-      return dateString;
-    }
   };
 
   const transactionColumns = useTransactionColumns({
@@ -289,7 +261,7 @@ const CaseListWithDetails = ({
                   </CardTitle>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button variant="outline" size="icon" className="h-8 w-8">
                         <MoreVertical className="size-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -323,11 +295,18 @@ const CaseListWithDetails = ({
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <div className="text-sm text-gray-600 mb-1">
-                        Court/Case Number
+                        Court Number
                       </div>
                       <div className="font-medium">
-                        {selectedCase.court_name || "N/A"} Case No.{" "}
                         {selectedCase.court_number || "N/A"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-600 mb-1">
+                        Court Name
+                      </div>
+                      <div className="font-medium">
+                        {selectedCase.court_name || "N/A"}
                       </div>
                     </div>
                     <div>
@@ -348,7 +327,7 @@ const CaseListWithDetails = ({
                     </div>
                     <div>
                       <div className="text-sm text-gray-600 mb-1">
-                        Last Payment Date
+                        Last Transaction Date
                       </div>
                       <div className="font-medium">
                         {formatDate(lastPaymentDate)}

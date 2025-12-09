@@ -146,6 +146,7 @@ const TransactionSheet = ({
 
       setOpen(false);
       form.reset();
+      window.location.reload();
     } catch (error: any) {
       console.error("Transaction error:", error);
       toast.error(error?.data?.detail || "Failed to save transaction");
