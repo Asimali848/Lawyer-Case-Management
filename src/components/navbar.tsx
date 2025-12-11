@@ -65,18 +65,18 @@ const Navbar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-36">
                   <DropdownMenuItem>
-                    <Button className="w-full" variant="ghost" size="sm" onClick={() => Home()}>
+                    <Button className="w-full gap-3.5" variant="ghost" size="sm" onClick={() => Home()}>
                       <HomeIcon className="size-4 text-primary" /> Home
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Button className="w-full" variant="ghost" size="sm" onClick={() => Profile()}>
-                      <UserIcon className="size-4 text-primary" /> Profile
+                    <Button className="w-full gap-3.5" variant="ghost" size="sm" onClick={() => Membership()}>
+                      <CreditCardIcon className="size-4 text-primary" /> Billing
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Button className="w-full" variant="ghost" size="sm" onClick={() => Membership()}>
-                      <CreditCardIcon className="size-4 text-primary" /> Billing
+                    <Button className="w-full gap-3.5" variant="ghost" size="sm" onClick={() => Profile()}>
+                      <UserIcon className="size-4 text-primary" /> Profile
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>

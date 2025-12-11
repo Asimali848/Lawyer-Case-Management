@@ -188,16 +188,16 @@ const CaseListWithDetails = ({
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 h-full overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 h-full overflow-hidden">
         {/* Active Cases Section - Left */}
         <div className="lg:col-span-2 flex flex-col gap-3 overflow-hidden">
           <Card className="flex-1 flex flex-col overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <CardTitle className="text-lg font-semibold">
+            <CardHeader className="flex flex-row items-center justify-between pb-3 px-4 sm:px-6">
+              <CardTitle className="text-base sm:text-lg font-semibold">
                 Active Cases ({cases.length})
               </CardTitle>
             </CardHeader>
-            <CardContent className="flex-1 overflow-y-auto space-y-3">
+            <CardContent className="flex-1 overflow-y-auto space-y-2 sm:space-y-3 px-4 sm:px-6">
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <p className="text-muted-foreground">Loading cases...</p>
@@ -217,18 +217,15 @@ const CaseListWithDetails = ({
                   <div
                     key={caseItem.id}
                     onClick={() => handleCaseClick(caseItem.id)}
-                    className={`p-4 rounded-lg border cursor-pointer transition-colors ${selectedCaseId === caseItem.id
-                        ? "bg-green-50 border-green-300"
-                        : "bg-white border-gray-200 hover:border-green-200"
-                      }`}
+                    className={`p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors ${selectedCaseId === caseItem.id ? "bg-primary/10 border-green-300" : ""}`}
                   >
-                    <div className="font-semibold text-lg text-gray-900 mb-1">
+                    <div className="font-semibold text-base sm:text-lg mb-1 break-words">
                       {caseItem.case_name}
                     </div>
-                    <div className="text-sm text-gray-600 mb-2">
+                    <div className="text-xs sm:text-sm text-muted-foreground mb-2 break-words">
                       {caseItem.court_name} - {caseItem.court_case_number}
                     </div>
-                    <div className="text-sm font-medium text-gray-700">
+                    <div className="text-xs sm:text-sm font-medium text-muted-foreground">
                       Payoff Amount:{" "}
                       <span className="text-green-600">
                         {formatCurrency(caseItem.today_payoff)}
@@ -250,13 +247,13 @@ const CaseListWithDetails = ({
         </div>
 
         {/* Case Details and Transactions - Right */}
-        <div className="lg:col-span-2 flex flex-col gap-5 overflow-hidden h-full">
+        <div className="lg:col-span-2 flex flex-col gap-3 sm:gap-4 md:gap-5 overflow-hidden h-full">
           {selectedCaseId && selectedCase ? (
             <>
               {/* Case Details Section */}
               <Card className="h-full flex flex-col">
-                <CardHeader className="flex flex-row items-center justify-between pb-3">
-                  <CardTitle className="text-lg font-semibold">
+                <CardHeader className="flex flex-row items-center justify-between pb-3 px-4 sm:px-6">
+                  <CardTitle className="text-base sm:text-lg font-semibold">
                     Case Details
                   </CardTitle>
                   <DropdownMenu>
@@ -274,6 +271,10 @@ const CaseListWithDetails = ({
                         <Pencil className="mr-2 size-4" />
                         Edit Case
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handlePrintCase}>
+                        <Printer className="mr-2 size-4" />
+                        Print Case
+                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => setDeleteCaseOpen(true)}
                         className="text-destructive focus:text-destructive"
@@ -281,79 +282,75 @@ const CaseListWithDetails = ({
                         <Trash2 className="mr-2 size-4" />
                         Delete Case
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handlePrintCase}>
-                        <Printer className="mr-2 size-4" />
-                        Print Case
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </CardHeader>
-                <CardContent className="space-y-4 h-full">
-                  <div className="text-2xl font-semibold text-green-600 mb-4 flex-1">
+                <CardContent className="space-y-3 sm:space-y-4 h-full px-4 sm:px-6 overflow-y-auto">
+                  <div className="text-xl sm:text-2xl font-semibold text-green-600 mb-3 sm:mb-4 break-words">
                     {selectedCase.case_name || "N/A"}
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Court Number
                       </div>
-                      <div className="font-medium">
+                      <div className="font-medium text-sm sm:text-base break-words">
                         {selectedCase.court_number || "N/A"}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Court Name
                       </div>
-                      <div className="font-medium">
+                      <div className="font-medium text-sm sm:text-base break-words">
                         {selectedCase.court_name || "N/A"}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Judgment Amount
                       </div>
-                      <div className="font-medium">
+                      <div className="font-medium text-sm sm:text-base">
                         {formatCurrency(selectedCase.judgment_amount || 0)}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Judgment Date
                       </div>
-                      <div className="font-medium">
+                      <div className="font-medium text-sm sm:text-base">
                         {formatDate(selectedCase.judgment_date || "")}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Last Transaction Date
                       </div>
-                      <div className="font-medium">
+                      <div className="font-medium text-sm sm:text-base">
                         {formatDate(lastPaymentDate)}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Total Payments to Date
                       </div>
-                      <div className="font-medium">
+                      <div className="font-medium text-sm sm:text-base">
                         {formatCurrency(totalPayments)}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Interest to Date
                       </div>
-                      <div className="font-medium">
+                      <div className="font-medium text-sm sm:text-base">
                         {formatCurrency(totalInterest)}
                       </div>
                     </div>
-                    <div className="col-span-2">
-                      <div className="text-sm text-gray-600 mb-1">
+                    <div className="col-span-1 sm:col-span-2">
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Today's Payoff
                       </div>
-                      <div className="text-xl font-semibold text-green-600">
+                      <div className="text-lg sm:text-xl font-semibold text-green-600">
                         {formatCurrency(todayPayoff)}
                       </div>
                     </div>
@@ -363,14 +360,14 @@ const CaseListWithDetails = ({
             </>
           ) : isLoadingCase ? (
             <Card>
-              <CardContent className="flex items-center justify-center py-12">
-                <p className="text-muted-foreground">Loading case details...</p>
+              <CardContent className="flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6">
+                <p className="text-sm sm:text-base text-muted-foreground">Loading case details...</p>
               </CardContent>
             </Card>
           ) : (
             <Card>
-              <CardContent className="flex items-center justify-center py-12">
-                <p className="text-muted-foreground">
+              <CardContent className="flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6">
+                <p className="text-sm sm:text-base text-muted-foreground">
                   Select a case to view details
                 </p>
               </CardContent>
@@ -378,37 +375,39 @@ const CaseListWithDetails = ({
           )}
         </div>
         {/* Recent Transactions Section */}
-        <Card className="flex-1 flex flex-col overflow-hidden col-span-4 h-[500px]" hidden={!selectedCaseId}>
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <div>
-              <CardTitle className="text-lg font-semibold">
+        <Card className={`flex-1 flex flex-col overflow-hidden ${selectedCaseId ? 'col-span-1 lg:col-span-4' : 'hidden'} h-auto lg:h-[500px]`}>
+          <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 px-4 sm:px-6">
+            <div className="w-full sm:w-auto">
+              <CardTitle className="text-base sm:text-lg font-semibold">
                 Recent Transactions
               </CardTitle>
-              <div className="text-sm text-green-600 font-medium mt-1">
+              <div className="text-xs sm:text-sm text-green-600 font-medium mt-1 break-words">
                 {selectedCase?.case_name || "N/A"}
               </div>
             </div>
             <Button
               variant="default"
               size="sm"
-              className="bg-primary hover:bg-primary/90 text-white"
+              className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto"
             >
               <Printer className="size-4 mr-1" />
               Print
             </Button>
           </CardHeader>
-          <CardContent className="flex-1 overflow-y-auto">
+          <CardContent className="flex-1 overflow-y-auto px-4 sm:px-6">
             {transactions.length === 0 ? (
               <div className="flex items-center justify-center py-8">
-                <p className="text-muted-foreground">
+                <p className="text-sm sm:text-base text-muted-foreground">
                   No transactions found
                 </p>
               </div>
             ) : (
-              <DataTable
-                columns={transactionColumns}
-                data={transactions}
-              />
+              <div className="w-full overflow-x-auto">
+                <DataTable
+                  columns={transactionColumns}
+                  data={transactions}
+                />
+              </div>
             )}
           </CardContent>
         </Card>

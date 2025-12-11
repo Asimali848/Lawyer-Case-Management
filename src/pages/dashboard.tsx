@@ -115,28 +115,28 @@ const Dashboard = () => {
   ]);
 
   return (
-    <div className="flex h-full w-full flex-col gap-5 overflow-hidden p-5">
-      <div className="flex w-full items-center justify-between mb-2">
-        <h1 className="text-2xl font-bold text-primary">Dashboard</h1>
+    <div className="flex h-full w-full flex-col gap-3 sm:gap-4 md:gap-5 overflow-hidden md:p-4 lg:p-5">
+      <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-primary">Dashboard</h1>
         <Button
           variant="default"
           size="sm"
           type="button"
           onClick={() => navigate("/add-case")}
-          className="bg-primary hover:bg-primary/90 text-white"
+          className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto"
         >
           <Plus className="size-4 mr-1" />
           Add New Case
         </Button>
       </div>
-      <div className="h-full w-full">
+      <div className="h-full w-full overflow-hidden">
         {isLoading && currentOffset === 0 && (
           <div className="flex items-center justify-center py-8 h-full w-full">
             <Loader />
           </div>
         )}
         {allCases.length > 0 && (
-          <div className="h-full w-full">
+          <div className="h-full w-full overflow-hidden">
             <CaseListWithDetails
               cases={allCases}
               isLoading={isLoading && currentOffset === 0}

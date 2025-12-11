@@ -27,9 +27,9 @@ const Billing = () => {
       buttonVariant: "default" as const,
       isPopular: false,
       isCurrent: false,
-      bgColor: "bg-white",
-      textColor: "text-gray-900",
-      borderColor: "border-gray-200",
+      bgColor: "bg-sidebar",
+      textColor: "text-muted-foreground",
+      borderColor: "border",
       iconColor: "text-green-600",
     },
     {
@@ -64,17 +64,17 @@ const Billing = () => {
   };
 
   return (
-    <div className="h-full w-full px-4 sm:px-6 lg:px-8">
+    <div className="h-full w-full md:px-6 lg:px-8">
       <div className="mx-auto">
         {/* Green Banner - Dismissible with Marquee */}
         {showBanner && (
           <div className="mb-8 flex items-center gap-2 overflow-hidden rounded-lg bg-primary px-4 py-3 text-white sm:px-6">
-            <Sparkles className="size-5 shrink-0" />
+            {/* <Sparkles className="size-5 shrink-0" /> */}
             <div className="flex-1 overflow-hidden">
               <div className="relative">
                 <div className="animate-marquee whitespace-nowrap">
-                  <span className="inline-block text-sm font-medium sm:text-base">
-                    Good news! Your coupon is still active for 2 more weeks. To keep
+                  <span className="text-sm font-medium sm:text-base flex items-center">
+                  <Sparkles className="size-5 shrink-0 mr-2 text-chart-4 dark:text-chart-3" /> Good news! Your coupon is still active for 2 more weeks. To keep
                     adding cases without interruption, activate your paid plan before it
                     expires. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   </span>
@@ -92,11 +92,11 @@ const Billing = () => {
         )}
 
         {/* Header Section */}
-        <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
+        <div className="mb-5 text-center">
+          <h1 className="mb-2 text-3xl font-bold  sm:text-4xl lg:text-5xl">
             Choose Your Plan
           </h1>
-          <p className="text-base text-gray-600 sm:text-lg">
+          <p className="text-base text-muted-foreground sm:text-lg">
             Select the perfect plan for your law firm. Upgrade or downgrade at
             any time.
           </p>
@@ -108,7 +108,7 @@ const Billing = () => {
             <Button
               variant="outline"
               onClick={() => setShowCouponInput(true)}
-              className="w-full border-primary bg-primary text-white hover:bg-primary/90 sm:w-auto"
+              className="w-full border-primary bg-primary text-white hover:bg-primary/90 sm:w-auto cursor-pointer"
             >
               <Tag className="mr-2 size-4" />
               Have a coupon code?
@@ -129,7 +129,7 @@ const Billing = () => {
                 Apply Coupon
               </Button>
               <Button
-                variant="ghost"
+                variant="outline"
                 onClick={() => {
                   setShowCouponInput(false);
                   setCouponCode("");
@@ -184,7 +184,7 @@ const Billing = () => {
                   </h3>
                   <p
                     className={`mt-1 text-sm ${
-                      plan.isCurrent ? "text-green-50" : "text-gray-600"
+                      plan.isCurrent ? "text-green-50" : "text-muted-foreground"
                     }`}
                   >
                     {plan.subtitle}
@@ -203,7 +203,7 @@ const Billing = () => {
                       {plan.priceLabel && (
                         <span
                           className={`text-lg ${
-                            plan.isCurrent ? "text-green-50" : "text-gray-600"
+                            plan.isCurrent ? "text-green-50" : "text-muted-foreground"
                           }`}
                         >
                           {plan.priceLabel}
@@ -213,7 +213,7 @@ const Billing = () => {
                     {plan.priceSubtext && (
                       <p
                         className={`mt-1 text-sm ${
-                          plan.isCurrent ? "text-green-50" : "text-gray-600"
+                          plan.isCurrent ? "text-green-50" : "text-muted-foreground"
                         }`}
                       >
                         {plan.priceSubtext}
@@ -225,7 +225,7 @@ const Billing = () => {
                   <div className="mb-6 flex-1">
                     <h4
                       className={`mb-4 text-sm font-semibold ${
-                        plan.isCurrent ? "text-white" : "text-gray-900"
+                        plan.isCurrent ? "text-white" : "text-muted-foreground"
                       }`}
                     >
                       What's Included
@@ -238,12 +238,12 @@ const Billing = () => {
                         >
                           <Check
                             className={`mt-0.5 size-5 shrink-0 ${
-                              plan.isCurrent ? "text-white" : "text-green-600"
+                              plan.isCurrent ? "text-white" : "text-primary"
                             }`}
                           />
                           <span
                             className={`text-sm ${
-                              plan.isCurrent ? "text-white" : "text-gray-700"
+                              plan.isCurrent ? "text-white" : "text-muted-foreground"
                             }`}
                           >
                             {feature}
@@ -258,8 +258,8 @@ const Billing = () => {
                     variant={plan.buttonVariant}
                     className={`w-full ${
                       plan.isCurrent
-                        ? "bg-primary text-white hover:bg-primary/90"
-                        : "bg-primary text-white hover:bg-primary/90"
+                        ? "bg-white text-primary hover:bg-primary/90 cursor-pointer  border border-muted-foreground"
+                        : "bg-primary text-white hover:bg-primary/90 cursor-pointer"
                     }`}
                     disabled={plan.isCurrent}
                   >

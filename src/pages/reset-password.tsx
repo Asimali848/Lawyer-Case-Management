@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { resetPasswordSchema } from "@/lib/form-schemas";
 import { useResetPasswordMutation } from "@/store/services/auth";
 
@@ -100,8 +101,7 @@ const ResetPassword = () => {
               <FormItem>
                 <FormLabel>New Password</FormLabel>
                 <FormControl>
-                  <Input
-                    type="password"
+                  <PasswordInput
                     placeholder="• • • • • • • •"
                     {...field}
                   />
@@ -117,8 +117,7 @@ const ResetPassword = () => {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input
-                    type="password"
+                  <PasswordInput
                     placeholder="• • • • • • • •"
                     {...field}
                   />

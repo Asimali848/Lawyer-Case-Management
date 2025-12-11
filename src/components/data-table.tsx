@@ -57,9 +57,9 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="flex h-full w-full flex-col items-start justify-start gap-5">
-      <div className="h-[calc(100%-112px)] w-full overflow-auto rounded-md border">
-        <Table>
+    <div className="flex h-full w-full flex-col items-start justify-start gap-3 sm:gap-4 md:gap-5">
+      <div className="h-[calc(100%-112px)] w-full overflow-x-auto rounded-md border">
+        <Table className="min-w-full">
           <TableHeader className="sticky top-0 z-[1] bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -67,7 +67,7 @@ export function DataTable<TData, TValue>({
                   <TableHead
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    className="cursor-pointer select-none"
+                    className="cursor-pointer select-none whitespace-nowrap text-xs sm:text-sm"
                   >
                     {header.isPlaceholder
                       ? null
@@ -86,10 +86,10 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="h-16"
+                  className="h-auto sm:h-16"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="py-4">
+                    <TableCell key={cell.id} className="py-2 sm:py-4 text-xs sm:text-sm whitespace-nowrap">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -102,7 +102,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center text-xs sm:text-sm"
                 >
                   No results.
                 </TableCell>
@@ -112,11 +112,11 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex w-full items-center justify-end">
-        <div className="flex w-full items-center gap-8 lg:w-fit">
-          <div className="flex items-center gap-2">
+        <div className="flex w-full flex-col sm:flex-row items-center gap-3 sm:gap-4 md:gap-8 lg:w-fit">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
             <Label
               htmlFor="rows-per-page"
-              className="hidden font-medium text-sm md:flex"
+              className="hidden font-medium text-xs sm:text-sm md:flex"
             >
               Rows per page
             </Label>
@@ -126,7 +126,7 @@ export function DataTable<TData, TValue>({
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger className="w-20" id="rows-per-page">
+              <SelectTrigger className="w-20 text-xs sm:text-sm" id="rows-per-page">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />
@@ -140,11 +140,11 @@ export function DataTable<TData, TValue>({
               </SelectContent>
             </Select>
           </div>
-          <div className="ml-auto flex w-fit items-center justify-center font-medium text-sm">
+          <div className="flex w-fit items-center justify-center font-medium text-xs sm:text-sm">
             Page {table.getState().pagination.pageIndex + 1} of&nbsp;
             {table.getPageCount()}
           </div>
-          <div className="flex items-center gap-2 md:ml-auto">
+          <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto justify-center sm:justify-end">
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"

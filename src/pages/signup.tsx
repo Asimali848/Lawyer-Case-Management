@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { signupSchema } from "@/lib/form-schemas";
 import { useRegisterMutation } from "@/store/services/auth";
 
@@ -127,8 +128,7 @@ const Signup = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
-                    type="password"
+                  <PasswordInput
                     placeholder="• • • • • • • •"
                     {...field}
                   />
