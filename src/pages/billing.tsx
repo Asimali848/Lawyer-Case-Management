@@ -17,7 +17,8 @@ const Billing = () => {
   const [couponCode, setCouponCode] = useState("");
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
-  const [billingInterval, setBillingInterval] = useState<BillingInterval>("monthly");
+  const [billingInterval, setBillingInterval] =
+    useState<BillingInterval>("monthly");
 
   // Fetch subscription status
   const {
@@ -25,10 +26,11 @@ const Billing = () => {
     isLoading: isLoadingStatus,
     refetch,
   } = useGetSubscriptionStatusQuery();
-  
+
   // Fetch available plans from Stripe
-  const { data: plansData, isLoading: isLoadingPlans } = useGetAvailablePlansQuery();
-  
+  const { data: plansData, isLoading: isLoadingPlans } =
+    useGetAvailablePlansQuery();
+
   const [createCheckoutSession, { isLoading: isCreatingCheckout }] =
     useCreateCheckoutSessionMutation();
   const [createPortalSession, { isLoading: isCreatingPortal }] =
@@ -57,9 +59,14 @@ const Billing = () => {
   const yearlyPlan = plansData?.plans?.yearly;
 
   // Calculate savings for yearly plan
-  const yearlySavings = monthlyPlan && yearlyPlan 
-    ? Math.round(((monthlyPlan.amount * 12) - yearlyPlan.amount) / (monthlyPlan.amount * 12) * 100)
-    : 25;
+  const yearlySavings =
+    monthlyPlan && yearlyPlan
+      ? Math.round(
+          ((monthlyPlan.amount * 12 - yearlyPlan.amount) /
+            (monthlyPlan.amount * 12)) *
+            100
+        )
+      : 25;
 
   const plans = [
     {
@@ -88,18 +95,26 @@ const Billing = () => {
       id: "pro",
       name: "Pro",
       subtitle: "For Big Law Firms",
-      price: billingInterval === "monthly" 
-        ? (monthlyPlan ? `$${monthlyPlan.amount}` : "$20")
-        : (yearlyPlan ? `$${yearlyPlan.amount}` : "$180"),
+      price:
+        billingInterval === "monthly"
+          ? monthlyPlan
+            ? `$${monthlyPlan.amount}`
+            : "$20"
+          : yearlyPlan
+          ? `$${yearlyPlan.amount}`
+          : "$180",
       priceLabel: billingInterval === "monthly" ? "/mo" : "/year",
-      priceSubtext: billingInterval === "yearly" 
-        ? `Save ${yearlySavings}% with annual billing`
-        : undefined,
+      priceSubtext:
+        billingInterval === "yearly"
+          ? `Save ${yearlySavings}% with annual billing`
+          : undefined,
       icon: Rocket,
       features: [
         "Unlimited Cases",
-        billingInterval === "yearly" 
-          ? `$${yearlyPlan ? yearlyPlan.amount : 180} Per Year (save ${yearlySavings}%)`
+        billingInterval === "yearly"
+          ? `$${
+              yearlyPlan ? yearlyPlan.amount : 180
+            } Per Year (save ${yearlySavings}%)`
           : `$${monthlyPlan ? monthlyPlan.amount : 20} Per Month`,
         "Priority Support",
       ],
@@ -111,9 +126,10 @@ const Billing = () => {
       textColor: isPremium ? "text-white" : "text-muted-foreground",
       borderColor: isPremium ? "border-green-600" : "border",
       iconColor: isPremium ? "text-white" : "text-green-600",
-      priceId: billingInterval === "monthly" 
-        ? monthlyPlan?.price_id 
-        : yearlyPlan?.price_id,
+      priceId:
+        billingInterval === "monthly"
+          ? monthlyPlan?.price_id
+          : yearlyPlan?.price_id,
     },
   ];
 
@@ -165,7 +181,7 @@ const Billing = () => {
     }
   };
 
-  const handlePlanAction = (plan: typeof plans[number]) => {
+  const handlePlanAction = (plan: (typeof plans)[number]) => {
     if (plan.id === "pro") {
       if (isPremium) {
         // Manage subscription via Stripe Portal
@@ -259,9 +275,7 @@ const Billing = () => {
             >
               Yearly
               {yearlyPlan && (
-                <span className="ml-2 text-xs">
-                  (Save {yearlySavings}%)
-                </span>
+                <span className="ml-2 text-xs">(Save {yearlySavings}%)</span>
               )}
             </button>
           </div>
