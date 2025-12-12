@@ -20,7 +20,10 @@ import { newCaseSchema } from "@/lib/form-schemas";
 import {
   useCreateCalculationMutation,
   useUpdateCalculationMutation,
+  useGetCalculationsQuery,
 } from "@/store/services/calculations";
+import { useGetSubscriptionStatusQuery } from "@/store/services/subscription";
+import { getCurrentDate } from "@/lib/utils";
 
 const NewCase = () => {
   const navigate = useNavigate();
@@ -35,6 +38,14 @@ const NewCase = () => {
   const [, setLastCalculationRequest] = useState<CalculationRequest | null>(
     null
   );
+
+  // Get subscription status and case count
+  const { data: subscription } = useGetSubscriptionStatusQuery();
+  const { data: casesData } = useGetCalculationsQuery({
+    limit: 3,
+    offset: 0,
+    current_date: getCurrentDate(),
+  });
 
   const isLoading = isCreating || isUpdating;
 
@@ -94,6 +105,24 @@ const NewCase = () => {
   // Calculate function - calls backend API and saves the case (matches static files behavior)
   const handleCalculate = async () => {
     const data = form.getValues();
+
+    // Check subscription limits before allowing case creation
+    if (subscription?.subscription_type === "free" && !savedCalculationId) {
+      const caseCount = casesData?.calculations?.length || 0;
+      if (caseCount >= 3) {
+        toast.error(
+          "Free tier limit reached. You can only create 3 cases. Please upgrade to Premium to create unlimited cases.",
+          {
+            duration: 5000,
+            action: {
+              label: "Upgrade",
+              onClick: () => navigate("/billing"),
+            },
+          }
+        );
+        return;
+      }
+    }
 
     // Validate required fields
     if (!data.judegment_amount || parseFloat(data.judegment_amount) <= 0) {
@@ -179,7 +208,27 @@ const NewCase = () => {
       setCalculationResult(result);
     } catch (error: any) {
       console.error("Calculation error:", error);
-      toast.error(error?.message || "Failed to calculate. Please try again.");
+
+      // Check if it's a free tier limit error from backend
+      const errorMessage =
+        error?.data?.detail ||
+        error?.message ||
+        "Failed to calculate. Please try again.";
+
+      if (
+        errorMessage.includes("Free tier limit") ||
+        errorMessage.includes("free tier limit")
+      ) {
+        toast.error(errorMessage, {
+          duration: 5000,
+          action: {
+            label: "Upgrade",
+            onClick: () => navigate("/billing"),
+          },
+        });
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setIsCalculating(false);
     }
@@ -599,30 +648,33 @@ const NewCase = () => {
             >
               Cancel
             </Button>
-            <Button
-              type="button"
-              variant="default"
-              className="bg-green-600 hover:bg-green-700"
-              onClick={handleCalculate}
-              disabled={isLoading || isCalculating}
-            >
-              {isCalculating || isLoading ? (
-                <>
-                  <Loader2 className="mr-2 size-4 animate-spin" />
-                  {savedCalculationId
-                    ? "Updating..."
-                    : "Calculating & Saving..."}
-                </>
-              ) : savedCalculationId ? (
-                "Recalculate & Update"
-              ) : (
-                "Calculate & Save"
-              )}
-            </Button>
+            {!calculationResult && (
+              <Button
+                type="button"
+                variant="default"
+                className="bg-green-600 hover:bg-green-700"
+                onClick={handleCalculate}
+                disabled={isLoading || isCalculating}
+              >
+                {isCalculating || isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                    {savedCalculationId
+                      ? "Updating..."
+                      : "Calculating & Saving..."}
+                  </>
+                ) : savedCalculationId ? (
+                  "Recalculate & Update"
+                ) : (
+                  "Calculate & Save"
+                )}
+              </Button>
+            )}
             {calculationResult && (
               <Button
                 type="submit"
-                variant="outline"
+                variant="default"
+                className="bg-green-600 hover:bg-green-700"
                 onClick={() => navigate("/dashboard")}
                 disabled={isLoading || isCalculating}
               >
