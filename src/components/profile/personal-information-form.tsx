@@ -3,24 +3,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useUpdateProfileMutation } from "@/store/services/auth";
 
 interface PersonalInformationFormProps {
   initialData?: {
     firstName: string;
     lastName: string;
     email: string;
-    firmName: string;
-    streetAddress: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    phoneNumber: string;
-    website: string;
+    firmName?: string;
+    streetAddress?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    phoneNumber?: string;
+    website?: string;
   };
-  onSave?: (data: { firstName: string; lastName: string; email: string }) => void;
+  onSave?: (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  }) => void;
 }
 
-const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFormProps) => {
+const PersonalInformationForm = ({
+  initialData,
+  onSave,
+}: PersonalInformationFormProps) => {
   const emptyForm = {
     firstName: "",
     lastName: "",
@@ -34,9 +42,14 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
     website: "",
   };
 
-  const [formData, setFormData] = useState(initialData || emptyForm);
-  const [savedData, setSavedData] = useState(initialData || null);
-  const [isSaving, setIsSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    ...emptyForm,
+    ...initialData,
+  });
+  const [savedData, setSavedData] = useState(
+    initialData ? { ...emptyForm, ...initialData } : null
+  );
+  const [updateProfile, { isLoading: isSaving }] = useUpdateProfileMutation();
   const isDataSaved = savedData !== null;
 
   const handleInputChange = (field: string, value: string) => {
@@ -44,10 +57,19 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
   };
 
   const handleSave = async () => {
-    setIsSaving(true);
     try {
-      // TODO: Implement actual API call to save profile data
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await updateProfile({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        phone_number: formData.phoneNumber,
+        firm_name: formData.firmName,
+        street_address: formData.streetAddress,
+        city: formData.city,
+        state: formData.state,
+        zipcode: formData.zipCode,
+        website: formData.website,
+      }).unwrap();
+
       const saved = { ...formData };
       setSavedData(saved);
       onSave?.({
@@ -56,18 +78,27 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
         email: saved.email,
       });
       toast.success("Profile saved successfully!");
-    } catch (error) {
-      toast.error("Failed to save profile. Please try again.");
-    } finally {
-      setIsSaving(false);
+    } catch (error: any) {
+      toast.error(
+        error?.data?.detail || "Failed to save profile. Please try again."
+      );
     }
   };
 
   const handleUpdate = async () => {
-    setIsSaving(true);
     try {
-      // TODO: Implement actual API call to update profile data
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await updateProfile({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        phone_number: formData.phoneNumber,
+        firm_name: formData.firmName,
+        street_address: formData.streetAddress,
+        city: formData.city,
+        state: formData.state,
+        zipcode: formData.zipCode,
+        website: formData.website,
+      }).unwrap();
+
       const saved = { ...formData };
       setSavedData(saved);
       onSave?.({
@@ -76,10 +107,10 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
         email: saved.email,
       });
       toast.success("Profile updated successfully!");
-    } catch (error) {
-      toast.error("Failed to update profile. Please try again.");
-    } finally {
-      setIsSaving(false);
+    } catch (error: any) {
+      toast.error(
+        error?.data?.detail || "Failed to update profile. Please try again."
+      );
     }
   };
 
@@ -93,7 +124,9 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-bold">Personal Information</CardTitle>
+        <CardTitle className="text-xl font-bold">
+          Personal Information
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -134,7 +167,9 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <label className="text-sm font-medium">Street Address</label>
             <Input
               value={formData.streetAddress}
-              onChange={(e) => handleInputChange("streetAddress", e.target.value)}
+              onChange={(e) =>
+                handleInputChange("streetAddress", e.target.value)
+              }
               placeholder="Enter your street address"
             />
           </div>
@@ -183,7 +218,11 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
         </div>
         <div className="mt-6 flex justify-end gap-2">
           {isDataSaved && (
-            <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isSaving}
+            >
               Cancel
             </Button>
           )}
@@ -201,4 +240,3 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
 };
 
 export default PersonalInformationForm;
-

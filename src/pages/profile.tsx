@@ -3,25 +3,54 @@ import ChangePasswordModal from "@/components/profile/change-password-modal";
 import PersonalInformationForm from "@/components/profile/personal-information-form";
 import UserProfileCard from "@/components/profile/user-profile-card";
 import AccountDetailsCard from "@/components/profile/account-details-card";
+import { useGetCurrentUserQuery } from "@/store/services/auth";
+import Loader from "@/components/loader";
 
 const Profile = () => {
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
-  const [savedProfileData, setSavedProfileData] = useState<{
-    firstName: string;
-    lastName: string;
-    email: string;
-  } | null>(null);
+  const { data: userData, isLoading } = useGetCurrentUserQuery();
 
-  const userData = {
-    memberSince: "08-25-2025",
+  if (isLoading) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (!userData) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <p className="text-muted-foreground">Failed to load profile data</p>
+      </div>
+    );
+  }
+
+  // Split name into first and last name
+  const nameParts = (userData.name || "").split(" ");
+  const firstName = nameParts[0] || "";
+  const lastName = nameParts.slice(1).join(" ") || "";
+
+  const profileData = {
+    firstName: userData.first_name || firstName,
+    lastName: userData.last_name || lastName,
+    email: userData.email,
+    phoneNumber: userData.phone_number || "",
+    firmName: userData.firm_name || "",
+    streetAddress: userData.street_address || "",
+    city: userData.city || "",
+    state: userData.state || "",
+    zipCode: userData.zipcode || "",
+    website: userData.website || "",
   };
 
-  // Get profile data from saved state or use empty values
-  const profileData = savedProfileData || {
-    firstName: "",
-    lastName: "",
-    email: "",
-  };
+  const memberSince = userData.created_at
+    ? new Date(userData.created_at).toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
+      })
+    : "N/A";
 
   return (
     <div className="h-full w-full md:px-6 lg:px-8">
@@ -34,23 +63,30 @@ const Profile = () => {
               email={profileData.email}
             />
             <AccountDetailsCard
-              memberSince={userData.memberSince}
+              memberSince={memberSince}
               onPasswordChange={() => setIsChangePasswordOpen(true)}
             />
           </div>
           <PersonalInformationForm
-            initialData={savedProfileData ? undefined : undefined}
-            onSave={(data) => {
-              setSavedProfileData({
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-              });
+            initialData={{
+              firstName: profileData.firstName,
+              lastName: profileData.lastName,
+              email: profileData.email,
+              phoneNumber: profileData.phoneNumber,
+              firmName: profileData.firmName,
+              streetAddress: profileData.streetAddress,
+              city: profileData.city,
+              state: profileData.state,
+              zipCode: profileData.zipCode,
+              website: profileData.website,
             }}
           />
         </div>
       </div>
-      <ChangePasswordModal open={isChangePasswordOpen} onOpenChange={setIsChangePasswordOpen} />
+      <ChangePasswordModal
+        open={isChangePasswordOpen}
+        onOpenChange={setIsChangePasswordOpen}
+      />
     </div>
   );
 };

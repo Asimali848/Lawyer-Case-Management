@@ -1,14 +1,22 @@
 import { Plus } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useGetCalculationsQuery } from "@/store/services/calculations";
+import { useGetSubscriptionStatusQuery } from "@/store/services/subscription";
 import { getCurrentDate } from "@/lib/utils";
 import CaseListWithDetails from "@/components/dashboard/case-list-with-details";
 import Loader from "@/components/loader";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+
+  // Get subscription status
+  const { data: subscription } = useGetSubscriptionStatusQuery();
+  const isFreeUser = subscription?.subscription_type === "free";
 
   const batchSize = useState<number>(50)[0];
   const [currentOffset, setCurrentOffset] = useState<number>(0);
@@ -51,11 +59,20 @@ const Dashboard = () => {
       setAllCases((prev) => {
         const existingIds = new Set(prev.map((c) => c.id));
         const uniqueNewCases = newBatch.filter((c) => !existingIds.has(c.id));
-        const updated = [...prev, ...uniqueNewCases];
+        let updated = [...prev, ...uniqueNewCases];
+
+        // For free users, limit to maximum 3 cases
+        if (isFreeUser && updated.length > 3) {
+          updated = updated.slice(0, 3);
+          hasMoreData.current = false;
+        }
 
         setTotalCases(updated.length);
 
-        if (newBatch.length < batchSize) {
+        if (
+          newBatch.length < batchSize ||
+          (isFreeUser && updated.length >= 3)
+        ) {
           hasMoreData.current = false;
           setIsLoadingMore(false);
         }
@@ -67,7 +84,7 @@ const Dashboard = () => {
         setIsLoadingMore(false);
       }
     }
-  }, [data, currentOffset, batchSize]);
+  }, [data, currentOffset, batchSize, isFreeUser]);
 
   useEffect(() => {
     if (
@@ -117,18 +134,60 @@ const Dashboard = () => {
   return (
     <div className="flex h-full w-full flex-col gap-3 sm:gap-4 md:gap-5 overflow-hidden md:p-4 lg:p-5">
       <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-2">
-        <h1 className="text-xl sm:text-2xl font-bold text-primary">Dashboard</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-primary">
+          Dashboard
+        </h1>
         <Button
           variant="default"
           size="sm"
           type="button"
-          onClick={() => navigate("/add-case")}
+          onClick={() => {
+            // Check if free user can create more cases
+            if (isFreeUser && allCases.length >= 3) {
+              toast.error(
+                "Free tier limit reached. You can only create 3 cases. Please upgrade to Premium.",
+                {
+                  duration: 5000,
+                  action: {
+                    label: "Upgrade",
+                    onClick: () => navigate("/billing"),
+                  },
+                }
+              );
+              return;
+            }
+            navigate("/add-case");
+          }}
           className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto"
         >
           <Plus className="size-4 mr-1" />
           Add New Case
         </Button>
       </div>
+
+      {/* Free User Warning */}
+      {isFreeUser && allCases.length > 0 && (
+        <Alert className="border-amber-500 bg-amber-50 dark:bg-amber-950">
+          <Info className="h-4 w-4 text-amber-600" />
+          <AlertTitle className="text-amber-800 dark:text-amber-200">
+            Free Tier - Limited to 3 Cases
+          </AlertTitle>
+          <AlertDescription className="text-amber-700 dark:text-amber-300">
+            You're viewing {allCases.length} of your{" "}
+            {allCases.length >= 3 ? "maximum 3" : allCases.length} cases.
+            {allCases.length >= 3 && " To create more cases, "}
+            <Button
+              variant="link"
+              className="p-0 h-auto text-amber-800 dark:text-amber-200 underline font-semibold"
+              onClick={() => navigate("/billing")}
+            >
+              upgrade to Premium
+            </Button>
+            {allCases.length >= 3 ? " for unlimited cases." : "."}
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="h-full w-full overflow-hidden">
         {isLoading && currentOffset === 0 && (
           <div className="flex items-center justify-center py-8 h-full w-full">
