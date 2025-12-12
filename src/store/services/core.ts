@@ -38,6 +38,7 @@ export const api = createApi({
     "policies",
     "calculations",
     "subscription",
+    "user",
   ],
   endpoints: (build) => ({
     healthCheck: build.query({
