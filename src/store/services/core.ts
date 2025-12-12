@@ -32,7 +32,13 @@ const baseQueryWith401Handling: typeof baseQuery = async (
 export const api = createApi({
   baseQuery: baseQueryWith401Handling,
   keepUnusedDataFor: 5,
-  tagTypes: ["employees", "companies", "policies", "calculations"],
+  tagTypes: [
+    "employees",
+    "companies",
+    "policies",
+    "calculations",
+    "subscription",
+  ],
   endpoints: (build) => ({
     healthCheck: build.query({
       query: () => ({
