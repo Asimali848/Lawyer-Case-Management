@@ -6,14 +6,18 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import {
   useGetSubscriptionStatusQuery,
+  useGetAvailablePlansQuery,
   useCreateCheckoutSessionMutation,
   useCreatePortalSessionMutation,
 } from "@/store/services/subscription";
+
+type BillingInterval = "monthly" | "yearly";
 
 const Billing = () => {
   const [couponCode, setCouponCode] = useState("");
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
+  const [billingInterval, setBillingInterval] = useState<BillingInterval>("monthly");
 
   // Fetch subscription status
   const {
@@ -21,6 +25,10 @@ const Billing = () => {
     isLoading: isLoadingStatus,
     refetch,
   } = useGetSubscriptionStatusQuery();
+  
+  // Fetch available plans from Stripe
+  const { data: plansData, isLoading: isLoadingPlans } = useGetAvailablePlansQuery();
+  
   const [createCheckoutSession, { isLoading: isCreatingCheckout }] =
     useCreateCheckoutSessionMutation();
   const [createPortalSession, { isLoading: isCreatingPortal }] =
@@ -43,6 +51,15 @@ const Billing = () => {
   // Determine if user is on premium plan
   const isPremium = subscriptionStatus?.subscription_type === "premium";
   const isFree = subscriptionStatus?.subscription_type === "free";
+
+  // Get pricing from Stripe plans
+  const monthlyPlan = plansData?.plans?.monthly;
+  const yearlyPlan = plansData?.plans?.yearly;
+
+  // Calculate savings for yearly plan
+  const yearlySavings = monthlyPlan && yearlyPlan 
+    ? Math.round(((monthlyPlan.amount * 12) - yearlyPlan.amount) / (monthlyPlan.amount * 12) * 100)
+    : 25;
 
   const plans = [
     {
@@ -71,13 +88,19 @@ const Billing = () => {
       id: "pro",
       name: "Pro",
       subtitle: "For Big Law Firms",
-      price: "$20",
-      priceLabel: "/mo",
-      priceSubtext: "$180 Per Year (save 25%)",
+      price: billingInterval === "monthly" 
+        ? (monthlyPlan ? `$${monthlyPlan.amount}` : "$20")
+        : (yearlyPlan ? `$${yearlyPlan.amount}` : "$180"),
+      priceLabel: billingInterval === "monthly" ? "/mo" : "/year",
+      priceSubtext: billingInterval === "yearly" 
+        ? `Save ${yearlySavings}% with annual billing`
+        : undefined,
       icon: Rocket,
       features: [
         "Unlimited Cases",
-        "$180 Per Year (save 25%)",
+        billingInterval === "yearly" 
+          ? `$${yearlyPlan ? yearlyPlan.amount : 180} Per Year (save ${yearlySavings}%)`
+          : `$${monthlyPlan ? monthlyPlan.amount : 20} Per Month`,
         "Priority Support",
       ],
       buttonText: isPremium ? "Manage Subscription" : "Upgrade to Pro",
@@ -88,13 +111,22 @@ const Billing = () => {
       textColor: isPremium ? "text-white" : "text-muted-foreground",
       borderColor: isPremium ? "border-green-600" : "border",
       iconColor: isPremium ? "text-white" : "text-green-600",
+      priceId: billingInterval === "monthly" 
+        ? monthlyPlan?.price_id 
+        : yearlyPlan?.price_id,
     },
   ];
 
-  const handleUpgradeToPro = async () => {
+  const handleUpgradeToPro = async (priceId: string | null | undefined) => {
+    if (!priceId) {
+      toast.error("Price information not available. Please try again later.");
+      return;
+    }
+
     try {
       const currentUrl = window.location.origin + window.location.pathname;
       const checkoutData: any = {
+        price_id: priceId,
         success_url: `${currentUrl}?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: currentUrl,
       };
@@ -133,16 +165,16 @@ const Billing = () => {
     }
   };
 
-  const handlePlanAction = (planId: string) => {
-    if (planId === "pro") {
+  const handlePlanAction = (plan: typeof plans[number]) => {
+    if (plan.id === "pro") {
       if (isPremium) {
         // Manage subscription via Stripe Portal
         handleManageSubscription();
       } else {
         // Upgrade to premium
-        handleUpgradeToPro();
+        handleUpgradeToPro(plan.priceId);
       }
-    } else if (planId === "starter" && isPremium) {
+    } else if (plan.id === "starter" && isPremium) {
       // Downgrade via Stripe Portal
       handleManageSubscription();
     }
@@ -156,7 +188,7 @@ const Billing = () => {
     }
   };
 
-  if (isLoadingStatus) {
+  if (isLoadingStatus || isLoadingPlans) {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <Loader2 className="size-8 animate-spin text-primary" />
@@ -202,6 +234,37 @@ const Billing = () => {
             Select the perfect plan for your law firm. Upgrade or downgrade at
             any time.
           </p>
+        </div>
+
+        {/* Billing Toggle */}
+        <div className="mb-6 flex justify-center">
+          <div className="inline-flex rounded-lg border border-border bg-sidebar p-1">
+            <button
+              onClick={() => setBillingInterval("monthly")}
+              className={`rounded-md px-6 py-2 text-sm font-medium transition-colors ${
+                billingInterval === "monthly"
+                  ? "bg-primary text-white"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingInterval("yearly")}
+              className={`rounded-md px-6 py-2 text-sm font-medium transition-colors ${
+                billingInterval === "yearly"
+                  ? "bg-primary text-white"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Yearly
+              {yearlyPlan && (
+                <span className="ml-2 text-xs">
+                  (Save {yearlySavings}%)
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Coupon Section */}
@@ -375,7 +438,7 @@ const Billing = () => {
                       isCreatingCheckout ||
                       isCreatingPortal
                     }
-                    onClick={() => handlePlanAction(plan.id)}
+                    onClick={() => handlePlanAction(plan)}
                   >
                     {isCreatingCheckout || isCreatingPortal ? (
                       <Loader2 className="size-4 animate-spin" />

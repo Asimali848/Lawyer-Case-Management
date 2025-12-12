@@ -19,6 +19,22 @@ export interface StripeConfig {
   test_mode: boolean;
 }
 
+export interface StripePlan {
+  price_id: string;
+  amount: number;
+  currency: string;
+  interval: string;
+  product_name: string;
+}
+
+export interface AvailablePlans {
+  success: boolean;
+  plans: {
+    monthly: StripePlan | null;
+    yearly: StripePlan | null;
+  };
+}
+
 export interface CheckoutSessionRequest {
   price_id?: string;
   success_url?: string;
@@ -45,6 +61,14 @@ export const subscriptionApi = api.injectEndpoints({
     getStripeConfig: build.query<StripeConfig, void>({
       query: () => ({
         url: "/api/subscription/config",
+        method: "GET",
+      }),
+    }),
+
+    // Get available plans with real pricing from Stripe
+    getAvailablePlans: build.query<AvailablePlans, void>({
+      query: () => ({
+        url: "/api/subscription/plans",
         method: "GET",
       }),
     }),
@@ -95,6 +119,7 @@ export const subscriptionApi = api.injectEndpoints({
 
 export const {
   useGetStripeConfigQuery,
+  useGetAvailablePlansQuery,
   useGetSubscriptionStatusQuery,
   useCreateCheckoutSessionMutation,
   useCreatePortalSessionMutation,
