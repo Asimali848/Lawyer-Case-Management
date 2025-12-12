@@ -81,6 +81,23 @@ export const endpoints = api.injectEndpoints({
           console.error("Failed to fetch user:", error);
         }
       },
+      providesTags: ["user"],
+    }),
+    updateProfile: build.mutation<UserResponse, Partial<UserResponse>>({
+      query: (data) => ({
+        url: "/api/auth/profile",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["user"],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setUser(data));
+        } catch (error) {
+          console.error("Failed to update profile:", error);
+        }
+      },
     }),
   }),
 });
@@ -94,4 +111,5 @@ export const {
   useVerifyOtpMutation,
   useResetPasswordMutation,
   useGetCurrentUserQuery,
+  useUpdateProfileMutation,
 } = endpoints;

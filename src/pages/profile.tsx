@@ -32,10 +32,16 @@ const Profile = () => {
   const lastName = nameParts.slice(1).join(" ") || "";
 
   const profileData = {
-    firstName,
-    lastName,
+    firstName: userData.first_name || firstName,
+    lastName: userData.last_name || lastName,
     email: userData.email,
     phoneNumber: userData.phone_number || "",
+    firmName: userData.firm_name || "",
+    streetAddress: userData.street_address || "",
+    city: userData.city || "",
+    state: userData.state || "",
+    zipCode: userData.zipcode || "",
+    website: userData.website || "",
   };
 
   const memberSince = userData.created_at
@@ -67,6 +73,12 @@ const Profile = () => {
               lastName: profileData.lastName,
               email: profileData.email,
               phoneNumber: profileData.phoneNumber,
+              firmName: profileData.firmName,
+              streetAddress: profileData.streetAddress,
+              city: profileData.city,
+              state: profileData.state,
+              zipCode: profileData.zipCode,
+              website: profileData.website,
             }}
           />
         </div>

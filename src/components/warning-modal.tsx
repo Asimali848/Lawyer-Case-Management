@@ -1,7 +1,13 @@
 import { Loader2, TriangleAlert } from "lucide-react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface WarningModalProps {
   open: boolean;
@@ -12,10 +18,20 @@ interface WarningModalProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const WarningModal = ({ cta, open, text, title, setOpen, isLoading }: WarningModalProps) => {
+const WarningModal = ({
+  cta,
+  open,
+  text,
+  title,
+  setOpen,
+  isLoading,
+}: WarningModalProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="sr-only">{title}</DialogTitle>
+        </DialogHeader>
         <div className="flex flex-col items-center justify-center py-10">
           <div className="size-20 rounded-full bg-destructive/20 p-3">
             <TriangleAlert className="size-full text-destructive" />
@@ -28,7 +44,12 @@ const WarningModal = ({ cta, open, text, title, setOpen, isLoading }: WarningMod
           </span>
         </div>
         <DialogFooter>
-          <Button onClick={() => setOpen(false)} type="button" variant="secondary" className="cursor-pointer">
+          <Button
+            onClick={() => setOpen(false)}
+            type="button"
+            variant="secondary"
+            className="cursor-pointer"
+          >
             Cancel
           </Button>
           <Button
