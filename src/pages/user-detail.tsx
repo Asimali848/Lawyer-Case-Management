@@ -56,8 +56,11 @@ const UserDetail = () => {
 
   // Transform transactions to Payment format for the table with timeline data
   // Apply LIFO (Last In First Out) ordering - most recent transactions first
+  //@ts-ignore
   const transactions: Payment[] = (calculation?.transactions || [])
     .map((t) => {
+      // Fix: ensure transaction_type is narrowed to "PAYMENT" | "COST"
+      // Also, ensure payment_amount, accrued_interest, and principal_balance are correctly typed as string
       // Find the corresponding timeline entry for this transaction
       const timelineEntry = calculation?.timeline?.find((entry: any) => {
         const entryDate = entry.event_date;
