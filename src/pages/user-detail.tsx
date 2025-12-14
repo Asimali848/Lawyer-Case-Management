@@ -55,35 +55,53 @@ const UserDetail = () => {
   const [deleteTransaction] = useDeleteTransactionMutation();
 
   // Transform transactions to Payment format for the table with timeline data
-  const transactions: Payment[] = (calculation?.transactions || []).map((t) => {
-    // Find the corresponding timeline entry for this transaction
-    const timelineEntry = calculation?.timeline?.find((entry: any) => {
-      const entryDate = entry.event_date;
-      const transDate = t.transaction_date;
-      // Match by date and event type (payment or cost)
-      return (
-        entryDate === transDate &&
-        ((entry.event_type === "payment" && t.payment_amount > 0) ||
-          (entry.event_type === "cost" && t.cost_amount > 0))
-      );
-    });
+  // Apply LIFO (Last In First Out) ordering - most recent transactions first
+  const transactions: Payment[] = (calculation?.transactions || [])
+    .map((t) => {
+      // Find the corresponding timeline entry for this transaction
+      const timelineEntry = calculation?.timeline?.find((entry: any) => {
+        const entryDate = entry.event_date;
+        const transDate = t.transaction_date;
+        // Match by date and event type (payment or cost)
+        return (
+          entryDate === transDate &&
+          ((entry.event_type === "payment" && t.payment_amount > 0) ||
+            (entry.event_type === "cost" && t.cost_amount > 0))
+        );
+      });
 
-    return {
-      id: t.id,
-      payment_date: t.transaction_date,
-      transaction_type: t.payment_amount > 0 ? "PAYMENT" : "COST",
-      payment_amount: String(
-        t.payment_amount > 0 ? t.payment_amount : t.cost_amount
-      ),
-      accrued_interest: timelineEntry
-        ? String((timelineEntry.interest_accrued || 0).toFixed(2))
-        : "0.00",
-      principal_balance: timelineEntry
-        ? String((timelineEntry.remaining_principal || 0).toFixed(2))
-        : "0.00",
-      description: t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
-    };
-  });
+      return {
+        id: t.id,
+        payment_date: t.transaction_date,
+        transaction_type: t.payment_amount > 0 ? "PAYMENT" : "COST",
+        payment_amount: String(
+          t.payment_amount > 0 ? t.payment_amount : t.cost_amount
+        ),
+        accrued_interest: timelineEntry
+          ? String((timelineEntry.interest_accrued || 0).toFixed(2))
+          : "0.00",
+        principal_balance: timelineEntry
+          ? String((timelineEntry.remaining_principal || 0).toFixed(2))
+          : "0.00",
+        description: t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
+        // Keep original transaction data for sorting
+        _transaction_date: t.transaction_date,
+        _created_at: t.created_at,
+      };
+    })
+    .sort((a, b) => {
+      // Sort by transaction_date (descending - most recent first)
+      const dateA = a._transaction_date || "";
+      const dateB = b._transaction_date || "";
+      if (dateA !== dateB) {
+        return dateB.localeCompare(dateA);
+      }
+      // If dates are the same, sort by created_at (descending - most recent first)
+      const createdA = a._created_at || "";
+      const createdB = b._created_at || "";
+      return createdB.localeCompare(createdA);
+    })
+    .map(({ _transaction_date, _created_at, ...transaction }) => transaction);
 
   const handleEditTransaction = (transaction: Payment) => {
     // Convert back to TransactionData type
