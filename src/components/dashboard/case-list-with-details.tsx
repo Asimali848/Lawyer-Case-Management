@@ -207,7 +207,7 @@ const CaseListWithDetails = ({
     <>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 h-full overflow-hidden">
         {/* Active Cases Section - Left */}
-        <div className="lg:col-span-2 flex flex-col gap-3 overflow-hidden">
+        <div className="lg:col-span-2 flex flex-col gap-3 overflow-hidden h-[570px]">
           <Card className="flex-1 flex flex-col overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between pb-3 px-4 sm:px-6">
               <CardTitle className="text-base sm:text-lg font-semibold">
@@ -263,6 +263,15 @@ const CaseListWithDetails = ({
           </Card>
         </div>
 
+
+
+
+
+
+
+
+
+
         {/* Case Details and Transactions - Right */}
         <div className="lg:col-span-2 flex flex-col gap-3 sm:gap-4 md:gap-5 overflow-hidden h-full">
           {selectedCaseId && selectedCase ? (
@@ -309,18 +318,18 @@ const CaseListWithDetails = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <div className="text-xs sm:text-sm text-muted-foreground mb-1">
-                        Court Number
-                      </div>
-                      <div className="font-medium text-sm sm:text-base break-words">
-                        {selectedCase.court_number || "N/A"}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Court Name
                       </div>
                       <div className="font-medium text-sm sm:text-base break-words">
                         {selectedCase.court_name || "N/A"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
+                        Judgment Date
+                      </div>
+                      <div className="font-medium text-sm sm:text-base">
+                        {formatDate(selectedCase.judgment_date || "")}
                       </div>
                     </div>
                     <div>
@@ -333,10 +342,10 @@ const CaseListWithDetails = ({
                     </div>
                     <div>
                       <div className="text-xs sm:text-sm text-muted-foreground mb-1">
-                        Judgment Date
+                        Daily Interest
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        {formatDate(selectedCase.judgment_date || "")}
+                        ${selectedCase.daily_interest || "N/A"}
                       </div>
                     </div>
                     <div>
@@ -353,6 +362,14 @@ const CaseListWithDetails = ({
                       </div>
                       <div className="font-medium text-sm sm:text-base">
                         {formatCurrency(totalPayments)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
+                        Interest Accrued
+                      </div>
+                      <div className="font-medium text-sm sm:text-base">
+                        ${selectedCase.interest_accrued || "0"}
                       </div>
                     </div>
                     <div>
@@ -391,6 +408,25 @@ const CaseListWithDetails = ({
             </Card>
           )}
         </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         {/* Recent Transactions Section */}
         <Card className={`flex-1 flex flex-col overflow-hidden ${selectedCaseId ? 'col-span-1 lg:col-span-4' : 'hidden'} h-auto lg:h-[500px]`}>
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 px-4 sm:px-6">
