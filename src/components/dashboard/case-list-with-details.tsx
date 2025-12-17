@@ -196,7 +196,7 @@ const CaseListWithDetails = ({
 
   const handlePrintCase = () => {
     if (!selectedCase) {
-      toast.error("No case selected to print");
+      toast.error("No case selected to print"); 
       return;
     }
 
@@ -364,10 +364,18 @@ const CaseListWithDetails = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <div className="text-xs sm:text-sm text-muted-foreground mb-1">
-                        Court Name
+                        Court
                       </div>
                       <div className="font-medium text-sm sm:text-base break-words">
                         {selectedCase.court_name || "N/A"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
+                        Case Number
+                      </div>
+                      <div className="font-medium text-sm sm:text-base break-words">
+                        {selectedCase.court_number || "N/A"}
                       </div>
                     </div>
                     <div>
