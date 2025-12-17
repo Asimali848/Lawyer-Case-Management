@@ -1,4 +1,11 @@
-import { RefreshCw, MoreVertical, Printer, Plus, Pencil, Trash2 } from "lucide-react";
+import {
+  RefreshCw,
+  MoreVertical,
+  Printer,
+  Plus,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +15,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useGetCalculationQuery, useDeleteCalculationMutation } from "@/store/services/calculations";
+import {
+  useGetCalculationQuery,
+  useDeleteCalculationMutation,
+} from "@/store/services/calculations";
 import { formatCurrency, formatDate, getCurrentDate } from "@/lib/utils";
 import { useTransactionColumns } from "@/components/dashboard/transaction-columns";
 import { DataTable } from "@/components/data-table";
@@ -18,6 +28,7 @@ import { useDeleteTransactionMutation } from "@/store/services/calculations";
 import EditCaseDialog from "@/components/dashboard/edit-case-dialog";
 import WarningModal from "@/components/warning-modal";
 import { toast } from "sonner";
+import { printCaseTransactions } from "@/lib/print-transactions";
 
 interface CaseListWithDetailsProps {
   cases: CaseGet[];
@@ -37,7 +48,8 @@ const CaseListWithDetails = ({
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [transactionOpen, setTransactionOpen] = useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<Payment | null>(null);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Payment | null>(null);
   const [editCaseOpen, setEditCaseOpen] = useState<boolean>(false);
   const [deleteCaseOpen, setDeleteCaseOpen] = useState<boolean>(false);
 
@@ -52,7 +64,8 @@ const CaseListWithDetails = ({
   );
 
   const [deleteTransaction] = useDeleteTransactionMutation();
-  const [deleteCalculation, { isLoading: isDeletingCase }] = useDeleteCalculationMutation();
+  const [deleteCalculation, { isLoading: isDeletingCase }] =
+    useDeleteCalculationMutation();
 
   // Auto-select first case if none selected
   useEffect(() => {
@@ -182,8 +195,37 @@ const CaseListWithDetails = ({
   };
 
   const handlePrintCase = () => {
-    // Placeholder for print functionality
-    toast.info("Print functionality will be implemented soon");
+    if (!selectedCase) {
+      toast.error("No case selected to print");
+      return;
+    }
+
+    if (transactions.length === 0) {
+      toast.warning("No transactions to print for this case");
+      return;
+    }
+
+    try {
+      // Prepare case data for printing
+      const printCaseData = {
+        case_name: selectedCase.case_name || "N/A",
+        court_name: selectedCase.court_name || "N/A",
+        court_number: selectedCase.court_number || "N/A",
+        judgment_amount: selectedCase.judgment_amount || 0,
+        judgment_date: selectedCase.judgment_date || "",
+        lastPaymentDate: lastPaymentDate,
+        totalPayments: totalPayments,
+        totalInterest: totalInterest,
+        todayPayoff: todayPayoff,
+      };
+
+      // Call the print utility
+      printCaseTransactions(printCaseData, transactions);
+      toast.success("Opening print preview...");
+    } catch (error) {
+      console.error("Print error:", error);
+      toast.error("Failed to open print preview");
+    }
   };
 
   const handleEditCaseSuccess = () => {
@@ -234,7 +276,11 @@ const CaseListWithDetails = ({
                   <div
                     key={caseItem.id}
                     onClick={() => handleCaseClick(caseItem.id)}
-                    className={`p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors ${selectedCaseId === caseItem.id ? "bg-primary/10 border-green-300" : ""}`}
+                    className={`p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors ${
+                      selectedCaseId === caseItem.id
+                        ? "bg-primary/10 border-green-300"
+                        : ""
+                    }`}
                   >
                     <div className="font-semibold text-base sm:text-lg mb-1 break-words">
                       {caseItem.case_name}
@@ -395,7 +441,9 @@ const CaseListWithDetails = ({
           ) : isLoadingCase ? (
             <Card>
               <CardContent className="flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6">
-                <p className="text-sm sm:text-base text-muted-foreground">Loading case details...</p>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  Loading case details...
+                </p>
               </CardContent>
             </Card>
           ) : (
@@ -428,7 +476,11 @@ const CaseListWithDetails = ({
 
 
         {/* Recent Transactions Section */}
-        <Card className={`flex-1 flex flex-col overflow-hidden ${selectedCaseId ? 'col-span-1 lg:col-span-4' : 'hidden'} h-auto lg:h-[500px]`}>
+        <Card
+          className={`flex-1 flex flex-col overflow-hidden ${
+            selectedCaseId ? "col-span-1 lg:col-span-4" : "hidden"
+          } h-auto lg:h-[500px]`}
+        >
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 px-4 sm:px-6">
             <div className="w-full sm:w-auto">
               <CardTitle className="text-base sm:text-lg font-semibold">
@@ -441,6 +493,7 @@ const CaseListWithDetails = ({
             <Button
               variant="default"
               size="sm"
+              onClick={handlePrintCase}
               className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto"
             >
               <Printer className="size-4 mr-1" />
@@ -456,10 +509,7 @@ const CaseListWithDetails = ({
               </div>
             ) : (
               <div className="w-full overflow-x-auto">
-                <DataTable
-                  columns={transactionColumns}
-                  data={transactions}
-                />
+                <DataTable columns={transactionColumns} data={transactions} />
               </div>
             )}
           </CardContent>
@@ -481,8 +531,8 @@ const CaseListWithDetails = ({
           transaction={
             selectedTransaction
               ? selectedCase?.transactions?.find(
-                (t) => t.id === selectedTransaction.id
-              )
+                  (t) => t.id === selectedTransaction.id
+                )
               : undefined
           }
         />
@@ -521,4 +571,3 @@ const CaseListWithDetails = ({
 };
 
 export default CaseListWithDetails;
-
