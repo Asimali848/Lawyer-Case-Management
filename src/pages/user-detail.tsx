@@ -28,6 +28,10 @@ import {
 } from "@/store/services/calculations";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import {
+  generateTransactionPDF,
+  createTransactionPDFData,
+} from "@/lib/transaction-pdf-generator";
 
 const UserDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -143,6 +147,24 @@ const UserDetail = () => {
     }
   };
 
+  // Print handler - Using NEW PDF Generator v2.0
+  const handlePrintTransactions = async () => {
+    try {
+      if (!calculation || !transactions || transactions.length === 0) {
+        toast.error("No transactions available to print");
+        return;
+      }
+
+      console.log("Using NEW Transaction PDF Generator v2.0");
+      const pdfData = createTransactionPDFData(calculation, transactions);
+      await generateTransactionPDF(pdfData);
+      toast.success("Transaction summary PDF downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Failed to generate PDF. Please try again.");
+    }
+  };
+
   const columns = useTransactionColumns({
     onEdit: handleEditTransaction,
     onDelete: handleDeleteTransaction,
@@ -192,11 +214,14 @@ const UserDetail = () => {
     <>
       <div className="flex h-full w-full flex-col gap-5 overflow-y-auto">
         <div className="flex items-center justify-between">
-          <div className="flex items-center justify-center gap-2 cursor-pointer" onClick={() => navigate("/dashboard")}>
-          <ArrowLeft className="size-6 text-primary font-bold" />
-          <Label className="font-bold text-primary text-xl sm:text-2xl md:text-3xl">
-            {calculation?.case_name ?? "Case Not Found"}
-          </Label>
+          <div
+            className="flex items-center justify-center gap-2 cursor-pointer"
+            onClick={() => navigate("/dashboard")}
+          >
+            <ArrowLeft className="size-6 text-primary font-bold" />
+            <Label className="font-bold text-primary text-xl sm:text-2xl md:text-3xl">
+              {calculation?.case_name ?? "Case Not Found"}
+            </Label>
           </div>
           <div className="hidden flex-col gap-2.5 md:flex md:flex-row">
             <Button
@@ -458,7 +483,11 @@ const UserDetail = () => {
                   <FileText className="mr-2 size-4" />
                   Payoff Demand
                 </Button>
-                <Button variant="default" className="w-full justify-start">
+                <Button
+                  variant="default"
+                  className="w-full justify-start"
+                  onClick={handlePrintTransactions}
+                >
                   <Printer className="mr-2 size-4" />
                   Print
                 </Button>

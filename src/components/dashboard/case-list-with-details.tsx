@@ -28,7 +28,7 @@ import { useDeleteTransactionMutation } from "@/store/services/calculations";
 import EditCaseDialog from "@/components/dashboard/edit-case-dialog";
 import WarningModal from "@/components/warning-modal";
 import { toast } from "sonner";
-import { printCaseTransactions } from "@/lib/print-transactions";
+import { generateTransactionPDF, createTransactionPDFData } from "@/lib/transaction-pdf-generator";
 
 interface CaseListWithDetailsProps {
   cases: CaseGet[];
@@ -180,7 +180,7 @@ const CaseListWithDetails = ({
     }
   };
 
-  const handlePrintCase = () => {
+  const handlePrintCase = async () => {
     if (!selectedCase) {
       toast.error("No case selected to print");
       return;
@@ -192,25 +192,13 @@ const CaseListWithDetails = ({
     }
 
     try {
-      // Prepare case data for printing
-      const printCaseData = {
-        case_name: selectedCase.case_name || "N/A",
-        court_name: selectedCase.court_name || "N/A",
-        court_number: selectedCase.court_number || "N/A",
-        judgment_amount: selectedCase.judgment_amount || 0,
-        judgment_date: selectedCase.judgment_date || "",
-        lastPaymentDate: lastPaymentDate,
-        totalPayments: totalPayments,
-        totalInterest: totalInterest,
-        todayPayoff: todayPayoff,
-      };
-
-      // Call the print utility
-      printCaseTransactions(printCaseData, transactions);
-      toast.success("Opening print preview...");
+      console.log("Using NEW Transaction PDF Generator v2.0");
+      const pdfData = createTransactionPDFData(selectedCase, transactions);
+      await generateTransactionPDF(pdfData);
+      toast.success("Transaction summary PDF downloaded successfully!");
     } catch (error) {
       console.error("Print error:", error);
-      toast.error("Failed to open print preview");
+      toast.error("Failed to generate PDF. Please try again.");
     }
   };
 
