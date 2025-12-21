@@ -84,9 +84,9 @@ const CaseListWithDetails = ({
     }
   }, [transactionOpen, selectedCaseId, refetchCase]);
 
-  // Transform transactions to Payment format
-  const transactions: Payment[] = (selectedCase?.transactions || []).map(
-    (t) => {
+  // Transform transactions to Payment format and apply LIFO (Last In First Out) ordering
+  const transactions: Payment[] = (selectedCase?.transactions || [])
+    .map((t) => {
       const timelineEntry = selectedCase?.timeline?.find((entry: any) => {
         const entryDate = entry.event_date;
         const transDate = t.transaction_date;
@@ -100,7 +100,7 @@ const CaseListWithDetails = ({
       return {
         id: t.id,
         payment_date: t.transaction_date,
-        transaction_type: t.payment_amount > 0 ? "PAYMENT" : "COST",
+        transaction_type: (t.payment_amount > 0 ? "PAYMENT" : "COST") as "PAYMENT" | "COST",
         payment_amount: String(
           t.payment_amount > 0 ? t.payment_amount : t.cost_amount
         ),
@@ -110,11 +110,25 @@ const CaseListWithDetails = ({
         principal_balance: timelineEntry
           ? String((timelineEntry.remaining_principal || 0).toFixed(2))
           : "0.00",
-        description:
-          t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
+        description: t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
+        // Keep original transaction data for sorting
+        _transaction_date: t.transaction_date,
+        _created_at: t.created_at,
       };
-    }
-  );
+    })
+    .sort((a, b) => {
+      // Sort by transaction_date (descending - most recent first)
+      const dateA = a._transaction_date || "";
+      const dateB = b._transaction_date || "";
+      if (dateA !== dateB) {
+        return dateB.localeCompare(dateA);
+      }
+      // If dates are the same, sort by created_at (descending - most recent first)
+      const createdA = a._created_at || "";
+      const createdB = b._created_at || "";
+      return createdB.localeCompare(createdA);
+    })
+    .map(({ _transaction_date, _created_at, ...transaction }) => transaction as Payment);
 
   const handleCaseClick = (caseId: string | undefined) => {
     if (caseId) {
@@ -226,7 +240,7 @@ const CaseListWithDetails = ({
     <>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 h-full overflow-hidden">
         {/* Active Cases Section - Left */}
-        <div className="lg:col-span-2 flex flex-col gap-3 overflow-hidden">
+        <div className="lg:col-span-2 flex flex-col gap-3 overflow-hidden h-[570px]">
           <Card className="flex-1 flex flex-col overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between pb-3 px-4 sm:px-6">
               <CardTitle className="text-base sm:text-lg font-semibold">
@@ -286,6 +300,15 @@ const CaseListWithDetails = ({
           </Card>
         </div>
 
+
+
+
+
+
+
+
+
+
         {/* Case Details and Transactions - Right */}
         <div className="lg:col-span-2 flex flex-col gap-3 sm:gap-4 md:gap-5 overflow-hidden h-full">
           {selectedCaseId && selectedCase ? (
@@ -332,18 +355,18 @@ const CaseListWithDetails = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <div className="text-xs sm:text-sm text-muted-foreground mb-1">
-                        Court Number
-                      </div>
-                      <div className="font-medium text-sm sm:text-base break-words">
-                        {selectedCase.court_number || "N/A"}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Court Name
                       </div>
                       <div className="font-medium text-sm sm:text-base break-words">
                         {selectedCase.court_name || "N/A"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
+                        Judgment Date
+                      </div>
+                      <div className="font-medium text-sm sm:text-base">
+                        {formatDate(selectedCase.judgment_date || "")}
                       </div>
                     </div>
                     <div>
@@ -356,10 +379,10 @@ const CaseListWithDetails = ({
                     </div>
                     <div>
                       <div className="text-xs sm:text-sm text-muted-foreground mb-1">
-                        Judgment Date
+                        Daily Interest
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        {formatDate(selectedCase.judgment_date || "")}
+                        ${selectedCase.daily_interest || "N/A"}
                       </div>
                     </div>
                     <div>
@@ -376,6 +399,14 @@ const CaseListWithDetails = ({
                       </div>
                       <div className="font-medium text-sm sm:text-base">
                         {formatCurrency(totalPayments)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
+                        Interest Accrued
+                      </div>
+                      <div className="font-medium text-sm sm:text-base">
+                        ${selectedCase.interest_accrued || "0"}
                       </div>
                     </div>
                     <div>
@@ -416,6 +447,25 @@ const CaseListWithDetails = ({
             </Card>
           )}
         </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         {/* Recent Transactions Section */}
         <Card
           className={`flex-1 flex flex-col overflow-hidden ${
