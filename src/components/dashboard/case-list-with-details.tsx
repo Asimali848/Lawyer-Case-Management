@@ -28,7 +28,10 @@ import { useDeleteTransactionMutation } from "@/store/services/calculations";
 import EditCaseDialog from "@/components/dashboard/edit-case-dialog";
 import WarningModal from "@/components/warning-modal";
 import { toast } from "sonner";
-import { generateTransactionPDF, createTransactionPDFData } from "@/lib/transaction-pdf-generator";
+import {
+  generateTransactionPDF,
+  createTransactionPDFData,
+} from "@/lib/transaction-pdf-generator";
 
 interface CaseListWithDetailsProps {
   cases: CaseGet[];
