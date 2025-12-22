@@ -15,10 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  useGetCalculationQuery,
-  useDeleteCalculationMutation,
-} from "@/store/services/calculations";
+import { useDeleteCalculationMutation } from "@/store/services/calculations";
 import { formatCurrency, formatDate, getCurrentDate } from "@/lib/utils";
 import { useTransactionColumns } from "@/components/dashboard/transaction-columns";
 import { DataTable } from "@/components/data-table";
@@ -56,15 +53,8 @@ const CaseListWithDetails = ({
   const [editCaseOpen, setEditCaseOpen] = useState<boolean>(false);
   const [deleteCaseOpen, setDeleteCaseOpen] = useState<boolean>(false);
 
-  // Fetch selected case details
-  const {
-    data: selectedCase,
-    isLoading: isLoadingCase,
-    refetch: refetchCase,
-  } = useGetCalculationQuery(
-    { id: selectedCaseId || "", current_date: getCurrentDate() },
-    { skip: !selectedCaseId }
-  );
+  // Get selected case data from the cases array (already loaded from history)
+  const selectedCase = cases.find((c) => c.id === selectedCaseId);
 
   const [deleteTransaction] = useDeleteTransactionMutation();
   const [deleteCalculation, { isLoading: isDeletingCase }] =
@@ -76,13 +66,6 @@ const CaseListWithDetails = ({
       setSelectedCaseId(cases[0].id || null);
     }
   }, [cases, selectedCaseId]);
-
-  // Refetch case when transaction sheet closes (to get updated data)
-  useEffect(() => {
-    if (!transactionOpen && selectedCaseId) {
-      refetchCase();
-    }
-  }, [transactionOpen, selectedCaseId, refetchCase]);
 
   // Transform transactions to Payment format and apply LIFO (Last In First Out) ordering
   const transactions: Payment[] = (selectedCase?.transactions || [])
@@ -100,7 +83,9 @@ const CaseListWithDetails = ({
       return {
         id: t.id,
         payment_date: t.transaction_date,
-        transaction_type: (t.payment_amount > 0 ? "PAYMENT" : "COST") as "PAYMENT" | "COST",
+        transaction_type: (t.payment_amount > 0 ? "PAYMENT" : "COST") as
+          | "PAYMENT"
+          | "COST",
         payment_amount: String(
           t.payment_amount > 0 ? t.payment_amount : t.cost_amount
         ),
@@ -110,7 +95,8 @@ const CaseListWithDetails = ({
         principal_balance: timelineEntry
           ? String((timelineEntry.remaining_principal || 0).toFixed(2))
           : "0.00",
-        description: t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
+        description:
+          t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
         // Keep original transaction data for sorting
         _transaction_date: t.transaction_date,
         _created_at: t.created_at,
@@ -128,7 +114,10 @@ const CaseListWithDetails = ({
       const createdB = b._created_at || "";
       return createdB.localeCompare(createdA);
     })
-    .map(({ _transaction_date, _created_at, ...transaction }) => transaction as Payment);
+    .map(
+      ({ _transaction_date, _created_at, ...transaction }) =>
+        transaction as Payment
+    );
 
   const handleCaseClick = (caseId: string | undefined) => {
     if (caseId) {
@@ -300,15 +289,6 @@ const CaseListWithDetails = ({
           </Card>
         </div>
 
-
-
-
-
-
-
-
-
-
         {/* Case Details and Transactions - Right */}
         <div className="lg:col-span-2 flex flex-col gap-3 sm:gap-4 md:gap-5 overflow-hidden h-full">
           {selectedCaseId && selectedCase ? (
@@ -363,6 +343,16 @@ const CaseListWithDetails = ({
                     </div>
                     <div>
                       <div className="text-xs sm:text-sm text-muted-foreground mb-1">
+                        Case Number
+                      </div>
+                      <div className="font-medium text-sm sm:text-base break-words">
+                        {selectedCase.court_number ||
+                          selectedCase.court_case_number ||
+                          "N/A"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Judgment Date
                       </div>
                       <div className="font-medium text-sm sm:text-base">
@@ -382,7 +372,9 @@ const CaseListWithDetails = ({
                         Daily Interest
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        ${selectedCase.daily_interest || "N/A"}
+                        {selectedCase.daily_interest
+                          ? `$${Number(selectedCase.daily_interest).toFixed(4)}`
+                          : "N/A"}
                       </div>
                     </div>
                     <div>
@@ -406,7 +398,7 @@ const CaseListWithDetails = ({
                         Interest Accrued
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        ${selectedCase.interest_accrued || "0"}
+                        {formatCurrency(selectedCase.interest_accrued || 0)}
                       </div>
                     </div>
                     <div>
@@ -429,14 +421,6 @@ const CaseListWithDetails = ({
                 </CardContent>
               </Card>
             </>
-          ) : isLoadingCase ? (
-            <Card>
-              <CardContent className="flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6">
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Loading case details...
-                </p>
-              </CardContent>
-            </Card>
           ) : (
             <Card>
               <CardContent className="flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6">
@@ -447,24 +431,6 @@ const CaseListWithDetails = ({
             </Card>
           )}
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         {/* Recent Transactions Section */}
         <Card

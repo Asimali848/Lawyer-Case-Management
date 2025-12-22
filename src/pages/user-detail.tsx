@@ -90,7 +90,8 @@ const UserDetail = () => {
         principal_balance: timelineEntry
           ? String((timelineEntry.remaining_principal || 0).toFixed(2))
           : "0.00",
-        description: t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
+        description:
+          t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
         // Keep original transaction data for sorting
         _transaction_date: t.transaction_date,
         _created_at: t.created_at,
@@ -219,7 +220,6 @@ const UserDetail = () => {
 
   // Use values from the API calculation response matching official calculator display
   const totalPayments = calculation.principal_reduction || 0;
-  const totalCosts = calculation.total_costs || 0;
 
   // Total Interest for display
   const totalInterest = calculation.total_interest_accrued || 0;
@@ -454,14 +454,6 @@ const UserDetail = () => {
                   </p>
                   <p className="text-muted-foreground text-sm">
                     {formatCurrency(totalPayments)}
-                  </p>
-                </div>
-                <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Total Costs
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {formatCurrency(totalCosts)}
                   </p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
