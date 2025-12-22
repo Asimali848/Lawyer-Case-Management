@@ -5,6 +5,7 @@ import {
   Plus,
   Pencil,
   Trash2,
+  FileText,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import DeleteConfirmationModal from "@/components/dashboard/delete-confirmation-
 import { useDeleteTransactionMutation } from "@/store/services/calculations";
 import EditCaseDialog from "@/components/dashboard/edit-case-dialog";
 import WarningModal from "@/components/warning-modal";
+import PayoffDemandModal from "@/components/dashboard/payoff-demand-modal";
 import { toast } from "sonner";
 import {
   generateTransactionPDF,
@@ -52,6 +54,7 @@ const CaseListWithDetails = ({
     useState<Payment | null>(null);
   const [editCaseOpen, setEditCaseOpen] = useState<boolean>(false);
   const [deleteCaseOpen, setDeleteCaseOpen] = useState<boolean>(false);
+  const [payoffDemandOpen, setPayoffDemandOpen] = useState<boolean>(false);
 
   // Get selected case data from the cases array (already loaded from history)
   const selectedCase = cases.find((c) => c.id === selectedCaseId);
@@ -447,15 +450,26 @@ const CaseListWithDetails = ({
                 {selectedCase?.case_name || "N/A"}
               </div>
             </div>
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handlePrintCase}
-              className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto"
-            >
-              <Printer className="size-4 mr-1" />
-              Print
-            </Button>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => setPayoffDemandOpen(true)}
+                className="bg-green-600 hover:bg-green-700 text-white flex-1 sm:flex-none"
+              >
+                <FileText className="size-4 mr-1" />
+                Payoff Demand
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handlePrintCase}
+                className="bg-primary hover:bg-primary/90 text-white flex-1 sm:flex-none"
+              >
+                <Printer className="size-4 mr-1" />
+                Print
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto px-4 sm:px-6">
             {transactions.length === 0 ? (
@@ -523,6 +537,17 @@ const CaseListWithDetails = ({
         cta={handleDeleteCase}
         isLoading={isDeletingCase}
       />
+
+      {/* Payoff Demand Modal */}
+      {selectedCase && (
+        <PayoffDemandModal
+          open={payoffDemandOpen}
+          setOpen={setPayoffDemandOpen}
+          caseId={selectedCaseId || undefined}
+          caseName={selectedCase.case_name}
+          caseData={selectedCase as any}
+        />
+      )}
     </>
   );
 };

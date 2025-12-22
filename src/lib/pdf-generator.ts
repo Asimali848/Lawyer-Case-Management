@@ -9,8 +9,20 @@ interface PayoffStatementData {
   totalPayoff: number;
   courtName?: string;
   caseNumber?: string;
-  judgmentAmount?: string;
+  judgmentAmount?: string | number;
   judgmentDate?: string;
+  clientName?: string;
+  firmName?: string;
+  lawyerName?: string;
+  streetAddress?: string;
+  city?: string;
+  state?: string;
+  zipcode?: string;
+  lawyerPhone?: string;
+  lawyerEmail?: string;
+  dailyInterestRate?: number;
+  dailyInterestAmount?: number;
+  annualInterestRate?: number;
 }
 
 /**
@@ -41,7 +53,7 @@ function formatCurrency(amount: number): string {
 }
 
 /**
- * Generates a payoff statement PDF with professional layout
+ * Generates a payoff statement PDF matching the provided design
  */
 export async function generatePayoffStatementPDF(
   data: PayoffStatementData
@@ -55,135 +67,228 @@ export async function generatePayoffStatementPDF(
   const pageWidth = 210;
   const pageHeight = 297;
   const margin = 20;
-  // const _contentWidth = pageWidth - 2 * margin;
-  let yPosition = margin + 10;
+  let yPosition = margin;
 
   // Set font
   pdf.setFont("helvetica");
 
-  // Title - centered
-  pdf.setFontSize(22);
+  // ===== HEADER: PAYOFF STATEMENT =====
+  pdf.setFontSize(24);
   pdf.setFont("helvetica", "bold");
-  const titleText = "PAYOFF STATEMENT";
+  pdf.setTextColor(0, 51, 102); // Dark blue
+  const titleText = "Payoff Statement";
   const titleWidth = pdf.getTextWidth(titleText);
   pdf.text(titleText, (pageWidth - titleWidth) / 2, yPosition);
-  yPosition += 20;
 
-  // Case Information Section
-  pdf.setFontSize(12);
+  // Draw line under title
+  yPosition += 3;
+  pdf.setDrawColor(0, 51, 102);
+  pdf.setLineWidth(0.8);
+  pdf.line(margin, yPosition, pageWidth - margin, yPosition);
+  yPosition += 12;
+
+  // ===== DATE =====
+  pdf.setFontSize(11);
+  pdf.setFont("helvetica", "bold");
+  pdf.setTextColor(0, 0, 0);
+  pdf.text("Date:", margin, yPosition);
   pdf.setFont("helvetica", "normal");
+  pdf.text(formatDate(new Date().toISOString()), margin + 15, yPosition);
+  yPosition += 12;
+
+  // ===== CREDITOR INFORMATION (Left Column) =====
+  pdf.setFontSize(12);
+  pdf.setFont("helvetica", "bold");
+  pdf.text(data.clientName || "Creditor Name", margin, yPosition);
+  yPosition += 6;
+
+  pdf.setFontSize(10);
+  pdf.setFont("helvetica", "normal");
+
+  if (data.firmName) {
+    pdf.text(data.firmName, margin, yPosition);
+    yPosition += 5;
+  }
+
+  if (data.streetAddress || (data.city && data.state)) {
+    if (data.streetAddress) {
+      pdf.text(data.streetAddress, margin, yPosition);
+      yPosition += 5;
+    }
+    if (data.city && data.state) {
+      pdf.text(
+        `${data.city}, ${data.state} ${data.zipcode || ""}`.trim(),
+        margin,
+        yPosition
+      );
+      yPosition += 5;
+    }
+  } else {
+    pdf.text("N/A", margin, yPosition);
+    yPosition += 5;
+  }
+
+  if (data.lawyerPhone) {
+    pdf.setFont("helvetica", "bold");
+    pdf.text("Tel:", margin, yPosition);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(data.lawyerPhone, margin + 10, yPosition);
+    yPosition += 5;
+  }
+
+  if (data.lawyerEmail) {
+    pdf.setFont("helvetica", "bold");
+    pdf.text("Email:", margin, yPosition);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(0, 0, 255); // Blue for email
+    pdf.text(data.lawyerEmail, margin + 14, yPosition);
+    pdf.setTextColor(0, 0, 0);
+    yPosition += 5;
+  }
+
+  // ===== DEBTOR INFORMATION =====
+  yPosition += 8;
+  pdf.setFontSize(11);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Debtor Information:", margin, yPosition);
+  yPosition += 6;
+
+  pdf.setFontSize(10);
+  pdf.setFont("helvetica", "normal");
+  pdf.text("Phone: N/A", margin, yPosition);
   yPosition += 5;
+  pdf.text("Email: N/A", margin, yPosition);
+  yPosition += 12;
+
+  // ===== CASE DETAILS SECTION =====
+  pdf.setFontSize(14);
+  pdf.setFont("helvetica", "bold");
+  pdf.setTextColor(0, 51, 102);
+  pdf.text("Case Details", pageWidth / 2, yPosition, { align: "center" });
+  yPosition += 8;
+
+  // Case details box
+  pdf.setFontSize(11);
+  pdf.setFont("helvetica", "bold");
+  pdf.setTextColor(0, 0, 0);
 
   if (data.caseName) {
-    pdf.setFont("helvetica", "bold");
-    pdf.text("Case Name:", margin, yPosition);
-    pdf.setFont("helvetica", "normal");
-    pdf.text(data.caseName, margin + 40, yPosition);
-    yPosition += 8;
+    pdf.text(data.caseName, pageWidth / 2, yPosition, { align: "center" });
+    yPosition += 7;
   }
+
+  pdf.setFontSize(10);
+  pdf.setFont("helvetica", "normal");
 
   if (data.courtName) {
-    pdf.setFont("helvetica", "bold");
-    pdf.text("Court Name:", margin, yPosition);
-    pdf.setFont("helvetica", "normal");
-    pdf.text(data.courtName, margin + 40, yPosition);
-    yPosition += 8;
-  }
-
-  if (data.caseNumber) {
-    pdf.setFont("helvetica", "bold");
-    pdf.text("Case Number:", margin, yPosition);
-    pdf.setFont("helvetica", "normal");
-    pdf.text(data.caseNumber, margin + 40, yPosition);
-    yPosition += 8;
-  }
-
-  if (data.judgmentAmount) {
-    pdf.setFont("helvetica", "bold");
-    pdf.text("Judgment Amount:", margin, yPosition);
-    pdf.setFont("helvetica", "normal");
     pdf.text(
-      formatCurrency(parseFloat(data.judgmentAmount)),
-      margin + 50,
-      yPosition
+      `${data.courtName} - Case No. ${data.caseNumber || "N/A"}`,
+      pageWidth / 2,
+      yPosition,
+      { align: "center" }
     );
-    yPosition += 8;
+    yPosition += 10;
   }
+
+  // Judgment details
+  const leftColX = margin + 20;
+  const rightColX = pageWidth / 2 + 10;
+
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Judgment Amount:", leftColX, yPosition);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(
+    formatCurrency(
+      typeof data.judgmentAmount === "string"
+        ? parseFloat(data.judgmentAmount)
+        : data.judgmentAmount || 0
+    ),
+    leftColX + 45,
+    yPosition
+  );
+  yPosition += 6;
 
   if (data.judgmentDate) {
     pdf.setFont("helvetica", "bold");
-    pdf.text("Judgment Date:", margin, yPosition);
+    pdf.text("Judgment Date:", leftColX, yPosition);
     pdf.setFont("helvetica", "normal");
-    pdf.text(formatDate(data.judgmentDate), margin + 45, yPosition);
-    yPosition += 8;
+    const jdgDate = formatDate(data.judgmentDate);
+    pdf.text(`${jdgDate} (entered Jan. 1, 2020)`, leftColX + 45, yPosition);
+    yPosition += 12;
   }
 
-  yPosition += 5;
+  // ===== TOTAL PAYOFF BOX =====
+  const boxY = yPosition;
+  const boxHeight = 25;
+  const boxWidth = pageWidth - 2 * margin - 30;
+  const boxX = margin + 15;
 
-  // Payoff Date
-  pdf.setFont("helvetica", "bold");
-  pdf.text("Payoff Date:", margin, yPosition);
-  pdf.setFont("helvetica", "normal");
-  pdf.text(formatDate(data.payoffDate), margin + 40, yPosition);
-  yPosition += 15;
+  // Draw blue background box
+  pdf.setFillColor(230, 240, 255);
+  pdf.rect(boxX, boxY, boxWidth, boxHeight, "F");
 
-  // Payoff Summary Section
-  pdf.setFontSize(16);
-  pdf.setFont("helvetica", "bold");
-  pdf.text("PAYOFF SUMMARY", margin, yPosition);
-  yPosition += 12;
-
-  // Draw line under heading
+  // Draw border
+  pdf.setDrawColor(0, 51, 102);
   pdf.setLineWidth(0.5);
-  pdf.line(margin, yPosition - 7, pageWidth - margin, yPosition - 7);
-  yPosition += 8;
+  pdf.rect(boxX, boxY, boxWidth, boxHeight);
 
-  pdf.setFontSize(12);
-  pdf.setFont("helvetica", "normal");
-
-  // Principal Balance
-  pdf.text("Principal Balance:", margin, yPosition);
-  pdf.setFont("helvetica", "bold");
-  const principalText = formatCurrency(data.principalBalance);
-  pdf.text(
-    principalText,
-    pageWidth - margin - pdf.getTextWidth(principalText),
-    yPosition
-  );
-  yPosition += 12;
-
-  // Accrued Interest
-  pdf.setFont("helvetica", "normal");
-  pdf.text("Accrued Interest:", margin, yPosition);
-  pdf.setFont("helvetica", "bold");
-  const interestText = formatCurrency(data.accruedInterest);
-  pdf.text(
-    interestText,
-    pageWidth - margin - pdf.getTextWidth(interestText),
-    yPosition
-  );
-  yPosition += 12;
-
-  // Total Payoff
-  pdf.setLineWidth(0.5);
-  pdf.line(margin, yPosition, pageWidth - margin, yPosition);
-  yPosition += 10;
-
+  // Total Payoff text
+  yPosition = boxY + 10;
   pdf.setFontSize(13);
   pdf.setFont("helvetica", "bold");
-  pdf.text("Total Payoff:", margin, yPosition);
-  pdf.setFontSize(15);
-  const totalText = formatCurrency(data.totalPayoff);
+  pdf.text("Total Payoff", pageWidth / 2, yPosition, { align: "center" });
+
+  yPosition += 10;
+  pdf.setFontSize(16);
+  pdf.setTextColor(0, 102, 0); // Green
+  pdf.text(formatCurrency(data.totalPayoff), pageWidth / 2, yPosition, {
+    align: "center",
+  });
+  pdf.setTextColor(0, 0, 0);
+
+  yPosition = boxY + boxHeight + 8;
+  pdf.setFontSize(9);
+  pdf.setFont("helvetica", "italic");
+  pdf.text(`As of ${formatDate(data.payoffDate)}`, pageWidth / 2, yPosition, {
+    align: "center",
+  });
+  yPosition += 10;
+
+  // ===== INTEREST ACCRUAL NOTICE =====
+  pdf.setFontSize(10);
+  pdf.setFont("helvetica", "normal");
+  pdf.setTextColor(0, 0, 0);
+
+  const dailyRate = data.dailyInterestRate || 0;
+  const dailyAmount =
+    data.dailyInterestAmount || data.principalBalance * dailyRate;
+  const annualRate = data.annualInterestRate || 10;
+
+  const interestText = `Interest accrues at a daily rate of $${dailyAmount.toFixed(
+    2
+  )} per day after ${formatDate(data.payoffDate)}.`;
+  pdf.text(interestText, pageWidth / 2, yPosition, { align: "center" });
+  yPosition += 12;
+
+  // ===== PAYMENT INSTRUCTIONS =====
+  pdf.setFontSize(9);
+  pdf.setFont("helvetica", "normal");
   pdf.text(
-    totalText,
-    pageWidth - margin - pdf.getTextWidth(totalText),
+    "Please ensure your payment reaches our office by the stated date.",
+    margin,
     yPosition
   );
+  yPosition += 6;
+  pdf.text(
+    "If paying by check, mail it to the address listed. For wire instructions, contact our office.",
+    margin,
+    yPosition
+  );
+  yPosition += 15;
 
-  // Footer
+  // ===== FOOTER =====
   const footerY = pageHeight - 15;
   pdf.setFontSize(8);
-  pdf.setFont("helvetica", "normal");
   pdf.setTextColor(128, 128, 128);
   pdf.text(
     `Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`,
@@ -192,12 +297,13 @@ export async function generatePayoffStatementPDF(
     { align: "center" }
   );
 
-  // Reset text color
+  // Reset colors
   pdf.setTextColor(0, 0, 0);
 
   // Generate filename
   const safeCaseName = (data.caseName || "Case").replace(/[^a-zA-Z0-9]/g, "_");
-  const filename = `payoff-${safeCaseName}.pdf`;
+  const safeDate = data.payoffDate.replace(/[^0-9]/g, "");
+  const filename = `Payoff_Statement_${safeCaseName}_${safeDate}.pdf`;
 
   // Save PDF
   pdf.save(filename);
