@@ -5,6 +5,7 @@ import {
   Plus,
   Pencil,
   Trash2,
+  FileText,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,11 +16,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  useGetCalculationQuery,
-  useDeleteCalculationMutation,
-} from "@/store/services/calculations";
-import { formatCurrency, formatDate, getCurrentDate } from "@/lib/utils";
+import { useDeleteCalculationMutation } from "@/store/services/calculations";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import { useTransactionColumns } from "@/components/dashboard/transaction-columns";
 import { DataTable } from "@/components/data-table";
 import TransactionSheet from "@/components/dashboard/transaction-sheet";
@@ -27,8 +25,12 @@ import DeleteConfirmationModal from "@/components/dashboard/delete-confirmation-
 import { useDeleteTransactionMutation } from "@/store/services/calculations";
 import EditCaseDialog from "@/components/dashboard/edit-case-dialog";
 import WarningModal from "@/components/warning-modal";
+import PayoffDemandModal from "@/components/dashboard/payoff-demand-modal";
 import { toast } from "sonner";
-import { printCaseTransactions } from "@/lib/print-transactions";
+import {
+  generateTransactionPDF,
+  createTransactionPDFData,
+} from "@/lib/transaction-pdf-generator";
 
 interface CaseListWithDetailsProps {
   cases: CaseGet[];
@@ -52,16 +54,10 @@ const CaseListWithDetails = ({
     useState<Payment | null>(null);
   const [editCaseOpen, setEditCaseOpen] = useState<boolean>(false);
   const [deleteCaseOpen, setDeleteCaseOpen] = useState<boolean>(false);
+  const [payoffDemandOpen, setPayoffDemandOpen] = useState<boolean>(false);
 
-  // Fetch selected case details
-  const {
-    data: selectedCase,
-    isLoading: isLoadingCase,
-    refetch: refetchCase,
-  } = useGetCalculationQuery(
-    { id: selectedCaseId || "", current_date: getCurrentDate() },
-    { skip: !selectedCaseId }
-  );
+  // Get selected case data from the cases array (already loaded from history)
+  const selectedCase = cases.find((c) => c.id === selectedCaseId);
 
   const [deleteTransaction] = useDeleteTransactionMutation();
   const [deleteCalculation, { isLoading: isDeletingCase }] =
@@ -74,30 +70,27 @@ const CaseListWithDetails = ({
     }
   }, [cases, selectedCaseId]);
 
-  // Refetch case when transaction sheet closes (to get updated data)
-  useEffect(() => {
-    if (!transactionOpen && selectedCaseId) {
-      refetchCase();
-    }
-  }, [transactionOpen, selectedCaseId, refetchCase]);
-
   // Transform transactions to Payment format and apply LIFO (Last In First Out) ordering
-  const transactions: Payment[] = (selectedCase?.transactions || [])
-    .map((t) => {
-      const timelineEntry = selectedCase?.timeline?.find((entry: any) => {
-        const entryDate = entry.event_date;
-        const transDate = t.transaction_date;
-        return (
-          entryDate === transDate &&
-          ((entry.event_type === "payment" && t.payment_amount > 0) ||
-            (entry.event_type === "cost" && t.cost_amount > 0))
-        );
-      });
+  const transactions: Payment[] = ((selectedCase as any)?.transactions || [])
+    .map((t: any) => {
+      const timelineEntry = (selectedCase as any)?.timeline?.find(
+        (entry: any) => {
+          const entryDate = entry.event_date;
+          const transDate = t.transaction_date;
+          return (
+            entryDate === transDate &&
+            ((entry.event_type === "payment" && t.payment_amount > 0) ||
+              (entry.event_type === "cost" && t.cost_amount > 0))
+          );
+        }
+      );
 
       return {
         id: t.id,
         payment_date: t.transaction_date,
-        transaction_type: (t.payment_amount > 0 ? "PAYMENT" : "COST") as "PAYMENT" | "COST",
+        transaction_type: (t.payment_amount > 0 ? "PAYMENT" : "COST") as
+          | "PAYMENT"
+          | "COST",
         payment_amount: String(
           t.payment_amount > 0 ? t.payment_amount : t.cost_amount
         ),
@@ -107,13 +100,14 @@ const CaseListWithDetails = ({
         principal_balance: timelineEntry
           ? String((timelineEntry.remaining_principal || 0).toFixed(2))
           : "0.00",
-        description: t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
+        description:
+          t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
         // Keep original transaction data for sorting
         _transaction_date: t.transaction_date,
         _created_at: t.created_at,
       };
     })
-    .sort((a, b) => {
+    .sort((a: any, b: any) => {
       // Sort by transaction_date (descending - most recent first)
       const dateA = a._transaction_date || "";
       const dateB = b._transaction_date || "";
@@ -125,7 +119,10 @@ const CaseListWithDetails = ({
       const createdB = b._created_at || "";
       return createdB.localeCompare(createdA);
     })
-    .map(({ _transaction_date, _created_at, ...transaction }) => transaction as Payment);
+    .map(
+      ({ _transaction_date, _created_at, ...transaction }: any) =>
+        transaction as Payment
+    );
 
   const handleCaseClick = (caseId: string | undefined) => {
     if (caseId) {
@@ -134,8 +131,8 @@ const CaseListWithDetails = ({
   };
 
   const handleEditTransaction = (transaction: Payment) => {
-    const trans = selectedCase?.transactions?.find(
-      (t) => t.id === transaction.id
+    const trans = (selectedCase as any)?.transactions?.find(
+      (t: any) => t.id === transaction.id
     );
     if (trans) {
       setSelectedTransaction(transaction);
@@ -162,7 +159,6 @@ const CaseListWithDetails = ({
       toast.success("Transaction deleted successfully");
       setSelectedTransaction(null);
       setDeleteModalOpen(false);
-      refetchCase();
       window.location.reload();
     } catch (error: any) {
       toast.error(error?.data?.detail || "Failed to delete transaction");
@@ -194,7 +190,7 @@ const CaseListWithDetails = ({
     }
   };
 
-  const handlePrintCase = () => {
+  const handlePrintCase = async () => {
     if (!selectedCase) {
       toast.error("No case selected to print"); 
       return;
@@ -206,30 +202,14 @@ const CaseListWithDetails = ({
     }
 
     try {
-      // Prepare case data for printing
-      const printCaseData = {
-        case_name: selectedCase.case_name || "N/A",
-        court_name: selectedCase.court_name || "N/A",
-        court_number: selectedCase.court_number || "N/A",
-        judgment_amount: selectedCase.judgment_amount || 0,
-        judgment_date: selectedCase.judgment_date || "",
-        lastPaymentDate: lastPaymentDate,
-        totalPayments: totalPayments,
-        totalInterest: totalInterest,
-        todayPayoff: todayPayoff,
-      };
-
-      // Call the print utility
-      printCaseTransactions(printCaseData, transactions);
-      toast.success("Opening print preview...");
+      console.log("Using NEW Transaction PDF Generator v2.0");
+      const pdfData = createTransactionPDFData(selectedCase, transactions);
+      await generateTransactionPDF(pdfData);
+      toast.success("Transaction summary PDF downloaded successfully!");
     } catch (error) {
       console.error("Print error:", error);
-      toast.error("Failed to open print preview");
+      toast.error("Failed to generate PDF. Please try again.");
     }
-  };
-
-  const handleEditCaseSuccess = () => {
-    refetchCase();
   };
 
   const transactionColumns = useTransactionColumns({
@@ -239,11 +219,11 @@ const CaseListWithDetails = ({
 
   const lastTransaction = transactions[transactions.length - 1];
   const lastPaymentDate =
-    lastTransaction?.payment_date || selectedCase?.judgment_date || "";
+    lastTransaction?.payment_date || selectedCase?.judgement_date || "";
 
-  const totalPayments = selectedCase?.principal_reduction || 0;
-  const totalInterest = selectedCase?.total_interest_accrued || 0;
-  const todayPayoff = selectedCase?.total_due || 0;
+  const totalPayments = (selectedCase as any)?.principal_reduction || 0;
+  const totalInterest = (selectedCase as any)?.total_interest_accrued || 0;
+  const todayPayoff = (selectedCase as any)?.total_due || 0;
 
   return (
     <>
@@ -308,15 +288,6 @@ const CaseListWithDetails = ({
             </CardContent>
           </Card>
         </div>
-
-
-
-
-
-
-
-
-
 
         {/* Case Details and Transactions - Right */}
         <div className="lg:col-span-2 flex flex-col gap-3 sm:gap-4 md:gap-5 overflow-hidden h-full">
@@ -383,7 +354,7 @@ const CaseListWithDetails = ({
                         Judgment Date
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        {formatDate(selectedCase.judgment_date || "")}
+                        {formatDate(selectedCase.judgement_date || "")}
                       </div>
                     </div>
                     <div>
@@ -391,7 +362,7 @@ const CaseListWithDetails = ({
                         Judgment Amount
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        {formatCurrency(selectedCase.judgment_amount || 0)}
+                        {formatCurrency(selectedCase.judegment_amount || 0)}
                       </div>
                     </div>
                     <div>
@@ -399,7 +370,11 @@ const CaseListWithDetails = ({
                         Daily Interest
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        ${selectedCase.daily_interest || "N/A"}
+                        {(selectedCase as any).daily_interest
+                          ? `$${Number(
+                              (selectedCase as any).daily_interest
+                            ).toFixed(4)}`
+                          : "N/A"}
                       </div>
                     </div>
                     <div>
@@ -423,7 +398,9 @@ const CaseListWithDetails = ({
                         Interest Accrued
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        ${selectedCase.interest_accrued || "0"}
+                        {formatCurrency(
+                          (selectedCase as any).interest_accrued || 0
+                        )}
                       </div>
                     </div>
                     <div>
@@ -446,14 +423,6 @@ const CaseListWithDetails = ({
                 </CardContent>
               </Card>
             </>
-          ) : isLoadingCase ? (
-            <Card>
-              <CardContent className="flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6">
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Loading case details...
-                </p>
-              </CardContent>
-            </Card>
           ) : (
             <Card>
               <CardContent className="flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6">
@@ -464,24 +433,6 @@ const CaseListWithDetails = ({
             </Card>
           )}
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         {/* Recent Transactions Section */}
         <Card
@@ -498,15 +449,26 @@ const CaseListWithDetails = ({
                 {selectedCase?.case_name || "N/A"}
               </div>
             </div>
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handlePrintCase}
-              className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto"
-            >
-              <Printer className="size-4 mr-1" />
-              Print
-            </Button>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => setPayoffDemandOpen(true)}
+                className="bg-green-600 hover:bg-green-700 text-white flex-1 sm:flex-none"
+              >
+                <FileText className="size-4 mr-1" />
+                Payoff Demand
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handlePrintCase}
+                className="bg-primary hover:bg-primary/90 text-white flex-1 sm:flex-none"
+              >
+                <Printer className="size-4 mr-1" />
+                Print
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto px-4 sm:px-6">
             {transactions.length === 0 ? (
@@ -538,8 +500,8 @@ const CaseListWithDetails = ({
           caseName={selectedCase?.case_name}
           transaction={
             selectedTransaction
-              ? selectedCase?.transactions?.find(
-                  (t) => t.id === selectedTransaction.id
+              ? (selectedCase as any)?.transactions?.find(
+                  (t: any) => t.id === selectedTransaction.id
                 )
               : undefined
           }
@@ -560,8 +522,7 @@ const CaseListWithDetails = ({
         <EditCaseDialog
           open={editCaseOpen}
           setOpen={setEditCaseOpen}
-          caseData={selectedCase}
-          onSuccess={handleEditCaseSuccess}
+          caseData={selectedCase as any}
         />
       )}
 
@@ -574,6 +535,17 @@ const CaseListWithDetails = ({
         cta={handleDeleteCase}
         isLoading={isDeletingCase}
       />
+
+      {/* Payoff Demand Modal */}
+      {selectedCase && (
+        <PayoffDemandModal
+          open={payoffDemandOpen}
+          setOpen={setPayoffDemandOpen}
+          caseId={selectedCaseId || undefined}
+          caseName={selectedCase.case_name}
+          caseData={selectedCase as any}
+        />
+      )}
     </>
   );
 };

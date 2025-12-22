@@ -366,3 +366,43 @@ declare type EmployeeFile = {
   upload_date: string;
   created_at?: string;
 };
+
+// Payoff Demand Types
+declare type PayoffDemandRequest = {
+  payoff_date: string;
+};
+
+declare type PayoffTransaction = {
+  date: string;
+  type: "PAYMENT" | "COST";
+  amount: number;
+  description?: string;
+};
+
+declare type PayoffDemandResponse = {
+  case_id: string;
+  case_name?: string;
+  client_name?: string;
+  court_name?: string;
+  court_case_number?: string;
+  judgment_amount: number;
+  judgment_date: string;
+  payoff_date: string;
+  lawyer_name?: string;
+  firm_name?: string;
+  street_address?: string;
+  city?: string;
+  state?: string;
+  zipcode?: string;
+  lawyer_phone?: string;
+  lawyer_email?: string;
+  principal_balance: number;
+  accrued_interest: number;
+  total_payoff: number;
+  daily_interest_rate: number;
+  daily_interest_amount: number;
+  transactions_included: PayoffTransaction[];
+  annual_interest_rate: number;
+  total_payments_made: number;
+  total_costs_added: number;
+};

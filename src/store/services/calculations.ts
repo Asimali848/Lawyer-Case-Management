@@ -105,6 +105,16 @@ export const calculationsApi = api.injectEndpoints({
         "calculations",
       ],
     }),
+    getPayoffDemand: build.mutation<
+      PayoffDemandResponse,
+      { calculationId: string; payoff_date: string }
+    >({
+      query: ({ calculationId, payoff_date }) => ({
+        url: `/api/calc/${calculationId}/payoff-demand`,
+        method: "POST",
+        body: { payoff_date },
+      }),
+    }),
   }),
 });
 
@@ -117,4 +127,5 @@ export const {
   useAddTransactionMutation,
   useUpdateTransactionMutation,
   useDeleteTransactionMutation,
+  useGetPayoffDemandMutation,
 } = calculationsApi;
