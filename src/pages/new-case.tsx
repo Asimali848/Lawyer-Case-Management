@@ -329,9 +329,9 @@ const NewCase = () => {
                   name="court_number"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Court Number</FormLabel>
+                      <FormLabel>Case Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter court number" {...field} />
+                        <Input placeholder="Enter case number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
