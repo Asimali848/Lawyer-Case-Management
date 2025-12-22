@@ -259,10 +259,11 @@ export async function generatePayoffStatementPDF(
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(0, 0, 0);
 
-  const dailyRate = data.dailyInterestRate || 0;
-  const dailyAmount =
-    data.dailyInterestAmount || data.principalBalance * dailyRate;
-  const annualRate = data.annualInterestRate || 10;
+  const dailyRate = Number(data.dailyInterestRate) || 0;
+  const dailyAmount = Number(
+    data.dailyInterestAmount || Number(data.principalBalance) * dailyRate
+  );
+  const annualRate = Number(data.annualInterestRate) || 10;
 
   const interestText = `Interest accrues at a daily rate of $${dailyAmount.toFixed(
     2
