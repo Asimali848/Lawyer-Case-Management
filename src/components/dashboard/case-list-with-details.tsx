@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useDeleteCalculationMutation } from "@/store/services/calculations";
-import { formatCurrency, formatDate, getCurrentDate } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import { useTransactionColumns } from "@/components/dashboard/transaction-columns";
 import { DataTable } from "@/components/data-table";
 import TransactionSheet from "@/components/dashboard/transaction-sheet";
@@ -71,17 +71,19 @@ const CaseListWithDetails = ({
   }, [cases, selectedCaseId]);
 
   // Transform transactions to Payment format and apply LIFO (Last In First Out) ordering
-  const transactions: Payment[] = (selectedCase?.transactions || [])
-    .map((t) => {
-      const timelineEntry = selectedCase?.timeline?.find((entry: any) => {
-        const entryDate = entry.event_date;
-        const transDate = t.transaction_date;
-        return (
-          entryDate === transDate &&
-          ((entry.event_type === "payment" && t.payment_amount > 0) ||
-            (entry.event_type === "cost" && t.cost_amount > 0))
-        );
-      });
+  const transactions: Payment[] = ((selectedCase as any)?.transactions || [])
+    .map((t: any) => {
+      const timelineEntry = (selectedCase as any)?.timeline?.find(
+        (entry: any) => {
+          const entryDate = entry.event_date;
+          const transDate = t.transaction_date;
+          return (
+            entryDate === transDate &&
+            ((entry.event_type === "payment" && t.payment_amount > 0) ||
+              (entry.event_type === "cost" && t.cost_amount > 0))
+          );
+        }
+      );
 
       return {
         id: t.id,
@@ -105,7 +107,7 @@ const CaseListWithDetails = ({
         _created_at: t.created_at,
       };
     })
-    .sort((a, b) => {
+    .sort((a: any, b: any) => {
       // Sort by transaction_date (descending - most recent first)
       const dateA = a._transaction_date || "";
       const dateB = b._transaction_date || "";
@@ -118,7 +120,7 @@ const CaseListWithDetails = ({
       return createdB.localeCompare(createdA);
     })
     .map(
-      ({ _transaction_date, _created_at, ...transaction }) =>
+      ({ _transaction_date, _created_at, ...transaction }: any) =>
         transaction as Payment
     );
 
@@ -129,8 +131,8 @@ const CaseListWithDetails = ({
   };
 
   const handleEditTransaction = (transaction: Payment) => {
-    const trans = selectedCase?.transactions?.find(
-      (t) => t.id === transaction.id
+    const trans = (selectedCase as any)?.transactions?.find(
+      (t: any) => t.id === transaction.id
     );
     if (trans) {
       setSelectedTransaction(transaction);
@@ -157,7 +159,6 @@ const CaseListWithDetails = ({
       toast.success("Transaction deleted successfully");
       setSelectedTransaction(null);
       setDeleteModalOpen(false);
-      refetchCase();
       window.location.reload();
     } catch (error: any) {
       toast.error(error?.data?.detail || "Failed to delete transaction");
@@ -211,10 +212,6 @@ const CaseListWithDetails = ({
     }
   };
 
-  const handleEditCaseSuccess = () => {
-    refetchCase();
-  };
-
   const transactionColumns = useTransactionColumns({
     onEdit: handleEditTransaction,
     onDelete: handleDeleteTransaction,
@@ -222,11 +219,11 @@ const CaseListWithDetails = ({
 
   const lastTransaction = transactions[transactions.length - 1];
   const lastPaymentDate =
-    lastTransaction?.payment_date || selectedCase?.judgment_date || "";
+    lastTransaction?.payment_date || selectedCase?.judgement_date || "";
 
-  const totalPayments = selectedCase?.principal_reduction || 0;
-  const totalInterest = selectedCase?.total_interest_accrued || 0;
-  const todayPayoff = selectedCase?.total_due || 0;
+  const totalPayments = (selectedCase as any)?.principal_reduction || 0;
+  const totalInterest = (selectedCase as any)?.total_interest_accrued || 0;
+  const todayPayoff = (selectedCase as any)?.total_due || 0;
 
   return (
     <>
@@ -349,9 +346,7 @@ const CaseListWithDetails = ({
                         Case Number
                       </div>
                       <div className="font-medium text-sm sm:text-base break-words">
-                        {selectedCase.court_number ||
-                          selectedCase.court_case_number ||
-                          "N/A"}
+                        {selectedCase.court_case_number || "N/A"}
                       </div>
                     </div>
                     <div>
@@ -359,7 +354,7 @@ const CaseListWithDetails = ({
                         Judgment Date
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        {formatDate(selectedCase.judgment_date || "")}
+                        {formatDate(selectedCase.judgement_date || "")}
                       </div>
                     </div>
                     <div>
@@ -367,7 +362,7 @@ const CaseListWithDetails = ({
                         Judgment Amount
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        {formatCurrency(selectedCase.judgment_amount || 0)}
+                        {formatCurrency(selectedCase.judegment_amount || 0)}
                       </div>
                     </div>
                     <div>
@@ -375,8 +370,10 @@ const CaseListWithDetails = ({
                         Daily Interest
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        {selectedCase.daily_interest
-                          ? `$${Number(selectedCase.daily_interest).toFixed(4)}`
+                        {(selectedCase as any).daily_interest
+                          ? `$${Number(
+                              (selectedCase as any).daily_interest
+                            ).toFixed(4)}`
                           : "N/A"}
                       </div>
                     </div>
@@ -401,7 +398,9 @@ const CaseListWithDetails = ({
                         Interest Accrued
                       </div>
                       <div className="font-medium text-sm sm:text-base">
-                        {formatCurrency(selectedCase.interest_accrued || 0)}
+                        {formatCurrency(
+                          (selectedCase as any).interest_accrued || 0
+                        )}
                       </div>
                     </div>
                     <div>
@@ -501,8 +500,8 @@ const CaseListWithDetails = ({
           caseName={selectedCase?.case_name}
           transaction={
             selectedTransaction
-              ? selectedCase?.transactions?.find(
-                  (t) => t.id === selectedTransaction.id
+              ? (selectedCase as any)?.transactions?.find(
+                  (t: any) => t.id === selectedTransaction.id
                 )
               : undefined
           }
@@ -523,8 +522,7 @@ const CaseListWithDetails = ({
         <EditCaseDialog
           open={editCaseOpen}
           setOpen={setEditCaseOpen}
-          caseData={selectedCase}
-          onSuccess={handleEditCaseSuccess}
+          caseData={selectedCase as any}
         />
       )}
 

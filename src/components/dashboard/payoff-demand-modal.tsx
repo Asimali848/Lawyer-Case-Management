@@ -41,7 +41,6 @@ const PayoffDemandModal = ({
   setOpen,
   caseId,
   caseName,
-  caseData,
 }: PayoffDemandModalProps) => {
   const [date, setDate] = useState("");
   const [isCalculating, setIsCalculating] = useState(false);

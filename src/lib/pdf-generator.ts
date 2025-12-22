@@ -192,7 +192,6 @@ export async function generatePayoffStatementPDF(
 
   // Judgment details
   const leftColX = margin + 20;
-  const rightColX = pageWidth / 2 + 10;
 
   pdf.setFont("helvetica", "bold");
   pdf.text("Judgment Amount:", leftColX, yPosition);
@@ -263,7 +262,6 @@ export async function generatePayoffStatementPDF(
   const dailyAmount = Number(
     data.dailyInterestAmount || Number(data.principalBalance) * dailyRate
   );
-  const annualRate = Number(data.annualInterestRate) || 10;
 
   const interestText = `Interest accrues at a daily rate of $${dailyAmount.toFixed(
     2
