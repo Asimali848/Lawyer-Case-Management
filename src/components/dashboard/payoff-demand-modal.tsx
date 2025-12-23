@@ -91,9 +91,24 @@ const PayoffDemandModal = ({
       toast.success("Payoff calculated successfully");
     } catch (error: any) {
       console.error("Error calculating payoff:", error);
-      toast.error(
-        error?.data?.detail || "Failed to calculate payoff. Please try again."
-      );
+
+      // Extract error message from validation errors or detail
+      let errorMessage = "Failed to calculate payoff. Please try again.";
+
+      if (error?.data?.detail) {
+        if (typeof error.data.detail === "string") {
+          errorMessage = error.data.detail;
+        } else if (Array.isArray(error.data.detail)) {
+          // Pydantic validation errors
+          errorMessage = error.data.detail
+            .map((err: any) => err.msg || JSON.stringify(err))
+            .join(", ");
+        } else if (typeof error.data.detail === "object") {
+          errorMessage = JSON.stringify(error.data.detail);
+        }
+      }
+
+      toast.error(errorMessage);
       setPayoffData(null);
     } finally {
       setIsCalculating(false);
