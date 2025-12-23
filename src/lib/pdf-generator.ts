@@ -95,28 +95,28 @@ export async function generatePayoffStatementPDF(
   pdf.text("Date:", margin, yPosition);
   pdf.setFont("helvetica", "normal");
   pdf.text(formatDate(new Date().toISOString()), margin + 15, yPosition);
-  
+
   // Add profile picture on the right if available
   if (data.profilePictureUrl) {
     try {
       const imgSize = 30; // 30mm square
       const imgX = pageWidth - margin - imgSize;
       const imgY = yPosition - 8; // Align with date section
-      
+
       // Add image (jsPDF supports data URLs and external URLs)
       pdf.addImage(
         data.profilePictureUrl,
-        'JPEG',
+        "JPEG",
         imgX,
         imgY,
         imgSize,
         imgSize
       );
     } catch (error) {
-      console.error('Failed to add profile picture to PDF:', error);
+      console.error("Failed to add profile picture to PDF:", error);
     }
   }
-  
+
   yPosition += 12;
 
   // ===== CREDITOR INFORMATION (Left Column) =====
