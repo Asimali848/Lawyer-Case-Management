@@ -12,6 +12,7 @@ interface TransactionPDFData {
     amount: string;
     accruedInterest: string;
     principalBalance: string;
+    description?: string;
   }>;
 }
 
@@ -116,12 +117,14 @@ export async function generateTransactionPDF(
   // Set default font
   pdf.setFont("helvetica");
 
-  // Add logo text at top left
+  // Add logo text at top center
   pdf.setFontSize(12);
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(16, 185, 129); // Green color for logo
-  pdf.text("JudgmentCalc.com", margin, yPosition);
-  yPosition += 12;
+  const logoText = "JudgmentCalc.com";
+  const logoWidth = pdf.getTextWidth(logoText);
+  pdf.text(logoText, (pageWidth - logoWidth) / 2, yPosition);
+  yPosition += 15;
 
   // Title - "Transaction Summary" - centered and large
   pdf.setFontSize(28);
@@ -130,7 +133,7 @@ export async function generateTransactionPDF(
   const titleText = "Transaction Summary";
   const titleWidth = pdf.getTextWidth(titleText);
   pdf.text(titleText, (pageWidth - titleWidth) / 2, yPosition);
-  yPosition += 20;
+  yPosition += 25;
 
   // Reset color to black for case details
   pdf.setTextColor(0, 0, 0);
@@ -163,20 +166,22 @@ export async function generateTransactionPDF(
 
   // Table setup
   const tableStartY = yPosition;
-  const colWidths = [30, 30, 35, 45, 45]; // Date, Type, Amount, Accrued Interest, Principal Balance
+  const colWidths = [25, 22, 28, 35, 35, 40]; // Date, Type, Amount, Accrued Interest, Principal Balance, Description
   const colX = [
     margin,
     margin + colWidths[0],
     margin + colWidths[0] + colWidths[1],
     margin + colWidths[0] + colWidths[1] + colWidths[2],
     margin + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3],
+    margin + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4],
   ];
 
   const rowHeight = 10;
+  const tableWidth = colWidths.reduce((sum, width) => sum + width, 0);
 
   // Table header background (light blue/gray)
   pdf.setFillColor(224, 242, 254); // Light blue
-  pdf.rect(margin, tableStartY, pageWidth - 2 * margin, rowHeight, "F");
+  pdf.rect(margin, tableStartY, tableWidth, rowHeight, "F");
 
   // Table header text
   pdf.setFontSize(10);
@@ -190,6 +195,7 @@ export async function generateTransactionPDF(
   pdf.text("Interest", colX[3] + 2, tableStartY + 7 + 3.5);
   pdf.text("Principal", colX[4] + 2, tableStartY + 7);
   pdf.text("Balance", colX[4] + 2, tableStartY + 7 + 3.5);
+  pdf.text("Description", colX[5] + 2, tableStartY + 7);
 
   yPosition = tableStartY + rowHeight;
 
@@ -197,16 +203,16 @@ export async function generateTransactionPDF(
   pdf.setDrawColor(200, 200, 200); // Light gray border
   pdf.setLineWidth(0.1);
 
-  // Horizontal lines
-  pdf.line(margin, tableStartY, pageWidth - margin, tableStartY);
+  // Horizontal lines for header
+  pdf.line(margin, tableStartY, margin + tableWidth, tableStartY);
   pdf.line(
     margin,
     tableStartY + rowHeight,
-    pageWidth - margin,
+    margin + tableWidth,
     tableStartY + rowHeight
   );
 
-  // Vertical lines
+  // Vertical lines for header
   for (let i = 0; i <= colWidths.length; i++) {
     const x = i === 0 ? margin : colX[i - 1] + colWidths[i - 1];
     pdf.line(x, tableStartY, x, tableStartY + rowHeight);
@@ -220,7 +226,7 @@ export async function generateTransactionPDF(
     // Alternate row background
     if (data.transactions.indexOf(transaction) % 2 === 0) {
       pdf.setFillColor(249, 250, 251); // Very light gray
-      pdf.rect(margin, yPosition, pageWidth - 2 * margin, rowHeight, "F");
+      pdf.rect(margin, yPosition, tableWidth, rowHeight, "F");
     }
 
     // Row data
@@ -238,12 +244,17 @@ export async function generateTransactionPDF(
       colX[4] + 2,
       yPosition + 7
     );
+    // Add description with text wrapping if needed
+    const description = transaction.description || "N/A";
+    const maxDescWidth = colWidths[5] - 4;
+    const descLines = pdf.splitTextToSize(description, maxDescWidth);
+    pdf.text(descLines[0] || "N/A", colX[5] + 2, yPosition + 7);
 
-    // Draw row border
+    // Draw row border (horizontal line)
     pdf.line(
       margin,
       yPosition + rowHeight,
-      pageWidth - margin,
+      margin + tableWidth,
       yPosition + rowHeight
     );
 
@@ -257,7 +268,7 @@ export async function generateTransactionPDF(
   });
 
   // Footer
-  yPosition += 15;
+  yPosition += 20;
   pdf.setFontSize(9);
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(100, 100, 100); // Gray color
@@ -284,6 +295,7 @@ export function createTransactionPDFData(
     payment_amount: string;
     accrued_interest: string;
     principal_balance: string;
+    description?: string;
   }>
 ): TransactionPDFData {
   return {
@@ -297,6 +309,7 @@ export function createTransactionPDFData(
       amount: t.payment_amount,
       accruedInterest: t.accrued_interest,
       principalBalance: t.principal_balance,
+      description: t.description,
     })),
   };
 }

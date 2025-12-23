@@ -148,11 +148,11 @@ const PayoffDemandModal = ({
   const principalBalanceNum = Number(payoffData?.principal_balance) || 0;
   const accruedInterestNum = Number(payoffData?.accrued_interest) || 0;
   const totalPayoff = Number(payoffData?.total_payoff) || 0;
-  const dailyInterestAmount = Number(payoffData?.daily_interest_amount) || 0;
+  // const dailyInterestAmount = Number(payoffData?.daily_interest_amount) || 0;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full max-w-screen-2xl max-h-[90vh] overflow-y-auto p-7 ">
         <DialogHeader>
           <DialogTitle>Payoff Demand - {caseName || "Case"}</DialogTitle>
           <DialogDescription>
@@ -183,21 +183,6 @@ const PayoffDemandModal = ({
                 />
                 <Calendar className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-3 size-4 text-muted-foreground" />
               </div>
-              <Button
-                onClick={handleCalculatePayoff}
-                disabled={isCalculating || !date}
-                variant="outline"
-                size="default"
-              >
-                {isCalculating ? (
-                  <>
-                    <Loader2 className="mr-2 size-4 animate-spin" />
-                    Calc
-                  </>
-                ) : (
-                  "Calculate"
-                )}
-              </Button>
             </div>
             <p className="text-muted-foreground text-xs">
               Interest will be calculated up to and including this date
@@ -215,8 +200,7 @@ const PayoffDemandModal = ({
 
           {payoffData && !isCalculating && (
             <div
-              className="flex flex-col gap-3 rounded-lg border p-4 cursor-pointer hover:bg-accent/50 transition-colors"
-              onClick={handleDownload}
+              className="flex flex-col gap-3 rounded-lg border p-4 bg-accent/50 transition-colors"
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
@@ -227,7 +211,6 @@ const PayoffDemandModal = ({
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-base">Payoff Summary</h3>
-                <Download className="size-5 text-green-600" />
               </div>
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
@@ -258,17 +241,6 @@ const PayoffDemandModal = ({
                     ${totalPayoff.toFixed(2)}
                   </span>
                 </div>
-                <div className="mt-3 rounded-md bg-blue-50 p-3">
-                  <p className="text-blue-900 text-sm">
-                    <strong>Daily Interest:</strong> $
-                    {dailyInterestAmount.toFixed(4)} per day after{" "}
-                    {new Date(date).toLocaleDateString()}
-                  </p>
-                  <p className="mt-1 text-blue-700 text-xs">
-                    Interest will continue to accrue at this rate until paid in
-                    full.
-                  </p>
-                </div>
                 {payoffData.transactions_included &&
                   payoffData.transactions_included.length > 0 && (
                     <div className="mt-2 text-muted-foreground text-xs">
@@ -280,8 +252,9 @@ const PayoffDemandModal = ({
                     </div>
                   )}
               </div>
-              <div className="mt-2 text-center text-green-600 text-sm font-medium">
-                Click here to download PDF statement
+              <div className="mt-2 flex items-center justify-center gap-2 text-center text-primary text-sm font-medium border p-3 rounded-lg cursor-pointer hover:bg-primary hover:text-white" onClick={handleDownload}>
+                Click here to download PDF
+                <Download className="size-5 shrink-0 " />
               </div>
             </div>
           )}
@@ -291,7 +264,7 @@ const PayoffDemandModal = ({
             <Button
               onClick={handleCalculatePayoff}
               disabled={isCalculating || !date}
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-primary hover:bg-primary/80"
             >
               {isCalculating ? (
                 <>
@@ -299,7 +272,7 @@ const PayoffDemandModal = ({
                   Calculating...
                 </>
               ) : (
-                "OK - Calculate Payoff"
+                "Calculate Payoff"
               )}
             </Button>
           </DialogFooter>

@@ -270,7 +270,7 @@ const CaseListWithDetails = ({
                     </div>
                     <div className="text-xs sm:text-sm font-medium text-muted-foreground">
                       Payoff Amount:{" "}
-                      <span className="text-green-600">
+                      <span className="text-primary">
                         {formatCurrency(caseItem.today_payoff)}
                       </span>
                     </div>
@@ -314,10 +314,10 @@ const CaseListWithDetails = ({
                         <Pencil className="mr-2 size-4" />
                         Edit Case
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handlePrintCase}>
+                      {/* <DropdownMenuItem onClick={handlePrintCase}>
                         <Printer className="mr-2 size-4" />
                         Print Case
-                      </DropdownMenuItem>
+                      </DropdownMenuItem> */}
                       <DropdownMenuItem
                         onClick={() => setDeleteCaseOpen(true)}
                         className="text-destructive focus:text-destructive"
@@ -329,7 +329,7 @@ const CaseListWithDetails = ({
                   </DropdownMenu>
                 </CardHeader>
                 <CardContent className="space-y-3 sm:space-y-4 h-full px-4 sm:px-6 overflow-y-auto">
-                  <div className="text-xl sm:text-2xl font-semibold text-green-600 mb-3 sm:mb-4 break-words">
+                  <div className="text-xl sm:text-2xl font-semibold text-primary mb-3 sm:mb-4 break-words">
                     {selectedCase.case_name || "N/A"}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -346,7 +346,7 @@ const CaseListWithDetails = ({
                         Case Number
                       </div>
                       <div className="font-medium text-sm sm:text-base break-words">
-                        {selectedCase.court_number || "N/A"}
+                        {selectedCase.court_case_number || "N/A"}
                       </div>
                     </div>
                     <div>
@@ -415,7 +415,7 @@ const CaseListWithDetails = ({
                       <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                         Today's Payoff
                       </div>
-                      <div className="text-lg sm:text-xl font-semibold text-green-600">
+                      <div className="text-lg sm:text-xl font-semibold text-primary">
                         {formatCurrency(todayPayoff)}
                       </div>
                     </div>
@@ -445,7 +445,7 @@ const CaseListWithDetails = ({
               <CardTitle className="text-base sm:text-lg font-semibold">
                 Recent Transactions
               </CardTitle>
-              <div className="text-xs sm:text-sm text-green-600 font-medium mt-1 break-words">
+              <div className="text-xs sm:text-sm text-primary font-medium mt-1 break-words">
                 {selectedCase?.case_name || "N/A"}
               </div>
             </div>
@@ -454,7 +454,7 @@ const CaseListWithDetails = ({
                 variant="default"
                 size="sm"
                 onClick={() => setPayoffDemandOpen(true)}
-                className="bg-green-600 hover:bg-green-700 text-white flex-1 sm:flex-none"
+                className="bg-primary hover:bg-primary/90 text-white flex-1 sm:flex-none"
               >
                 <FileText className="size-4 mr-1" />
                 Payoff Demand
