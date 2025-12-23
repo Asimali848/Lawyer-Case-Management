@@ -1,6 +1,6 @@
 import { CreditCardIcon, HomeIcon, LogOutIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Logo from "@/assets/img/logo.png";
@@ -21,6 +21,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [open, setOpen] = useState<boolean>(false);
+  const user = useSelector((state: { global: GlobalState }) => state.global?.user);
 
   const Profile = () => {
     navigate("/profile");
@@ -42,6 +43,27 @@ const Navbar = () => {
     toast.success("Logged out successfully!");
   };
 
+  const getInitials = () => {
+    if (user?.first_name && user?.last_name) {
+      return `${user.first_name[0]}${user.last_name[0]}`.toUpperCase();
+    }
+    if (user?.name) {
+      const parts = user.name.split(" ");
+      if (parts.length >= 2) {
+        return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+      }
+      return user.name[0].toUpperCase();
+    }
+    return "U";
+  };
+
+  const getAvatarUrl = () => {
+    if (user?.profile_picture_url) {
+      return `${user.profile_picture_url}?tr=w-50,h-50,fo-face,r-max`;
+    }
+    return null;
+  };
+
   return (
     <>
       <nav className="fixed top-0 z-[2] h-16 w-full border-b backdrop-blur">
@@ -49,7 +71,7 @@ const Navbar = () => {
           <img
             src={Logo}
             alt="logo"
-            className="h-full rounded-md dark:bg-white dark:px-1"
+            className="h-full rounded-md dark:bg-white dark:px-1 cursor-pointer"
             onClick={() => navigate("/dashboard")}
           />
           <div className="flex items-center justify-center gap-2.5">
@@ -58,8 +80,12 @@ const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="icon" className="rounded-full">
                     <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" />
-                      <AvatarFallback>CN</AvatarFallback>
+                      {getAvatarUrl() ? (
+                        <AvatarImage src={getAvatarUrl()!} alt="Profile" className="object-cover" />
+                      ) : null}
+                      <AvatarFallback className="bg-primary/40 text-white font-semibold">
+                        {getInitials()}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>

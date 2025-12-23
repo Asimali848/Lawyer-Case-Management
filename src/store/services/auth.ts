@@ -99,6 +99,37 @@ export const endpoints = api.injectEndpoints({
         }
       },
     }),
+    uploadProfilePicture: build.mutation<UserResponse, FormData>({
+      query: (formData) => ({
+        url: "/api/auth/profile/picture",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["user"],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setUser(data));
+        } catch (error) {
+          console.error("Failed to upload profile picture:", error);
+        }
+      },
+    }),
+    deleteProfilePicture: build.mutation<UserResponse, void>({
+      query: () => ({
+        url: "/api/auth/profile/picture",
+        method: "DELETE",
+      }),
+      invalidatesTags: ["user"],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setUser(data));
+        } catch (error) {
+          console.error("Failed to delete profile picture:", error);
+        }
+      },
+    }),
   }),
 });
 
@@ -112,4 +143,6 @@ export const {
   useResetPasswordMutation,
   useGetCurrentUserQuery,
   useUpdateProfileMutation,
+  useUploadProfilePictureMutation,
+  useDeleteProfilePictureMutation,
 } = endpoints;

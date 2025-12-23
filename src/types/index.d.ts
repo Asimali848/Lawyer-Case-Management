@@ -22,6 +22,8 @@ declare type User = {
   state?: string;
   zipcode?: string;
   website?: string;
+  profile_picture_url?: string | null;
+  profile_picture_id?: string | null;
   is_active?: boolean;
   is_admin?: boolean;
   is_verified?: boolean;

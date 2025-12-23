@@ -61,6 +61,7 @@ const Profile = () => {
               firstName={profileData.firstName}
               lastName={profileData.lastName}
               email={profileData.email}
+              profilePictureUrl={userData.profile_picture_url}
             />
             <AccountDetailsCard
               memberSince={memberSince}
