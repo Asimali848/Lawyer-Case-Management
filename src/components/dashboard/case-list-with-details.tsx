@@ -337,7 +337,7 @@ const CaseListWithDetails = ({
                         Case Number
                       </div>
                       <div className="font-medium text-sm sm:text-base break-words">
-                        {selectedCase.court_number || "N/A"}
+                        {selectedCase.court_case_number || "N/A"}
                       </div>
                     </div>
                     <div>
