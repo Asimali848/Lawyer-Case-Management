@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useGetPayoffDemandMutation } from "@/store/services/calculations";
-import { generatePayoffStatementPDF } from "@/lib/pdf-generator";
+import { downloadPayoffStatementPDF } from "@/lib/api";
 import { toast } from "sonner";
 
 interface PayoffDemandModalProps {
@@ -103,38 +103,16 @@ const PayoffDemandModal = ({
   // Don't auto-calculate anymore - user will click OK button
 
   const handleDownload = async () => {
-    if (!payoffData) {
+    if (!payoffData || !caseId) {
       toast.error("Please wait for payoff calculation to complete");
       return;
     }
 
     try {
-      console.log("Generating PDF with payoff data:", payoffData);
+      console.log("Downloading PDF with payoff data:", payoffData);
+      toast.info("Generating PDF...");
 
-      await generatePayoffStatementPDF({
-        caseName: payoffData.case_name || caseName || "Case",
-        caseId: payoffData.case_id,
-        payoffDate: payoffData.payoff_date,
-        principalBalance: payoffData.principal_balance,
-        accruedInterest: payoffData.accrued_interest,
-        totalPayoff: payoffData.total_payoff,
-        courtName: payoffData.court_name,
-        caseNumber: payoffData.court_case_number,
-        judgmentAmount: payoffData.judgment_amount,
-        judgmentDate: payoffData.judgment_date,
-        clientName: payoffData.client_name,
-        firmName: payoffData.firm_name,
-        lawyerName: payoffData.lawyer_name,
-        streetAddress: payoffData.street_address,
-        city: payoffData.city,
-        state: payoffData.state,
-        zipcode: payoffData.zipcode,
-        lawyerPhone: payoffData.lawyer_phone,
-        lawyerEmail: payoffData.lawyer_email,
-        dailyInterestRate: payoffData.daily_interest_rate,
-        dailyInterestAmount: payoffData.daily_interest_amount,
-        annualInterestRate: payoffData.annual_interest_rate,
-      });
+      await downloadPayoffStatementPDF(caseId, payoffData.payoff_date);
 
       toast.success("Payoff statement downloaded successfully");
       setOpen(false);

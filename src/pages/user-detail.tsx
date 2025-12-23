@@ -28,10 +28,7 @@ import {
 } from "@/store/services/calculations";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import {
-  generateTransactionPDF,
-  createTransactionPDFData,
-} from "@/lib/transaction-pdf-generator";
+import { downloadTransactionsPDF } from "@/lib/api";
 
 const UserDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -169,17 +166,16 @@ const UserDetail = () => {
     }
   };
 
-  // Print handler - Using NEW PDF Generator v2.0
+  // Print handler - Using backend PDF generation
   const handlePrintTransactions = async () => {
     try {
-      if (!calculation || !transactions || transactions.length === 0) {
-        toast.error("No transactions available to print");
+      if (!calculation || !id) {
+        toast.error("No calculation data available");
         return;
       }
 
-      console.log("Using NEW Transaction PDF Generator v2.0");
-      const pdfData = createTransactionPDFData(calculation, transactions);
-      await generateTransactionPDF(pdfData);
+      toast.info("Generating PDF...");
+      await downloadTransactionsPDF(id);
       toast.success("Transaction summary PDF downloaded successfully!");
     } catch (error) {
       console.error("Error generating PDF:", error);
