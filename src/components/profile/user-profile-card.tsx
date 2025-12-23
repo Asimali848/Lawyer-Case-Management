@@ -4,7 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useUploadProfilePictureMutation, useDeleteProfilePictureMutation } from "@/store/services/auth";
+import {
+  useUploadProfilePictureMutation,
+  useDeleteProfilePictureMutation,
+} from "@/store/services/auth";
 
 interface UserProfileCardProps {
   firstName: string;
@@ -13,7 +16,12 @@ interface UserProfileCardProps {
   profilePictureUrl?: string | null;
 }
 
-const UserProfileCard = ({ firstName, lastName, email, profilePictureUrl }: UserProfileCardProps) => {
+const UserProfileCard = ({
+  firstName,
+  lastName,
+  email,
+  profilePictureUrl,
+}: UserProfileCardProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProfilePicture] = useUploadProfilePictureMutation();
@@ -34,7 +42,13 @@ const UserProfileCard = ({ firstName, lastName, email, profilePictureUrl }: User
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
     if (!allowedTypes.includes(file.type)) {
       toast.error("Please select a valid image file (JPG, PNG, GIF, or WebP)");
       return;
@@ -99,14 +113,18 @@ const UserProfileCard = ({ firstName, lastName, email, profilePictureUrl }: User
             onClick={handleAvatarClick}
           >
             {getThumbnailUrl() ? (
-              <AvatarImage src={getThumbnailUrl()!} alt="Profile" className="object-cover" />
+              <AvatarImage
+                src={getThumbnailUrl()!}
+                alt="Profile"
+                className="object-cover"
+              />
             ) : null}
             <AvatarFallback className="bg-primary/40 text-2xl font-bold text-white shrink-0 object-cover">
               {getInitials()}
             </AvatarFallback>
           </Avatar>
-          <div 
-            className="absolute bottom-2.5 right-1 flex size-8 items-center justify-center rounded-full bg-primary text-white cursor-pointer hover:bg-primary/90 transition-colors"  
+          <div
+            className="absolute bottom-2.5 right-1 flex size-8 items-center justify-center rounded-full bg-primary text-white cursor-pointer hover:bg-primary/90 transition-colors"
             onClick={handleAvatarClick}
           >
             {isUploading ? (
