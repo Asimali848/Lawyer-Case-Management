@@ -222,3 +222,63 @@ export const downloadPayoffStatementPDF = async (
     throw error;
   }
 };
+
+/**
+ * Download payoff demand letter DOCX from backend
+ */
+export const downloadPayoffDemandDocx = async (
+  calculationId: string,
+  payoffDate: string
+): Promise<void> => {
+  const token = getAuthToken();
+
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/calc/payoff-demand-docx`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          calculation_id: calculationId,
+          payoff_date: payoffDate,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to generate DOCX: ${response.statusText}`);
+    }
+
+    // Get filename from Content-Disposition header
+    const contentDisposition = response.headers.get("Content-Disposition");
+    let filename = "Payoff_Demand.docx";
+
+    if (contentDisposition) {
+      const filenameMatch = contentDisposition.match(/filename=(.+)/);
+      if (filenameMatch) {
+        filename = filenameMatch[1].replace(/['"]/g, "");
+      }
+    }
+
+    // Download the DOCX
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  } catch (error) {
+    console.error("Error downloading payoff demand DOCX:", error);
+    throw error;
+  }
+};

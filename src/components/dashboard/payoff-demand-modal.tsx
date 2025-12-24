@@ -1,4 +1,4 @@
-import { Calendar, Download, Loader2 } from "lucide-react";
+import { Calendar, Download, Loader2, FileText } from "lucide-react";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useGetPayoffDemandMutation } from "@/store/services/calculations";
-import { downloadPayoffStatementPDF } from "@/lib/api";
+import {
+  downloadPayoffStatementPDF,
+  downloadPayoffDemandDocx,
+} from "@/lib/api";
 import { toast } from "sonner";
 
 interface PayoffDemandModalProps {
@@ -137,6 +140,23 @@ const PayoffDemandModal = ({
     }
   };
 
+  const handleDownloadWord = async () => {
+    if (!payoffData || !caseId) {
+      toast.error("Please wait for payoff calculation to complete");
+      return;
+    }
+
+    try {
+      toast.info("Generating Word document...");
+      await downloadPayoffDemandDocx(caseId, payoffData.payoff_date);
+      toast.success("Payoff demand letter downloaded successfully");
+      setOpen(false);
+    } catch (error) {
+      console.error("Error generating DOCX:", error);
+      toast.error("Error generating payoff demand letter. Please try again.");
+    }
+  };
+
   // Calculate display values - convert strings to numbers
   const principalBalanceNum = Number(payoffData?.principal_balance) || 0;
   const accruedInterestNum = Number(payoffData?.accrued_interest) || 0;
@@ -207,20 +227,9 @@ const PayoffDemandModal = ({
           )}
 
           {payoffData && !isCalculating && (
-            <div
-              className="flex flex-col gap-3 rounded-lg border p-4 cursor-pointer hover:bg-accent/50 transition-colors"
-              onClick={handleDownload}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  handleDownload();
-                }
-              }}
-            >
+            <div className="flex flex-col gap-3 rounded-lg border p-4 bg-accent/50">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-base">Payoff Summary</h3>
-                <Download className="size-5 text-green-600" />
               </div>
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
@@ -273,8 +282,23 @@ const PayoffDemandModal = ({
                     </div>
                   )}
               </div>
-              <div className="mt-2 text-center text-green-600 text-sm font-medium">
-                Click here to download PDF statement
+              <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <Button
+                  onClick={handleDownload}
+                  className="flex items-center justify-center gap-2"
+                  variant="outline"
+                >
+                  <Download className="size-4" />
+                  Download PDF Statement
+                </Button>
+                <Button
+                  onClick={handleDownloadWord}
+                  className="flex items-center justify-center gap-2"
+                  variant="default"
+                >
+                  <FileText className="size-4" />
+                  Download Demand Letter
+                </Button>
               </div>
             </div>
           )}
