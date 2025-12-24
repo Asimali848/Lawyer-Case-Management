@@ -23,6 +23,7 @@ interface PayoffStatementData {
   dailyInterestRate?: number;
   dailyInterestAmount?: number;
   annualInterestRate?: number;
+  profilePictureUrl?: string | null;
 }
 
 /**
@@ -87,13 +88,35 @@ export async function generatePayoffStatementPDF(
   pdf.line(margin, yPosition, pageWidth - margin, yPosition);
   yPosition += 12;
 
-  // ===== DATE =====
+  // ===== DATE AND PROFILE PICTURE =====
   pdf.setFontSize(11);
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(0, 0, 0);
   pdf.text("Date:", margin, yPosition);
   pdf.setFont("helvetica", "normal");
   pdf.text(formatDate(new Date().toISOString()), margin + 15, yPosition);
+
+  // Add profile picture on the right if available
+  if (data.profilePictureUrl) {
+    try {
+      const imgSize = 30; // 30mm square
+      const imgX = pageWidth - margin - imgSize;
+      const imgY = yPosition - 8; // Align with date section
+
+      // Add image (jsPDF supports data URLs and external URLs)
+      pdf.addImage(
+        data.profilePictureUrl,
+        "JPEG",
+        imgX,
+        imgY,
+        imgSize,
+        imgSize
+      );
+    } catch (error) {
+      console.error("Failed to add profile picture to PDF:", error);
+    }
+  }
+
   yPosition += 12;
 
   // ===== CREDITOR INFORMATION (Left Column) =====

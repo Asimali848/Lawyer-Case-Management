@@ -27,10 +27,7 @@ import EditCaseDialog from "@/components/dashboard/edit-case-dialog";
 import WarningModal from "@/components/warning-modal";
 import PayoffDemandModal from "@/components/dashboard/payoff-demand-modal";
 import { toast } from "sonner";
-import {
-  generateTransactionPDF,
-  createTransactionPDFData,
-} from "@/lib/transaction-pdf-generator";
+import { downloadTransactionsPDF } from "@/lib/api";
 
 interface CaseListWithDetailsProps {
   cases: CaseGet[];
@@ -191,20 +188,14 @@ const CaseListWithDetails = ({
   };
 
   const handlePrintCase = async () => {
-    if (!selectedCase) {
-      toast.error("No case selected to print"); 
-      return;
-    }
-
-    if (transactions.length === 0) {
-      toast.warning("No transactions to print for this case");
+    if (!selectedCase || !selectedCaseId) {
+      toast.error("No case selected to print");
       return;
     }
 
     try {
-      console.log("Using NEW Transaction PDF Generator v2.0");
-      const pdfData = createTransactionPDFData(selectedCase, transactions);
-      await generateTransactionPDF(pdfData);
+      toast.info("Generating PDF...");
+      await downloadTransactionsPDF(selectedCaseId);
       toast.success("Transaction summary PDF downloaded successfully!");
     } catch (error) {
       console.error("Print error:", error);
