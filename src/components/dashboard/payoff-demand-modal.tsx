@@ -1,4 +1,4 @@
-import { Calendar, Download, Loader2 } from "lucide-react";
+import { Calendar, Download, Loader2, FileText } from "lucide-react";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useGetPayoffDemandMutation } from "@/store/services/calculations";
 import { downloadPayoffStatementPDF } from "@/lib/api";
+import { generatePayoffDoc } from "@/lib/payoff-doc-generator";
 import { toast } from "sonner";
 
 interface PayoffDemandModalProps {
@@ -137,6 +138,22 @@ const PayoffDemandModal = ({
     }
   };
 
+  const handleDownloadWord = async () => {
+    if (!payoffData || !caseId) {
+      toast.error("Please wait for payoff calculation to complete");
+      return;
+    }
+
+    try {
+      toast.info("Generating Word document...");
+      await generatePayoffDoc(payoffData);
+      toast.success("Payoff statement Word document generated successfully");
+    } catch (error) {
+      console.error("Error generating Word document:", error);
+      toast.error("Error generating payoff statement Word document. Please try again.");
+    }
+  };
+
   // Calculate display values - convert strings to numbers
   const principalBalanceNum = Number(payoffData?.principal_balance) || 0;
   const accruedInterestNum = Number(payoffData?.accrued_interest) || 0;
@@ -245,9 +262,21 @@ const PayoffDemandModal = ({
                     </div>
                   )}
               </div>
-              <div className="mt-2 flex items-center justify-center gap-2 text-center text-primary text-sm font-medium border p-3 rounded-lg cursor-pointer hover:bg-primary hover:text-white" onClick={handleDownload}>
-                Click here to download PDF
-                <Download className="size-5 shrink-0 " />
+              <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div
+                  className="flex items-center justify-center gap-2 text-center text-primary text-sm font-medium border p-3 rounded-lg cursor-pointer hover:bg-primary hover:text-white transition-colors"
+                  onClick={handleDownload}
+                >
+                  Download PDF
+                  <Download className="size-5 shrink-0 " />
+                </div>
+                <div
+                  className="flex items-center justify-center gap-2 text-center text-primary text-sm font-medium border p-3 rounded-lg cursor-pointer hover:bg-primary hover:text-white transition-colors"
+                  onClick={handleDownloadWord}
+                >
+                  Download Word
+                  <FileText className="size-5 shrink-0 " />
+                </div>
               </div>
             </div>
           )}

@@ -166,7 +166,7 @@ export async function generateTransactionPDF(
 
   // Table setup
   const tableStartY = yPosition;
-  const colWidths = [25, 22, 28, 35, 35, 40]; // Date, Type, Amount, Accrued Interest, Principal Balance, Description
+  const colWidths = [22, 20, 25, 28, 28, 47]; // Date, Type, Amount, Accrued Interest, Principal Balance, Description
   const colX = [
     margin,
     margin + colWidths[0],
@@ -176,28 +176,33 @@ export async function generateTransactionPDF(
     margin + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4],
   ];
 
-  const rowHeight = 10;
+  const headerRowHeight = 15;
   const tableWidth = colWidths.reduce((sum, width) => sum + width, 0);
 
   // Table header background (light blue/gray)
   pdf.setFillColor(224, 242, 254); // Light blue
-  pdf.rect(margin, tableStartY, tableWidth, rowHeight, "F");
+  pdf.rect(margin, tableStartY, tableWidth, headerRowHeight, "F");
 
   // Table header text
-  pdf.setFontSize(10);
+  pdf.setFontSize(9);
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(0, 0, 0);
 
-  pdf.text("Date", colX[0] + 2, tableStartY + 7);
-  pdf.text("Type", colX[1] + 2, tableStartY + 7);
-  pdf.text("Amount", colX[2] + 2, tableStartY + 7);
-  pdf.text("Accrued", colX[3] + 2, tableStartY + 7);
-  pdf.text("Interest", colX[3] + 2, tableStartY + 7 + 3.5);
-  pdf.text("Principal", colX[4] + 2, tableStartY + 7);
-  pdf.text("Balance", colX[4] + 2, tableStartY + 7 + 3.5);
-  pdf.text("Description", colX[5] + 2, tableStartY + 7);
+  const headerY = tableStartY + 6;
+  pdf.text("Date", colX[0] + 2, headerY + 3);
+  pdf.text("Type", colX[1] + 2, headerY + 3);
+  pdf.text("Amount", colX[2] + 2, headerY + 3);
 
-  yPosition = tableStartY + rowHeight;
+  // Stacked headers
+  pdf.text("Accrued", colX[3] + 2, headerY + 1);
+  pdf.text("Interest", colX[3] + 2, headerY + 5);
+
+  pdf.text("Principal", colX[4] + 2, headerY + 1);
+  pdf.text("Balance", colX[4] + 2, headerY + 5);
+
+  pdf.text("Description", colX[5] + 2, headerY + 3);
+
+  yPosition = tableStartY + headerRowHeight;
 
   // Draw table borders
   pdf.setDrawColor(200, 200, 200); // Light gray border
@@ -207,48 +212,87 @@ export async function generateTransactionPDF(
   pdf.line(margin, tableStartY, margin + tableWidth, tableStartY);
   pdf.line(
     margin,
-    tableStartY + rowHeight,
+    tableStartY + headerRowHeight,
     margin + tableWidth,
-    tableStartY + rowHeight
+    tableStartY + headerRowHeight
   );
 
   // Vertical lines for header
   for (let i = 0; i <= colWidths.length; i++) {
     const x = i === 0 ? margin : colX[i - 1] + colWidths[i - 1];
-    pdf.line(x, tableStartY, x, tableStartY + rowHeight);
+    pdf.line(x, tableStartY, x, tableStartY + headerRowHeight);
   }
 
   // Table rows
   pdf.setFont("helvetica", "normal");
   pdf.setFontSize(10);
 
-  data.transactions.forEach((transaction) => {
+  data.transactions.forEach((transaction, index) => {
+    // Calculate required row height based on description
+    const description = transaction.description || "N/A";
+    const maxDescWidth = colWidths[5] - 4;
+    const descLines = pdf.splitTextToSize(description, maxDescWidth);
+    const rowHeight = Math.max(10, descLines.length * 5 + 2);
+
+    // Check for page break
+    if (yPosition + rowHeight > 270) {
+      pdf.addPage();
+      yPosition = 20;
+
+      // Redraw header on new page
+      pdf.setFillColor(224, 242, 254);
+      pdf.rect(margin, yPosition, tableWidth, headerRowHeight, "F");
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(9);
+      const newHeaderY = yPosition + 5;
+      pdf.text("Date", colX[0] + 2, newHeaderY + 2);
+      pdf.text("Type", colX[1] + 2, newHeaderY + 2);
+      pdf.text("Amount", colX[2] + 2, newHeaderY + 2);
+      pdf.text("Accrued", colX[3] + 2, newHeaderY);
+      pdf.text("Interest", colX[3] + 2, newHeaderY + 4);
+      pdf.text("Principal", colX[4] + 2, newHeaderY);
+      pdf.text("Balance", colX[4] + 2, newHeaderY + 4);
+      pdf.text("Description", colX[5] + 2, newHeaderY + 2);
+
+      pdf.setDrawColor(200, 200, 200);
+      pdf.line(margin, yPosition, margin + tableWidth, yPosition);
+      pdf.line(margin, yPosition + headerRowHeight, margin + tableWidth, yPosition + headerRowHeight);
+      for (let i = 0; i <= colWidths.length; i++) {
+        const x = i === 0 ? margin : colX[i - 1] + colWidths[i - 1];
+        pdf.line(x, yPosition, x, yPosition + headerRowHeight);
+      }
+      yPosition += headerRowHeight;
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+    }
+
     // Alternate row background
-    if (data.transactions.indexOf(transaction) % 2 === 0) {
+    if (index % 2 === 0) {
       pdf.setFillColor(249, 250, 251); // Very light gray
       pdf.rect(margin, yPosition, tableWidth, rowHeight, "F");
     }
 
     // Row data
     pdf.setTextColor(0, 0, 0);
-    pdf.text(formatDateTable(transaction.date), colX[0] + 2, yPosition + 7);
-    pdf.text(transaction.type, colX[1] + 2, yPosition + 7);
-    pdf.text(formatCurrency(transaction.amount), colX[2] + 2, yPosition + 7);
+    const verticalOffset = 7;
+    pdf.text(formatDateTable(transaction.date), colX[0] + 2, yPosition + verticalOffset);
+    pdf.text(transaction.type, colX[1] + 2, yPosition + verticalOffset);
+    pdf.text(formatCurrency(transaction.amount), colX[2] + 2, yPosition + verticalOffset);
     pdf.text(
       formatCurrency(transaction.accruedInterest),
       colX[3] + 2,
-      yPosition + 7
+      yPosition + verticalOffset
     );
     pdf.text(
       formatCurrency(transaction.principalBalance),
       colX[4] + 2,
-      yPosition + 7
+      yPosition + verticalOffset
     );
-    // Add description with text wrapping if needed
-    const description = transaction.description || "N/A";
-    const maxDescWidth = colWidths[5] - 4;
-    const descLines = pdf.splitTextToSize(description, maxDescWidth);
-    pdf.text(descLines[0] || "N/A", colX[5] + 2, yPosition + 7);
+
+    // Add description lines
+    descLines.forEach((line: string, i: number) => {
+      pdf.text(line, colX[5] + 2, yPosition + verticalOffset + (i * 5));
+    });
 
     // Draw row border (horizontal line)
     pdf.line(

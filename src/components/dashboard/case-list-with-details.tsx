@@ -1,11 +1,11 @@
 import {
   RefreshCw,
   MoreVertical,
-  Printer,
   Plus,
   Pencil,
   Trash2,
   FileText,
+  Download,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,11 @@ import EditCaseDialog from "@/components/dashboard/edit-case-dialog";
 import WarningModal from "@/components/warning-modal";
 import PayoffDemandModal from "@/components/dashboard/payoff-demand-modal";
 import { toast } from "sonner";
-import { downloadTransactionsPDF } from "@/lib/api";
+// import { downloadTransactionsPDF } from "@/lib/api";
+import {
+  createTransactionPDFData,
+  generateTransactionPDF
+} from "@/lib/transaction-pdf-generator";
 
 interface CaseListWithDetailsProps {
   cases: CaseGet[];
@@ -187,18 +191,20 @@ const CaseListWithDetails = ({
     }
   };
 
-  const handlePrintCase = async () => {
+
+  const handleDownloadTransactionPDF = async () => {
     if (!selectedCase || !selectedCaseId) {
-      toast.error("No case selected to print");
+      toast.error("No case selected to download PDF");
       return;
     }
 
     try {
-      toast.info("Generating PDF...");
-      await downloadTransactionsPDF(selectedCaseId);
-      toast.success("Transaction summary PDF downloaded successfully!");
+      toast.info("Generating Transaction PDF...");
+      const pdfData = createTransactionPDFData(selectedCase, transactions);
+      await generateTransactionPDF(pdfData);
+      toast.success("Transaction summary PDF generated successfully!");
     } catch (error) {
-      console.error("Print error:", error);
+      console.error("PDF generation error:", error);
       toast.error("Failed to generate PDF. Please try again.");
     }
   };
@@ -247,11 +253,10 @@ const CaseListWithDetails = ({
                   <div
                     key={caseItem.id}
                     onClick={() => handleCaseClick(caseItem.id)}
-                    className={`p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors ${
-                      selectedCaseId === caseItem.id
-                        ? "bg-primary/10 border-green-300"
-                        : ""
-                    }`}
+                    className={`p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors ${selectedCaseId === caseItem.id
+                      ? "bg-primary/10 border-green-300"
+                      : ""
+                      }`}
                   >
                     <div className="font-semibold text-base sm:text-lg mb-1 break-words">
                       {caseItem.case_name}
@@ -363,8 +368,8 @@ const CaseListWithDetails = ({
                       <div className="font-medium text-sm sm:text-base">
                         {(selectedCase as any).daily_interest
                           ? `$${Number(
-                              (selectedCase as any).daily_interest
-                            ).toFixed(4)}`
+                            (selectedCase as any).daily_interest
+                          ).toFixed(4)}`
                           : "N/A"}
                       </div>
                     </div>
@@ -427,9 +432,8 @@ const CaseListWithDetails = ({
 
         {/* Recent Transactions Section */}
         <Card
-          className={`flex-1 flex flex-col overflow-hidden ${
-            selectedCaseId ? "col-span-1 lg:col-span-4" : "hidden"
-          } h-auto lg:h-[500px]`}
+          className={`flex-1 flex flex-col overflow-hidden ${selectedCaseId ? "col-span-1 lg:col-span-4" : "hidden"
+            } h-auto lg:h-[500px]`}
         >
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 px-4 sm:px-6">
             <div className="w-full sm:w-auto">
@@ -444,20 +448,20 @@ const CaseListWithDetails = ({
               <Button
                 variant="default"
                 size="sm"
+                onClick={handleDownloadTransactionPDF}
+                className="bg-primary hover:bg-primary/90 text-white flex-1 sm:flex-none"
+              >
+                <Download className="size-4 mr-1" />
+                Download PDF
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
                 onClick={() => setPayoffDemandOpen(true)}
                 className="bg-primary hover:bg-primary/90 text-white flex-1 sm:flex-none"
               >
                 <FileText className="size-4 mr-1" />
                 Payoff Demand
-              </Button>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={handlePrintCase}
-                className="bg-primary hover:bg-primary/90 text-white flex-1 sm:flex-none"
-              >
-                <Printer className="size-4 mr-1" />
-                Print
               </Button>
             </div>
           </CardHeader>
@@ -492,8 +496,8 @@ const CaseListWithDetails = ({
           transaction={
             selectedTransaction
               ? (selectedCase as any)?.transactions?.find(
-                  (t: any) => t.id === selectedTransaction.id
-                )
+                (t: any) => t.id === selectedTransaction.id
+              )
               : undefined
           }
         />
