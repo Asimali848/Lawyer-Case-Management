@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
-import { Check, Sparkles, Box, Rocket, Tag, X, Loader2 } from "lucide-react";
+import { Box, Check, Loader2, Rocket, Sparkles, Tag, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import {
-  useGetSubscriptionStatusQuery,
-  useGetAvailablePlansQuery,
   useCreateCheckoutSessionMutation,
   useCreatePortalSessionMutation,
+  useGetAvailablePlansQuery,
+  useGetSubscriptionStatusQuery,
 } from "@/store/services/subscription";
 
 type BillingInterval = "monthly" | "yearly";
@@ -17,24 +17,16 @@ const Billing = () => {
   const [couponCode, setCouponCode] = useState("");
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
-  const [billingInterval, setBillingInterval] =
-    useState<BillingInterval>("monthly");
+  const [billingInterval, setBillingInterval] = useState<BillingInterval>("monthly");
 
   // Fetch subscription status
-  const {
-    data: subscriptionStatus,
-    isLoading: isLoadingStatus,
-    refetch,
-  } = useGetSubscriptionStatusQuery();
+  const { data: subscriptionStatus, isLoading: isLoadingStatus, refetch } = useGetSubscriptionStatusQuery();
 
   // Fetch available plans from Stripe
-  const { data: plansData, isLoading: isLoadingPlans } =
-    useGetAvailablePlansQuery();
+  const { data: plansData, isLoading: isLoadingPlans } = useGetAvailablePlansQuery();
 
-  const [createCheckoutSession, { isLoading: isCreatingCheckout }] =
-    useCreateCheckoutSessionMutation();
-  const [createPortalSession, { isLoading: isCreatingPortal }] =
-    useCreatePortalSessionMutation();
+  const [createCheckoutSession, { isLoading: isCreatingCheckout }] = useCreateCheckoutSessionMutation();
+  const [createPortalSession, { isLoading: isCreatingPortal }] = useCreatePortalSessionMutation();
 
   // Check URL for session_id (after successful checkout)
   useEffect(() => {
@@ -61,11 +53,7 @@ const Billing = () => {
   // Calculate savings for yearly plan
   const yearlySavings =
     monthlyPlan && yearlyPlan
-      ? Math.round(
-          ((monthlyPlan.amount * 12 - yearlyPlan.amount) /
-            (monthlyPlan.amount * 12)) *
-            100
-        )
+      ? Math.round(((monthlyPlan.amount * 12 - yearlyPlan.amount) / (monthlyPlan.amount * 12)) * 100)
       : 25;
 
   const plans = [
@@ -76,12 +64,7 @@ const Billing = () => {
       price: "Free",
       priceLabel: "",
       icon: Box,
-      features: [
-        "Basic Support",
-        "No Usage Limit",
-        "2 Week free trial",
-        "No Credit Card Required",
-      ],
+      features: ["Basic Support", "No Usage Limit", "2 Week free trial", "No Credit Card Required"],
       buttonText: isFree ? "Current Plan" : "Downgrade",
       buttonVariant: "default" as const,
       isPopular: false,
@@ -101,20 +84,15 @@ const Billing = () => {
             ? `$${monthlyPlan.amount}`
             : "$20"
           : yearlyPlan
-          ? `$${yearlyPlan.amount}`
-          : "$180",
+            ? `$${yearlyPlan.amount}`
+            : "$180",
       priceLabel: billingInterval === "monthly" ? "/mo" : "/year",
-      priceSubtext:
-        billingInterval === "yearly"
-          ? `Save ${yearlySavings}% with annual billing`
-          : undefined,
+      priceSubtext: billingInterval === "yearly" ? `Save ${yearlySavings}% with annual billing` : undefined,
       icon: Rocket,
       features: [
         "Unlimited Cases",
         billingInterval === "yearly"
-          ? `$${
-              yearlyPlan ? yearlyPlan.amount : 180
-            } Per Year (save ${yearlySavings}%)`
+          ? `$${yearlyPlan ? yearlyPlan.amount : 180} Per Year (save ${yearlySavings}%)`
           : `$${monthlyPlan ? monthlyPlan.amount : 20} Per Month`,
         "Priority Support",
       ],
@@ -126,10 +104,7 @@ const Billing = () => {
       textColor: isPremium ? "text-white" : "text-muted-foreground",
       borderColor: isPremium ? "border-green-600" : "border",
       iconColor: isPremium ? "text-white" : "text-green-600",
-      priceId:
-        billingInterval === "monthly"
-          ? monthlyPlan?.price_id
-          : yearlyPlan?.price_id,
+      priceId: billingInterval === "monthly" ? monthlyPlan?.price_id : yearlyPlan?.price_id,
     },
   ];
 
@@ -159,7 +134,6 @@ const Billing = () => {
         window.location.href = result.url;
       }
     } catch (error: any) {
-      console.error("Failed to create checkout session:", error);
       toast.error(error?.data?.detail || "Failed to start checkout process");
     }
   };
@@ -176,7 +150,6 @@ const Billing = () => {
         window.location.href = result.url;
       }
     } catch (error: any) {
-      console.error("Failed to create portal session:", error);
       toast.error(error?.data?.detail || "Failed to open customer portal");
     }
   };
@@ -222,18 +195,17 @@ const Billing = () => {
             <div className="flex-1 overflow-hidden">
               <div className="relative">
                 <div className="animate-marquee whitespace-nowrap">
-                  <span className="text-sm font-medium sm:text-base flex items-center">
-                    <Sparkles className="size-5 shrink-0 mr-2 text-chart-4 dark:text-chart-3" />{" "}
-                    Good news! Your coupon is still active for 2 more weeks. To
-                    keep adding cases without interruption, activate your paid
-                    plan before it expires. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <span className="flex items-center font-medium text-sm sm:text-base">
+                    <Sparkles className="mr-2 size-5 shrink-0 text-chart-4 dark:text-chart-3" /> Good news! Your coupon
+                    is still active for 2 more weeks. To keep adding cases without interruption, activate your paid plan
+                    before it expires. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   </span>
                 </div>
               </div>
             </div>
             <button
               onClick={() => setShowBanner(false)}
-              className="ml-2 shrink-0 rounded p-1 hover:bg-primary/90 transition-colors z-10"
+              className="z-10 ml-2 shrink-0 rounded p-1 transition-colors hover:bg-primary/90"
               aria-label="Dismiss banner"
             >
               <X className="size-4" />
@@ -243,12 +215,9 @@ const Billing = () => {
 
         {/* Header Section */}
         <div className="mb-5 text-center">
-          <h1 className="mb-2 text-3xl font-bold  sm:text-4xl lg:text-5xl">
-            Choose Your Plan
-          </h1>
+          <h1 className="mb-2 font-bold text-3xl sm:text-4xl lg:text-5xl">Choose Your Plan</h1>
           <p className="text-base text-muted-foreground sm:text-lg">
-            Select the perfect plan for your law firm. Upgrade or downgrade at
-            any time.
+            Select the perfect plan for your law firm. Upgrade or downgrade at any time.
           </p>
         </div>
 
@@ -257,26 +226,20 @@ const Billing = () => {
           <div className="inline-flex rounded-lg border border-border bg-sidebar p-1">
             <button
               onClick={() => setBillingInterval("monthly")}
-              className={`rounded-md px-6 py-2 text-sm font-medium transition-colors ${
-                billingInterval === "monthly"
-                  ? "bg-primary text-white"
-                  : "text-muted-foreground hover:text-foreground"
+              className={`rounded-md px-6 py-2 font-medium text-sm transition-colors ${
+                billingInterval === "monthly" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBillingInterval("yearly")}
-              className={`rounded-md px-6 py-2 text-sm font-medium transition-colors ${
-                billingInterval === "yearly"
-                  ? "bg-primary text-white"
-                  : "text-muted-foreground hover:text-foreground"
+              className={`rounded-md px-6 py-2 font-medium text-sm transition-colors ${
+                billingInterval === "yearly" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Yearly
-              {yearlyPlan && (
-                <span className="ml-2 text-xs">(Save {yearlySavings}%)</span>
-              )}
+              {yearlyPlan && <span className="ml-2 text-xs">(Save {yearlySavings}%)</span>}
             </button>
           </div>
         </div>
@@ -287,7 +250,7 @@ const Billing = () => {
             <Button
               variant="outline"
               onClick={() => setShowCouponInput(true)}
-              className="w-full border-primary bg-primary text-white hover:bg-primary/90 sm:w-auto cursor-pointer"
+              className="w-full cursor-pointer border-primary bg-primary text-white hover:bg-primary/90 sm:w-auto"
             >
               <Tag className="mr-2 size-4" />
               Have a coupon code?
@@ -329,45 +292,31 @@ const Billing = () => {
               <Card
                 key={plan.id}
                 className={`relative flex flex-col overflow-hidden border-2 transition-all hover:shadow-lg ${
-                  plan.isCurrent
-                    ? `${plan.bgColor} ${plan.borderColor}`
-                    : `${plan.bgColor} ${plan.borderColor}`
+                  plan.isCurrent ? `${plan.bgColor} ${plan.borderColor}` : `${plan.bgColor} ${plan.borderColor}`
                 }`}
               >
                 {/* Badges */}
                 {plan.isPopular && (
-                  <div className="absolute left-0 top-0 bg-primary px-3 py-1 text-xs font-semibold text-white">
+                  <div className="absolute top-0 left-0 bg-primary px-3 py-1 font-semibold text-white text-xs">
                     Most Popular
                   </div>
                 )}
                 {plan.isCurrent && (
-                  <div className="absolute right-0 top-0 rounded-bl-lg bg-orange-500 px-3 py-1 text-xs font-semibold text-white">
+                  <div className="absolute top-0 right-0 rounded-bl-lg bg-orange-500 px-3 py-1 font-semibold text-white text-xs">
                     Current Plan
                   </div>
                 )}
 
-                <CardHeader className="flex flex-col items-center pb-4 pt-8 text-center">
+                <CardHeader className="flex flex-col items-center pt-8 pb-4 text-center">
                   <div
                     className={`mb-4 flex size-16 items-center justify-center rounded-lg ${
                       plan.isCurrent ? "bg-primary" : "bg-green-50"
                     }`}
                   >
-                    <Icon
-                      className={`size-8 ${
-                        plan.isCurrent ? "text-white" : "text-primary"
-                      }`}
-                    />
+                    <Icon className={`size-8 ${plan.isCurrent ? "text-white" : "text-primary"}`} />
                   </div>
-                  <h3
-                    className={`text-2xl font-bold ${plan.textColor} sm:text-3xl`}
-                  >
-                    {plan.name}
-                  </h3>
-                  <p
-                    className={`mt-1 text-sm ${
-                      plan.isCurrent ? "text-green-50" : "text-muted-foreground"
-                    }`}
-                  >
+                  <h3 className={`font-bold text-2xl ${plan.textColor} sm:text-3xl`}>{plan.name}</h3>
+                  <p className={`mt-1 text-sm ${plan.isCurrent ? "text-green-50" : "text-muted-foreground"}`}>
                     {plan.subtitle}
                   </p>
                 </CardHeader>
@@ -376,31 +325,15 @@ const Billing = () => {
                   {/* Pricing */}
                   <div className="mb-6 text-center">
                     <div className="flex items-baseline justify-center gap-1">
-                      <span
-                        className={`text-4xl font-bold ${plan.textColor} sm:text-5xl`}
-                      >
-                        {plan.price}
-                      </span>
+                      <span className={`font-bold text-4xl ${plan.textColor} sm:text-5xl`}>{plan.price}</span>
                       {plan.priceLabel && (
-                        <span
-                          className={`text-lg ${
-                            plan.isCurrent
-                              ? "text-green-50"
-                              : "text-muted-foreground"
-                          }`}
-                        >
+                        <span className={`text-lg ${plan.isCurrent ? "text-green-50" : "text-muted-foreground"}`}>
                           {plan.priceLabel}
                         </span>
                       )}
                     </div>
                     {plan.priceSubtext && (
-                      <p
-                        className={`mt-1 text-sm ${
-                          plan.isCurrent
-                            ? "text-green-50"
-                            : "text-muted-foreground"
-                        }`}
-                      >
+                      <p className={`mt-1 text-sm ${plan.isCurrent ? "text-green-50" : "text-muted-foreground"}`}>
                         {plan.priceSubtext}
                       </p>
                     )}
@@ -409,7 +342,7 @@ const Billing = () => {
                   {/* Features List */}
                   <div className="mb-6 flex-1">
                     <h4
-                      className={`mb-4 text-sm font-semibold ${
+                      className={`mb-4 font-semibold text-sm ${
                         plan.isCurrent ? "text-white" : "text-muted-foreground"
                       }`}
                     >
@@ -419,17 +352,9 @@ const Billing = () => {
                       {plan.features.map((feature, index) => (
                         <li key={index} className="flex items-start gap-3">
                           <Check
-                            className={`mt-0.5 size-5 shrink-0 ${
-                              plan.isCurrent ? "text-white" : "text-primary"
-                            }`}
+                            className={`mt-0.5 size-5 shrink-0 ${plan.isCurrent ? "text-white" : "text-primary"}`}
                           />
-                          <span
-                            className={`text-sm ${
-                              plan.isCurrent
-                                ? "text-white"
-                                : "text-muted-foreground"
-                            }`}
-                          >
+                          <span className={`text-sm ${plan.isCurrent ? "text-white" : "text-muted-foreground"}`}>
                             {feature}
                           </span>
                         </li>
@@ -442,16 +367,12 @@ const Billing = () => {
                     variant={plan.buttonVariant}
                     className={`w-full ${
                       plan.isCurrent && plan.id === "starter"
-                        ? "bg-white text-primary hover:bg-primary/90 cursor-pointer  border border-muted-foreground"
+                        ? "cursor-pointer border border-muted-foreground bg-white text-primary hover:bg-primary/90"
                         : plan.isCurrent && plan.id === "pro"
-                        ? "bg-white text-primary hover:bg-white/90 cursor-pointer border border-white"
-                        : "bg-primary text-white hover:bg-primary/90 cursor-pointer"
+                          ? "cursor-pointer border border-white bg-white text-primary hover:bg-white/90"
+                          : "cursor-pointer bg-primary text-white hover:bg-primary/90"
                     }`}
-                    disabled={
-                      (plan.isCurrent && plan.id === "starter") ||
-                      isCreatingCheckout ||
-                      isCreatingPortal
-                    }
+                    disabled={(plan.isCurrent && plan.id === "starter") || isCreatingCheckout || isCreatingPortal}
                     onClick={() => handlePlanAction(plan)}
                   >
                     {isCreatingCheckout || isCreatingPortal ? (

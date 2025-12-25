@@ -5,14 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import type z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { resetPasswordSchema } from "@/lib/form-schemas";
@@ -43,9 +36,7 @@ const ResetPassword = () => {
       toast.success(response.message || "Password reset successfully!");
       navigate("/");
     } catch (error: any) {
-      toast.error(
-        error?.data?.detail || "Failed to reset password. Please try again."
-      );
+      toast.error(error?.data?.detail || "Failed to reset password. Please try again.");
     }
   };
 
@@ -55,15 +46,10 @@ const ResetPassword = () => {
         <span className="w-full text-center font-bold text-[32px] leading-[32px] md:text-[48px] md:leading-[48px]">
           Reset Password
         </span>
-        <span className="w-full text-center text-[#71717A] text-[14px] leading-[14px]">
-          Enter your new password
-        </span>
+        <span className="w-full text-center text-[#71717A] text-[14px] leading-[14px]">Enter your new password</span>
       </div>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full flex-col gap-5"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-5">
           <FormField
             control={form.control}
             name="email"
@@ -71,12 +57,7 @@ const ResetPassword = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="johndoe@example.com"
-                    {...field}
-                    disabled
-                  />
+                  <Input type="email" placeholder="johndoe@example.com" {...field} disabled />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -101,10 +82,7 @@ const ResetPassword = () => {
               <FormItem>
                 <FormLabel>New Password</FormLabel>
                 <FormControl>
-                  <PasswordInput
-                    placeholder="• • • • • • • •"
-                    {...field}
-                  />
+                  <PasswordInput placeholder="• • • • • • • •" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -117,27 +95,14 @@ const ResetPassword = () => {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <PasswordInput
-                    placeholder="• • • • • • • •"
-                    {...field}
-                  />
+                  <PasswordInput placeholder="• • • • • • • •" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            className="w-full"
-            variant="default"
-            size="lg"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              "Reset Password"
-            )}
+          <Button type="submit" className="w-full" variant="default" size="lg" disabled={isLoading}>
+            {isLoading ? <Loader2 className="animate-spin" /> : "Reset Password"}
           </Button>
         </form>
       </Form>

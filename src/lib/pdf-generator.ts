@@ -56,9 +56,7 @@ function formatCurrency(amount: number): string {
 /**
  * Generates a payoff statement PDF matching the provided design
  */
-export async function generatePayoffStatementPDF(
-  data: PayoffStatementData
-): Promise<void> {
+export async function generatePayoffStatementPDF(data: PayoffStatementData): Promise<void> {
   const pdf = new jsPDF({
     orientation: "portrait",
     unit: "mm",
@@ -104,17 +102,8 @@ export async function generatePayoffStatementPDF(
       const imgY = yPosition - 8; // Align with date section
 
       // Add image (jsPDF supports data URLs and external URLs)
-      pdf.addImage(
-        data.profilePictureUrl,
-        "JPEG",
-        imgX,
-        imgY,
-        imgSize,
-        imgSize
-      );
-    } catch (error) {
-      console.error("Failed to add profile picture to PDF:", error);
-    }
+      pdf.addImage(data.profilePictureUrl, "JPEG", imgX, imgY, imgSize, imgSize);
+    } catch (_error) {}
   }
 
   yPosition += 12;
@@ -139,11 +128,7 @@ export async function generatePayoffStatementPDF(
       yPosition += 5;
     }
     if (data.city && data.state) {
-      pdf.text(
-        `${data.city}, ${data.state} ${data.zipcode || ""}`.trim(),
-        margin,
-        yPosition
-      );
+      pdf.text(`${data.city}, ${data.state} ${data.zipcode || ""}`.trim(), margin, yPosition);
       yPosition += 5;
     }
   } else {
@@ -204,12 +189,7 @@ export async function generatePayoffStatementPDF(
   pdf.setFont("helvetica", "normal");
 
   if (data.courtName) {
-    pdf.text(
-      `${data.courtName} - Case No. ${data.caseNumber || "N/A"}`,
-      pageWidth / 2,
-      yPosition,
-      { align: "center" }
-    );
+    pdf.text(`${data.courtName} - Case No. ${data.caseNumber || "N/A"}`, pageWidth / 2, yPosition, { align: "center" });
     yPosition += 10;
   }
 
@@ -221,12 +201,10 @@ export async function generatePayoffStatementPDF(
   pdf.setFont("helvetica", "normal");
   pdf.text(
     formatCurrency(
-      typeof data.judgmentAmount === "string"
-        ? parseFloat(data.judgmentAmount)
-        : data.judgmentAmount || 0
+      typeof data.judgmentAmount === "string" ? parseFloat(data.judgmentAmount) : data.judgmentAmount || 0,
     ),
     leftColX + 45,
-    yPosition
+    yPosition,
   );
   yPosition += 6;
 
@@ -282,12 +260,10 @@ export async function generatePayoffStatementPDF(
   pdf.setTextColor(0, 0, 0);
 
   const dailyRate = Number(data.dailyInterestRate) || 0;
-  const dailyAmount = Number(
-    data.dailyInterestAmount || Number(data.principalBalance) * dailyRate
-  );
+  const dailyAmount = Number(data.dailyInterestAmount || Number(data.principalBalance) * dailyRate);
 
   const interestText = `Interest accrues at a daily rate of $${dailyAmount.toFixed(
-    2
+    2,
   )} per day after ${formatDate(data.payoffDate)}.`;
   pdf.text(interestText, pageWidth / 2, yPosition, { align: "center" });
   yPosition += 12;
@@ -295,16 +271,12 @@ export async function generatePayoffStatementPDF(
   // ===== PAYMENT INSTRUCTIONS =====
   pdf.setFontSize(9);
   pdf.setFont("helvetica", "normal");
-  pdf.text(
-    "Please ensure your payment reaches our office by the stated date.",
-    margin,
-    yPosition
-  );
+  pdf.text("Please ensure your payment reaches our office by the stated date.", margin, yPosition);
   yPosition += 6;
   pdf.text(
     "If paying by check, mail it to the address listed. For wire instructions, contact our office.",
     margin,
-    yPosition
+    yPosition,
   );
   yPosition += 15;
 
@@ -316,7 +288,7 @@ export async function generatePayoffStatementPDF(
     `Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`,
     pageWidth / 2,
     footerY,
-    { align: "center" }
+    { align: "center" },
   );
 
   // Reset colors
@@ -349,7 +321,7 @@ export function createPayoffStatementData(
   },
   payoffDate: string,
   principalBalance: number,
-  accruedInterest: number
+  accruedInterest: number,
 ): PayoffStatementData {
   return {
     caseName: caseData.case_name,

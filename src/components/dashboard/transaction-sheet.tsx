@@ -4,36 +4,14 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { transactionSchema } from "@/lib/form-schemas";
+import { useAddTransactionMutation, useUpdateTransactionMutation } from "@/store/services/calculations";
 import { Button } from "../ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "../ui/sheet";
-import {
-  useAddTransactionMutation,
-  useUpdateTransactionMutation,
-} from "@/store/services/calculations";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../ui/sheet";
 
 interface TransactionSheetProps {
   open: boolean;
@@ -43,13 +21,7 @@ interface TransactionSheetProps {
   transaction?: TransactionData;
 }
 
-const TransactionSheet = ({
-  open,
-  setOpen,
-  caseId,
-  caseName,
-  transaction,
-}: TransactionSheetProps) => {
+const TransactionSheet = ({ open, setOpen, caseId, caseName, transaction }: TransactionSheetProps) => {
   const [addTransaction] = useAddTransactionMutation();
   const [updateTransaction] = useUpdateTransactionMutation();
   const [isLoading, setIsLoading] = useState(false);
@@ -88,10 +60,7 @@ const TransactionSheet = ({
 
       // Determine transaction type from amounts
       const transType = transaction.payment_amount > 0 ? "PAYMENT" : "COST";
-      const amount =
-        transaction.payment_amount > 0
-          ? transaction.payment_amount
-          : transaction.cost_amount;
+      const amount = transaction.payment_amount > 0 ? transaction.payment_amount : transaction.cost_amount;
 
       form.reset({
         payment_date: dateValue,
@@ -121,8 +90,7 @@ const TransactionSheet = ({
     try {
       const transactionRequest: TransactionRequest = {
         transaction_date: data.payment_date,
-        transaction_type:
-          data.transaction_type === "PAYMENT" ? "payment" : "cost",
+        transaction_type: data.transaction_type === "PAYMENT" ? "payment" : "cost",
         amount: parseFloat(data.payment_amount),
         description: data.description || undefined,
       };
@@ -148,7 +116,6 @@ const TransactionSheet = ({
       form.reset();
       window.location.reload();
     } catch (error: any) {
-      console.error("Transaction error:", error);
       toast.error(error?.data?.detail || "Failed to save transaction");
     } finally {
       setIsLoading(false);
@@ -159,9 +126,7 @@ const TransactionSheet = ({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>
-            {transaction ? "Edit Transaction" : "Add New Transaction"}
-          </SheetTitle>
+          <SheetTitle>{transaction ? "Edit Transaction" : "Add New Transaction"}</SheetTitle>
           {caseName && caseId && (
             <SheetDescription className="font-medium text-base">
               {caseName} - {caseId}
@@ -202,12 +167,7 @@ const TransactionSheet = ({
                 <FormItem>
                   <FormLabel>Amount</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="0"
-                      {...field}
-                    />
+                    <Input type="number" step="0.01" placeholder="0" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -233,11 +193,7 @@ const TransactionSheet = ({
                 <FormItem>
                   <FormLabel>Description (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Enter description..."
-                      className="min-h-[100px] resize-none"
-                      {...field}
-                    />
+                    <Textarea placeholder="Enter description..." className="min-h-[100px] resize-none" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -245,12 +201,7 @@ const TransactionSheet = ({
             />
             <div className="mt-auto flex gap-3 pt-4">
               {isLoading ? (
-                <Button
-                  type="submit"
-                  variant="default"
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                  disabled
-                >
+                <Button type="submit" variant="default" className="flex-1 bg-green-600 hover:bg-green-700" disabled>
                   <Loader2 className="mr-2 size-4 animate-spin" />
                   {transaction ? "Updating..." : "Adding..."}
                 </Button>

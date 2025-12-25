@@ -1,10 +1,10 @@
 import { useState } from "react";
+import Loader from "@/components/loader";
+import AccountDetailsCard from "@/components/profile/account-details-card";
 import ChangePasswordModal from "@/components/profile/change-password-modal";
 import PersonalInformationForm from "@/components/profile/personal-information-form";
 import UserProfileCard from "@/components/profile/user-profile-card";
-import AccountDetailsCard from "@/components/profile/account-details-card";
 import { useGetCurrentUserQuery } from "@/store/services/auth";
-import Loader from "@/components/loader";
 
 const Profile = () => {
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
@@ -63,10 +63,7 @@ const Profile = () => {
               email={profileData.email}
               profilePictureUrl={userData.profile_picture_url}
             />
-            <AccountDetailsCard
-              memberSince={memberSince}
-              onPasswordChange={() => setIsChangePasswordOpen(true)}
-            />
+            <AccountDetailsCard memberSince={memberSince} onPasswordChange={() => setIsChangePasswordOpen(true)} />
           </div>
           <PersonalInformationForm
             initialData={{
@@ -84,10 +81,7 @@ const Profile = () => {
           />
         </div>
       </div>
-      <ChangePasswordModal
-        open={isChangePasswordOpen}
-        onOpenChange={setIsChangePasswordOpen}
-      />
+      <ChangePasswordModal open={isChangePasswordOpen} onOpenChange={setIsChangePasswordOpen} />
     </div>
   );
 };

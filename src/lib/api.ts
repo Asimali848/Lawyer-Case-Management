@@ -25,7 +25,7 @@ export const callWebhook = async (
   file_content: string,
   company_id?: string,
   file_name?: string,
-  employee_id?: string
+  employee_id?: string,
 ): Promise<WebhookResponse> => {
   const webhookUrl = import.meta.env.VITE_WEBHOOK_URL;
 
@@ -92,133 +92,101 @@ const getAuthToken = (): string | null => {
     const state = store.getState();
     const token = state.global?.token;
 
-    console.log(
-      "Getting token from Redux store:",
-      token ? "Token found" : "No token"
-    );
-
     if (token) {
       return token;
     }
-
-    console.error("No token found in Redux store");
-  } catch (e) {
-    console.error("Failed to get auth token:", e);
-  }
+  } catch (_e) {}
   return null;
 };
 
 /**
  * Download transaction summary PDF from backend
  */
-export const downloadTransactionsPDF = async (
-  calculationId: string
-): Promise<void> => {
+export const downloadTransactionsPDF = async (calculationId: string): Promise<void> => {
   const token = getAuthToken();
 
   if (!token) {
     throw new Error("Authentication required");
   }
+  const response = await fetch(`${API_BASE_URL}/api/calc/${calculationId}/transactions-pdf`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/calc/${calculationId}/transactions-pdf`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Failed to generate PDF: ${response.statusText}`);
-    }
-
-    // Get filename from Content-Disposition header
-    const contentDisposition = response.headers.get("Content-Disposition");
-    let filename = "Transaction_Summary.pdf";
-
-    if (contentDisposition) {
-      const filenameMatch = contentDisposition.match(/filename=(.+)/);
-      if (filenameMatch) {
-        filename = filenameMatch[1].replace(/['"]/g, "");
-      }
-    }
-
-    // Download the PDF
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-  } catch (error) {
-    console.error("Error downloading transaction PDF:", error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(`Failed to generate PDF: ${response.statusText}`);
   }
+
+  // Get filename from Content-Disposition header
+  const contentDisposition = response.headers.get("Content-Disposition");
+  let filename = "Transaction_Summary.pdf";
+
+  if (contentDisposition) {
+    const filenameMatch = contentDisposition.match(/filename=(.+)/);
+    if (filenameMatch) {
+      filename = filenameMatch[1].replace(/['"]/g, "");
+    }
+  }
+
+  // Download the PDF
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
 };
 
 /**
  * Download payoff statement PDF from backend
  */
-export const downloadPayoffStatementPDF = async (
-  calculationId: string,
-  payoffDate: string
-): Promise<void> => {
+export const downloadPayoffStatementPDF = async (calculationId: string, payoffDate: string): Promise<void> => {
   const token = getAuthToken();
 
   if (!token) {
     throw new Error("Authentication required");
   }
+  const response = await fetch(`${API_BASE_URL}/api/calc/payoff-statement-pdf`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      calculation_id: calculationId,
+      payoff_date: payoffDate,
+    }),
+  });
 
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/calc/payoff-statement-pdf`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          calculation_id: calculationId,
-          payoff_date: payoffDate,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Failed to generate PDF: ${response.statusText}`);
-    }
-
-    // Get filename from Content-Disposition header
-    const contentDisposition = response.headers.get("Content-Disposition");
-    let filename = "Payoff_Statement.pdf";
-
-    if (contentDisposition) {
-      const filenameMatch = contentDisposition.match(/filename=(.+)/);
-      if (filenameMatch) {
-        filename = filenameMatch[1].replace(/['"]/g, "");
-      }
-    }
-
-    // Download the PDF
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-  } catch (error) {
-    console.error("Error downloading payoff statement PDF:", error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(`Failed to generate PDF: ${response.statusText}`);
   }
+
+  // Get filename from Content-Disposition header
+  const contentDisposition = response.headers.get("Content-Disposition");
+  let filename = "Payoff_Statement.pdf";
+
+  if (contentDisposition) {
+    const filenameMatch = contentDisposition.match(/filename=(.+)/);
+    if (filenameMatch) {
+      filename = filenameMatch[1].replace(/['"]/g, "");
+    }
+  }
+
+  // Download the PDF
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
 };

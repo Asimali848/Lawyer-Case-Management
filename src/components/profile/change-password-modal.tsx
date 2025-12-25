@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,25 +9,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { PasswordInput } from "@/components/ui/password-input";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   useForgotPasswordMutation,
-  useVerifyOtpMutation,
+  useGetCurrentUserQuery,
   useResetPasswordMutation,
+  useVerifyOtpMutation,
 } from "@/store/services/auth";
-import { useGetCurrentUserQuery } from "@/store/services/auth";
 
 interface ChangePasswordModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const ChangePasswordModal = ({
-  open,
-  onOpenChange,
-}: ChangePasswordModalProps) => {
+const ChangePasswordModal = ({ open, onOpenChange }: ChangePasswordModalProps) => {
   const [step, setStep] = useState<"request" | "verify" | "reset">("request");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -34,11 +31,9 @@ const ChangePasswordModal = ({
   const [resetToken, setResetToken] = useState("");
 
   const { data: userData } = useGetCurrentUserQuery();
-  const [forgotPassword, { isLoading: isSendingOtp }] =
-    useForgotPasswordMutation();
+  const [forgotPassword, { isLoading: isSendingOtp }] = useForgotPasswordMutation();
   const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
-  const [resetPassword, { isLoading: isResetting }] =
-    useResetPasswordMutation();
+  const [resetPassword, { isLoading: isResetting }] = useResetPasswordMutation();
 
   const handleRequestOtp = async () => {
     if (!userData?.email) {
@@ -117,8 +112,7 @@ const ChangePasswordModal = ({
         <DialogHeader>
           <DialogTitle>Change Password</DialogTitle>
           <DialogDescription>
-            {step === "request" &&
-              "We'll send an OTP to your email to verify it's you."}
+            {step === "request" && "We'll send an OTP to your email to verify it's you."}
             {step === "verify" && "Enter the OTP sent to your email."}
             {step === "reset" && "Enter your new password."}
           </DialogDescription>
@@ -126,14 +120,14 @@ const ChangePasswordModal = ({
         <div className="space-y-4 py-4">
           {step === "request" && (
             <div className="flex flex-col gap-2">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Email: <span className="font-medium">{userData?.email}</span>
               </p>
             </div>
           )}
           {step === "verify" && (
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium">OTP Code</label>
+              <label className="font-medium text-sm">OTP Code</label>
               <Input
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
@@ -146,7 +140,7 @@ const ChangePasswordModal = ({
           {step === "reset" && (
             <>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium">New Password</label>
+                <label className="font-medium text-sm">New Password</label>
                 <PasswordInput
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -155,7 +149,7 @@ const ChangePasswordModal = ({
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium">Confirm Password</label>
+                <label className="font-medium text-sm">Confirm Password</label>
                 <PasswordInput
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}

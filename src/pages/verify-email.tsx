@@ -6,20 +6,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import type z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { verifyEmailSchema } from "@/lib/form-schemas";
-import {
-  useVerifyEmailMutation,
-  useResendOtpMutation,
-} from "@/store/services/auth";
+import { useResendOtpMutation, useVerifyEmailMutation } from "@/store/services/auth";
 
 const VerifyEmail = () => {
   const navigate = useNavigate();
@@ -54,9 +44,7 @@ const VerifyEmail = () => {
       toast.success(response.message || "Email verified successfully!");
       navigate("/");
     } catch (error: any) {
-      toast.error(
-        error?.data?.detail || "Verification failed. Please try again."
-      );
+      toast.error(error?.data?.detail || "Verification failed. Please try again.");
     }
   };
 
@@ -68,9 +56,7 @@ const VerifyEmail = () => {
       setCanResend(false);
       setCountdown(60);
     } catch (error: any) {
-      toast.error(
-        error?.data?.detail || "Failed to resend OTP. Please try again."
-      );
+      toast.error(error?.data?.detail || "Failed to resend OTP. Please try again.");
     }
   };
 
@@ -85,10 +71,7 @@ const VerifyEmail = () => {
         </span>
       </div>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full flex-col gap-5"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-5">
           <FormField
             control={form.control}
             name="email"
@@ -96,12 +79,7 @@ const VerifyEmail = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="johndoe@example.com"
-                    {...field}
-                    disabled
-                  />
+                  <Input type="email" placeholder="johndoe@example.com" {...field} disabled />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -126,13 +104,7 @@ const VerifyEmail = () => {
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            className="w-full"
-            variant="default"
-            size="lg"
-            disabled={isLoading}
-          >
+          <Button type="submit" className="w-full" variant="default" size="lg" disabled={isLoading}>
             {isLoading ? <Loader2 className="animate-spin" /> : "Verify Email"}
           </Button>
         </form>
@@ -147,11 +119,7 @@ const VerifyEmail = () => {
             disabled={isResending}
             className="p-0 font-medium text-primary"
           >
-            {isResending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              "Resend Code"
-            )}
+            {isResending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Resend Code"}
           </Button>
         ) : (
           <span className="text-[#71717A]">Resend in {countdown}s</span>

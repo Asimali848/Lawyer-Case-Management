@@ -1,13 +1,7 @@
 import { Loader2, TriangleAlert } from "lucide-react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface WarningModalProps {
   open: boolean;
@@ -18,14 +12,7 @@ interface WarningModalProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const WarningModal = ({
-  cta,
-  open,
-  text,
-  title,
-  setOpen,
-  isLoading,
-}: WarningModalProps) => {
+const WarningModal = ({ cta, open, text, title, setOpen, isLoading }: WarningModalProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px]">
@@ -44,12 +31,7 @@ const WarningModal = ({
           </span>
         </div>
         <DialogFooter>
-          <Button
-            onClick={() => setOpen(false)}
-            type="button"
-            variant="secondary"
-            className="cursor-pointer"
-          >
+          <Button onClick={() => setOpen(false)} type="button" variant="secondary" className="cursor-pointer">
             Cancel
           </Button>
           <Button

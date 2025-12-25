@@ -22,20 +22,7 @@ interface TransactionPDFData {
 function formatDateShort(dateString: string): string {
   try {
     const date = new Date(dateString);
-    const months = [
-      "Jan.",
-      "Feb.",
-      "Mar.",
-      "Apr.",
-      "May",
-      "Jun.",
-      "Jul.",
-      "Aug.",
-      "Sep.",
-      "Oct.",
-      "Nov.",
-      "Dec.",
-    ];
+    const months = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."];
     const month = months[date.getMonth()];
     const day = date.getDate();
     const year = date.getFullYear();
@@ -78,20 +65,7 @@ function formatCurrency(amount: number | string): string {
  */
 function getCurrentDateFormatted(): string {
   const date = new Date();
-  const months = [
-    "Jan.",
-    "Feb.",
-    "Mar.",
-    "Apr.",
-    "May",
-    "Jun.",
-    "Jul.",
-    "Aug.",
-    "Sep.",
-    "Oct.",
-    "Nov.",
-    "Dec.",
-  ];
+  const months = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."];
   const month = months[date.getMonth()];
   const day = date.getDate();
   const year = date.getFullYear();
@@ -101,9 +75,7 @@ function getCurrentDateFormatted(): string {
 /**
  * Generates a transaction summary PDF matching the provided design
  */
-export async function generateTransactionPDF(
-  data: TransactionPDFData
-): Promise<void> {
+export async function generateTransactionPDF(data: TransactionPDFData): Promise<void> {
   const pdf = new jsPDF({
     orientation: "portrait",
     unit: "mm",
@@ -210,12 +182,7 @@ export async function generateTransactionPDF(
 
   // Horizontal lines for header
   pdf.line(margin, tableStartY, margin + tableWidth, tableStartY);
-  pdf.line(
-    margin,
-    tableStartY + headerRowHeight,
-    margin + tableWidth,
-    tableStartY + headerRowHeight
-  );
+  pdf.line(margin, tableStartY + headerRowHeight, margin + tableWidth, tableStartY + headerRowHeight);
 
   // Vertical lines for header
   for (let i = 0; i <= colWidths.length; i++) {
@@ -278,29 +245,16 @@ export async function generateTransactionPDF(
     pdf.text(formatDateTable(transaction.date), colX[0] + 2, yPosition + verticalOffset);
     pdf.text(transaction.type, colX[1] + 2, yPosition + verticalOffset);
     pdf.text(formatCurrency(transaction.amount), colX[2] + 2, yPosition + verticalOffset);
-    pdf.text(
-      formatCurrency(transaction.accruedInterest),
-      colX[3] + 2,
-      yPosition + verticalOffset
-    );
-    pdf.text(
-      formatCurrency(transaction.principalBalance),
-      colX[4] + 2,
-      yPosition + verticalOffset
-    );
+    pdf.text(formatCurrency(transaction.accruedInterest), colX[3] + 2, yPosition + verticalOffset);
+    pdf.text(formatCurrency(transaction.principalBalance), colX[4] + 2, yPosition + verticalOffset);
 
     // Add description lines
     descLines.forEach((line: string, i: number) => {
-      pdf.text(line, colX[5] + 2, yPosition + verticalOffset + (i * 5));
+      pdf.text(line, colX[5] + 2, yPosition + verticalOffset + i * 5);
     });
 
     // Draw row border (horizontal line)
-    pdf.line(
-      margin,
-      yPosition + rowHeight,
-      margin + tableWidth,
-      yPosition + rowHeight
-    );
+    pdf.line(margin, yPosition + rowHeight, margin + tableWidth, yPosition + rowHeight);
 
     // Draw vertical lines for this row
     for (let i = 0; i <= colWidths.length; i++) {
@@ -340,7 +294,7 @@ export function createTransactionPDFData(
     accrued_interest: string;
     principal_balance: string;
     description?: string;
-  }>
+  }>,
 ): TransactionPDFData {
   return {
     caseName: calculation.case_name || "N/A",

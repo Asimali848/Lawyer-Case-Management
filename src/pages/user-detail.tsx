@@ -1,15 +1,7 @@
-import {
-  ArrowLeft,
-  CreditCard,
-  FileText,
-  Pencil,
-  Printer,
-  Receipt,
-  Trash,
-} from "lucide-react";
+import { ArrowLeft, CreditCard, FileText, Pencil, Printer, Receipt, Trash } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { getCurrentDate } from "@/lib/utils";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 import CompanySheet from "@/components/dashboard/company-sheet";
 import DeleteConfirmationModal from "@/components/dashboard/delete-confirmation-modal";
 import PayoffDemandModal from "@/components/dashboard/payoff-demand-modal";
@@ -21,14 +13,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import WarningModal from "@/components/warning-modal";
+import { downloadTransactionsPDF } from "@/lib/api";
+import { getCurrentDate } from "@/lib/utils";
 import {
-  useGetCalculationQuery,
   useDeleteCalculationMutation,
   useDeleteTransactionMutation,
+  useGetCalculationQuery,
 } from "@/store/services/calculations";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { downloadTransactionsPDF } from "@/lib/api";
 
 const UserDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -38,8 +29,7 @@ const UserDetail = () => {
   const [transactionOpen, setTransactionOpen] = useState<boolean>(false);
   const [payoffDemandOpen, setPayoffDemandOpen] = useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
-  const [selectedTransaction, setSelectedTransaction] =
-    useState<TransactionData | null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<TransactionData | null>(null);
   const [warningModalOpen, setWarningModalOpen] = useState<boolean>(false);
 
   // Fetch calculation details with current client date
@@ -50,7 +40,7 @@ const UserDetail = () => {
     refetch,
   } = useGetCalculationQuery(
     { id: id || "", current_date: getCurrentDate() }, // Use client's current date
-    { skip: !id }
+    { skip: !id },
   );
   const [deleteCalculation] = useDeleteCalculationMutation();
   const [deleteTransaction] = useDeleteTransactionMutation();
@@ -78,17 +68,10 @@ const UserDetail = () => {
         id: t.id,
         payment_date: t.transaction_date,
         transaction_type: t.payment_amount > 0 ? "PAYMENT" : "COST",
-        payment_amount: String(
-          t.payment_amount > 0 ? t.payment_amount : t.cost_amount
-        ),
-        accrued_interest: timelineEntry
-          ? String((timelineEntry.interest_accrued || 0).toFixed(2))
-          : "0.00",
-        principal_balance: timelineEntry
-          ? String((timelineEntry.remaining_principal || 0).toFixed(2))
-          : "0.00",
-        description:
-          t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
+        payment_amount: String(t.payment_amount > 0 ? t.payment_amount : t.cost_amount),
+        accrued_interest: timelineEntry ? String((timelineEntry.interest_accrued || 0).toFixed(2)) : "0.00",
+        principal_balance: timelineEntry ? String((timelineEntry.remaining_principal || 0).toFixed(2)) : "0.00",
+        description: t.description || (t.payment_amount > 0 ? "Payment" : "Cost"),
         // Keep original transaction data for sorting
         _transaction_date: t.transaction_date,
         _created_at: t.created_at,
@@ -110,9 +93,7 @@ const UserDetail = () => {
 
   const handleEditTransaction = (transaction: Payment) => {
     // Convert back to TransactionData type
-    const trans = calculation?.transactions?.find(
-      (t) => t.id === transaction.id
-    );
+    const trans = calculation?.transactions?.find((t) => t.id === transaction.id);
     if (trans) {
       setSelectedTransaction(trans);
       setTransactionOpen(true);
@@ -120,9 +101,7 @@ const UserDetail = () => {
   };
 
   const handleDeleteTransaction = (transaction: Payment) => {
-    const trans = calculation?.transactions?.find(
-      (t) => t.id === transaction.id
-    );
+    const trans = calculation?.transactions?.find((t) => t.id === transaction.id);
     if (trans) {
       setSelectedTransaction(trans);
       setDeleteModalOpen(true);
@@ -177,8 +156,7 @@ const UserDetail = () => {
       toast.info("Generating PDF...");
       await downloadTransactionsPDF(id);
       toast.success("Transaction summary PDF downloaded successfully!");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
+    } catch (_error) {
       toast.error("Failed to generate PDF. Please try again.");
     }
   };
@@ -199,9 +177,7 @@ const UserDetail = () => {
   if (error || !calculation) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <p className="text-destructive">
-          Error loading case details. Please try again.
-        </p>
+        <p className="text-destructive">Error loading case details. Please try again.</p>
       </div>
     );
   }
@@ -224,38 +200,24 @@ const UserDetail = () => {
   const todayPayoff = calculation.total_due || 0;
 
   const lastTransaction = transactions[transactions.length - 1];
-  const lastPaymentDate =
-    lastTransaction?.payment_date || calculation.judgment_date;
+  const lastPaymentDate = lastTransaction?.payment_date || calculation.judgment_date;
 
   return (
     <>
       <div className="flex h-full w-full flex-col gap-5 overflow-y-auto">
         <div className="flex items-center justify-between">
-          <div
-            className="flex items-center justify-center gap-2 cursor-pointer"
-            onClick={() => navigate("/dashboard")}
-          >
-            <ArrowLeft className="size-6 text-primary font-bold" />
+          <div className="flex cursor-pointer items-center justify-center gap-2" onClick={() => navigate("/dashboard")}>
+            <ArrowLeft className="size-6 font-bold text-primary" />
             <Label className="font-bold text-primary text-xl sm:text-2xl md:text-3xl">
               {calculation?.case_name ?? "Case Not Found"}
             </Label>
           </div>
           <div className="hidden flex-col gap-2.5 md:flex md:flex-row">
-            <Button
-              variant="default"
-              size="sm"
-              type="button"
-              onClick={() => setEdit(true)}
-            >
+            <Button variant="default" size="sm" type="button" onClick={() => setEdit(true)}>
               Edit Case
               <Pencil className="ml-1 size-4" />
             </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              type="button"
-              onClick={() => setWarningModalOpen(true)}
-            >
+            <Button variant="destructive" size="sm" type="button" onClick={() => setWarningModalOpen(true)}>
               Delete Case <Trash className="ml-1 size-4" />
             </Button>
           </div>
@@ -269,123 +231,70 @@ const UserDetail = () => {
           <CardContent className="space-y-6">
             {/* Case Information Section */}
             <div>
-              <h3 className="mb-3 font-semibold text-lg text-primary">
-                Case Information
-              </h3>
+              <h3 className="mb-3 font-semibold text-lg text-primary">Case Information</h3>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Case Name
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {calculation?.case_name || "N/A"}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Case Name</p>
+                  <p className="text-muted-foreground text-sm">{calculation?.case_name || "N/A"}</p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Client Name
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {calculation?.client_name || "N/A"}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Client Name</p>
+                  <p className="text-muted-foreground text-sm">{calculation?.client_name || "N/A"}</p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Court Name
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {calculation?.court_name || "N/A"}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Court Name</p>
+                  <p className="text-muted-foreground text-sm">{calculation?.court_name || "N/A"}</p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Court Number
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {calculation?.court_number || "N/A"}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Court Number</p>
+                  <p className="text-muted-foreground text-sm">{calculation?.court_number || "N/A"}</p>
                 </div>
               </div>
             </div>
 
             {/* Lawyer/Firm Information Section */}
             <div>
-              <h3 className="mb-3 font-semibold text-lg text-primary">
-                Lawyer & Firm Information
-              </h3>
+              <h3 className="mb-3 font-semibold text-lg text-primary">Lawyer & Firm Information</h3>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Lawyer Name
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {calculation?.lawyer_name || "N/A"}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Lawyer Name</p>
+                  <p className="text-muted-foreground text-sm">{calculation?.lawyer_name || "N/A"}</p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Firm Name
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {calculation?.firm_name || "N/A"}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Firm Name</p>
+                  <p className="text-muted-foreground text-sm">{calculation?.firm_name || "N/A"}</p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Lawyer Phone
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {calculation?.lawyer_phone || "N/A"}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Lawyer Phone</p>
+                  <p className="text-muted-foreground text-sm">{calculation?.lawyer_phone || "N/A"}</p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Lawyer Email
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {calculation?.lawyer_email || "N/A"}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Lawyer Email</p>
+                  <p className="text-muted-foreground text-sm">{calculation?.lawyer_email || "N/A"}</p>
                 </div>
               </div>
             </div>
 
             {/* Address Information Section */}
-            {(calculation?.street_address ||
-              calculation?.city ||
-              calculation?.state ||
-              calculation?.zipcode) && (
+            {(calculation?.street_address || calculation?.city || calculation?.state || calculation?.zipcode) && (
               <div>
-                <h3 className="mb-3 font-semibold text-lg text-primary">
-                  Address Information
-                </h3>
+                <h3 className="mb-3 font-semibold text-lg text-primary">Address Information</h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <div className="flex flex-col rounded-lg border p-4 shadow">
-                    <p className="font-semibold text-base sm:text-lg">
-                      Street Address
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                      {calculation?.street_address || "N/A"}
-                    </p>
+                    <p className="font-semibold text-base sm:text-lg">Street Address</p>
+                    <p className="text-muted-foreground text-sm">{calculation?.street_address || "N/A"}</p>
                   </div>
                   <div className="flex flex-col rounded-lg border p-4 shadow">
                     <p className="font-semibold text-base sm:text-lg">City</p>
-                    <p className="text-muted-foreground text-sm">
-                      {calculation?.city || "N/A"}
-                    </p>
+                    <p className="text-muted-foreground text-sm">{calculation?.city || "N/A"}</p>
                   </div>
                   <div className="flex flex-col rounded-lg border p-4 shadow">
                     <p className="font-semibold text-base sm:text-lg">State</p>
-                    <p className="text-muted-foreground text-sm">
-                      {calculation?.state || "N/A"}
-                    </p>
+                    <p className="text-muted-foreground text-sm">{calculation?.state || "N/A"}</p>
                   </div>
                   <div className="flex flex-col rounded-lg border p-4 shadow">
-                    <p className="font-semibold text-base sm:text-lg">
-                      Zip Code
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                      {calculation?.zipcode || "N/A"}
-                    </p>
+                    <p className="font-semibold text-base sm:text-lg">Zip Code</p>
+                    <p className="text-muted-foreground text-sm">{calculation?.zipcode || "N/A"}</p>
                   </div>
                 </div>
               </div>
@@ -393,33 +302,19 @@ const UserDetail = () => {
 
             {/* Financial Information Section */}
             <div>
-              <h3 className="mb-3 font-semibold text-lg text-primary">
-                Financial Details
-              </h3>
+              <h3 className="mb-3 font-semibold text-lg text-primary">Financial Details</h3>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Judgement Amount
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {formatCurrency(calculation?.judgment_amount || 0)}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Judgement Amount</p>
+                  <p className="text-muted-foreground text-sm">{formatCurrency(calculation?.judgment_amount || 0)}</p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Interest Rate
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {calculation?.annual_interest_rate || 10}%
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Interest Rate</p>
+                  <p className="text-muted-foreground text-sm">{calculation?.annual_interest_rate || 10}%</p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Judgement Date
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {calculation?.judgment_date || "N/A"}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Judgement Date</p>
+                  <p className="text-muted-foreground text-sm">{calculation?.judgment_date || "N/A"}</p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
                   <p className="font-semibold text-base sm:text-lg">End Date</p>
@@ -432,41 +327,23 @@ const UserDetail = () => {
 
             {/* Payment Summary Section */}
             <div>
-              <h3 className="mb-3 font-semibold text-lg text-primary">
-                Payment Summary
-              </h3>
+              <h3 className="mb-3 font-semibold text-lg text-primary">Payment Summary</h3>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Last Payment Date
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {lastPaymentDate || "N/A"}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Last Payment Date</p>
+                  <p className="text-muted-foreground text-sm">{lastPaymentDate || "N/A"}</p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Total Payments
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {formatCurrency(totalPayments)}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Total Payments</p>
+                  <p className="text-muted-foreground text-sm">{formatCurrency(totalPayments)}</p>
                 </div>
                 <div className="flex flex-col rounded-lg border p-4 shadow">
-                  <p className="font-semibold text-base sm:text-lg">
-                    Total Interest
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {formatCurrency(totalInterest)}
-                  </p>
+                  <p className="font-semibold text-base sm:text-lg">Total Interest</p>
+                  <p className="text-muted-foreground text-sm">{formatCurrency(totalInterest)}</p>
                 </div>
                 <div className="col-span-1 flex flex-col rounded-lg border bg-primary/5 p-4 shadow sm:col-span-2 lg:col-span-4">
-                  <p className="font-bold text-lg sm:text-xl text-primary">
-                    Today Payoff
-                  </p>
-                  <p className="w-full font-semibold text-xl sm:text-2xl text-primary">
-                    {formatCurrency(todayPayoff)}
-                  </p>
+                  <p className="font-bold text-lg text-primary sm:text-xl">Today Payoff</p>
+                  <p className="w-full font-semibold text-primary text-xl sm:text-2xl">{formatCurrency(todayPayoff)}</p>
                 </div>
               </div>
             </div>
@@ -476,27 +353,15 @@ const UserDetail = () => {
           <div className="order-1 w-full lg:order-2">
             <Card className="h-full w-full shadow-none">
               <CardContent className="flex h-full w-full flex-col gap-3 p-4">
-                <Button
-                  variant="default"
-                  className="w-full justify-start"
-                  onClick={handleAddTransaction}
-                >
+                <Button variant="default" className="w-full justify-start" onClick={handleAddTransaction}>
                   <Receipt className="mr-2 size-4" />
                   Transaction
                 </Button>
-                <Button
-                  variant="default"
-                  className="w-full justify-start"
-                  onClick={() => setPayoffDemandOpen(true)}
-                >
+                <Button variant="default" className="w-full justify-start" onClick={() => setPayoffDemandOpen(true)}>
                   <FileText className="mr-2 size-4" />
                   Payoff Demand
                 </Button>
-                <Button
-                  variant="default"
-                  className="w-full justify-start"
-                  onClick={handlePrintTransactions}
-                >
+                <Button variant="default" className="w-full justify-start" onClick={handlePrintTransactions}>
                   <Printer className="mr-2 size-4" />
                   Print
                 </Button>
@@ -505,9 +370,7 @@ const UserDetail = () => {
           </div>
           <div className="order-1 flex h-[600px] flex-col gap-5 rounded-xl border p-4 sm:p-6 md:h-[600px] lg:order-2 lg:col-span-3">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <span className="font-medium text-primary text-xl sm:text-2xl md:text-[28px]">
-                Transactions History
-              </span>
+              <span className="font-medium text-primary text-xl sm:text-2xl md:text-[28px]">Transactions History</span>
               <Input
                 type="text"
                 className="w-full sm:w-1/2 lg:w-1/3"
@@ -521,22 +384,14 @@ const UserDetail = () => {
               columns={columns}
               data={
                 transactions?.filter((payment) =>
-                  search
-                    ? payment.payment_date
-                        .toLowerCase()
-                        .includes(search.toLowerCase())
-                    : true
+                  search ? payment.payment_date.toLowerCase().includes(search.toLowerCase()) : true,
                 ) ?? []
               }
             />
           </div>
         </div>
       </div>
-      <CompanySheet
-        company={calculation as any}
-        open={edit}
-        setOpen={setEdit}
-      />
+      <CompanySheet company={calculation as any} open={edit} setOpen={setEdit} />
       <TransactionSheet
         open={transactionOpen}
         setOpen={(value) => {
@@ -564,11 +419,7 @@ const UserDetail = () => {
         onConfirm={confirmDelete}
         title="Delete Transaction"
         description="Are you sure you want to delete this transaction? This action cannot be undone."
-        itemName={
-          selectedTransaction
-            ? `Transaction dated ${selectedTransaction.transaction_date}`
-            : undefined
-        }
+        itemName={selectedTransaction ? `Transaction dated ${selectedTransaction.transaction_date}` : undefined}
       />
       <WarningModal
         open={warningModalOpen}

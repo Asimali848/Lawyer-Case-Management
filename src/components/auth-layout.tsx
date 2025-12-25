@@ -3,7 +3,6 @@ import Logo from "@/assets/img/logo.png";
 import { ModeToggle } from "./mode-toggle";
 
 const AuthLayout = () => {
-
   return (
     <div className="mx-auto h-screen overflow-hidden md:w-1/2">
       <div className="flex h-screen w-full flex-col items-center justify-center">

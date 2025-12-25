@@ -35,9 +35,7 @@ export const useRowColumns = () => {
       ),
       cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() =>
-            handleRowClick(row.original.id, row.original.case_name)
-          }
+          onClick={() => handleRowClick(row.original.id, row.original.case_name)}
           className="ml-3 w-full cursor-pointer font-medium hover:underline"
         >
           {row.getValue("case_name") || "N/A"}
@@ -49,9 +47,7 @@ export const useRowColumns = () => {
       header: "Court Name",
       cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() =>
-            handleRowClick(row.original.id, row.original.court_name)
-          }
+          onClick={() => handleRowClick(row.original.id, row.original.court_name)}
           className="w-full cursor-pointer font-semibold text-[#71717A] text-sm hover:underline"
         >
           {row.getValue("court_name") || "N/A"}
@@ -63,9 +59,7 @@ export const useRowColumns = () => {
       header: "Court Case Number",
       cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() =>
-            handleRowClick(row.original.id, row.original.court_case_number)
-          }
+          onClick={() => handleRowClick(row.original.id, row.original.court_case_number)}
           className="w-full cursor-pointer font-semibold text-[#71717A] text-sm hover:underline"
         >
           {row.getValue("court_case_number") || "N/A"}
@@ -77,9 +71,7 @@ export const useRowColumns = () => {
       header: "Judgment Amount",
       cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() =>
-            handleRowClick(row.original.id, row.original.judegment_amount)
-          }
+          onClick={() => handleRowClick(row.original.id, row.original.judegment_amount)}
           className="w-full cursor-pointer font-semibold text-[#71717A] text-sm hover:underline"
         >
           ${row.getValue("judegment_amount") || "0.00"}
@@ -91,9 +83,7 @@ export const useRowColumns = () => {
       header: "Grand Total",
       cell: ({ row }: { row: Row<CaseGet> }) => (
         <span
-          onClick={() =>
-            handleRowClick(row.original.id, row.original.today_payoff)
-          }
+          onClick={() => handleRowClick(row.original.id, row.original.today_payoff)}
           className="w-full cursor-pointer font-semibold text-green-600 text-sm hover:underline"
         >
           ${row.getValue("today_payoff") || "0.00"}

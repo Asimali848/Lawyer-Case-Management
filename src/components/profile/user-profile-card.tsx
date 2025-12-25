@@ -1,13 +1,10 @@
+import { Camera, Mail, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
-import { Mail, Camera, Trash2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import {
-  useUploadProfilePictureMutation,
-  useDeleteProfilePictureMutation,
-} from "@/store/services/auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useDeleteProfilePictureMutation, useUploadProfilePictureMutation } from "@/store/services/auth";
 
 interface UserProfileCardProps {
   firstName: string;
@@ -16,12 +13,7 @@ interface UserProfileCardProps {
   profilePictureUrl?: string | null;
 }
 
-const UserProfileCard = ({
-  firstName,
-  lastName,
-  email,
-  profilePictureUrl,
-}: UserProfileCardProps) => {
+const UserProfileCard = ({ firstName, lastName, email, profilePictureUrl }: UserProfileCardProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProfilePicture] = useUploadProfilePictureMutation();
@@ -42,13 +34,7 @@ const UserProfileCard = ({
     }
 
     // Validate file type
-    const allowedTypes = [
-      "image/jpeg",
-      "image/jpg",
-      "image/png",
-      "image/gif",
-      "image/webp",
-    ];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       toast.error("Please select a valid image file (JPG, PNG, GIF, or WebP)");
       return;
@@ -62,7 +48,6 @@ const UserProfileCard = ({
       await uploadProfilePicture(formData).unwrap();
       toast.success("Profile picture updated successfully!");
     } catch (error: any) {
-      console.error("Failed to upload profile picture:", error);
       toast.error(error?.data?.detail || "Failed to upload profile picture");
     } finally {
       setIsUploading(false);
@@ -84,7 +69,6 @@ const UserProfileCard = ({
       await deleteProfilePicture().unwrap();
       toast.success("Profile picture removed successfully!");
     } catch (error: any) {
-      console.error("Failed to delete profile picture:", error);
       toast.error(error?.data?.detail || "Failed to delete profile picture");
     } finally {
       setIsUploading(false);
@@ -109,22 +93,16 @@ const UserProfileCard = ({
       <CardContent className="flex flex-col items-center pt-6">
         <div className="relative">
           <Avatar
-            className="mb-4 size-24 cursor-pointer bg-primary/40 transition-opacity hover:opacity-80 shrink-0 object-cover"
+            className="mb-4 size-24 shrink-0 cursor-pointer bg-primary/40 object-cover transition-opacity hover:opacity-80"
             onClick={handleAvatarClick}
           >
-            {getThumbnailUrl() ? (
-              <AvatarImage
-                src={getThumbnailUrl()!}
-                alt="Profile"
-                className="object-cover"
-              />
-            ) : null}
-            <AvatarFallback className="bg-primary/40 text-2xl font-bold text-white shrink-0 object-cover">
+            {getThumbnailUrl() ? <AvatarImage src={getThumbnailUrl()!} alt="Profile" className="object-cover" /> : null}
+            <AvatarFallback className="shrink-0 bg-primary/40 object-cover font-bold text-2xl text-white">
               {getInitials()}
             </AvatarFallback>
           </Avatar>
           <div
-            className="absolute bottom-2.5 right-1 flex size-8 items-center justify-center rounded-full bg-primary text-white cursor-pointer hover:bg-primary/90 transition-colors"
+            className="absolute right-1 bottom-2.5 flex size-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary/90"
             onClick={handleAvatarClick}
           >
             {isUploading ? (
@@ -142,21 +120,15 @@ const UserProfileCard = ({
           onChange={handleImageChange}
           disabled={isUploading}
         />
-        <h2 className="mb-2 text-2xl font-bold">
+        <h2 className="mb-2 font-bold text-2xl">
           {firstName || lastName ? `${firstName} ${lastName}`.trim() : "User"}
         </h2>
-        <div className="flex items-center gap-2 text-muted-foreground mb-4">
+        <div className="mb-4 flex items-center gap-2 text-muted-foreground">
           <Mail className="size-4 shrink-0 object-cover" />
           <span className="text-sm">{email || "No email provided"}</span>
         </div>
         {profilePictureUrl && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDeletePicture}
-            disabled={isUploading}
-            className="gap-2"
-          >
+          <Button variant="outline" size="sm" onClick={handleDeletePicture} disabled={isUploading} className="gap-2">
             <Trash2 className="size-4" />
             Remove Picture
           </Button>

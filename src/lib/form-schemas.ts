@@ -32,9 +32,7 @@ export const resetPasswordSchema = z
     email: z.string().email("Invalid email address"),
     reset_token: z.string().min(1, "Reset token is required"),
     new_password: z.string().min(8, "Password must be at least 8 characters"),
-    confirm_password: z
-      .string()
-      .min(8, "Password must be at least 8 characters"),
+    confirm_password: z.string().min(8, "Password must be at least 8 characters"),
   })
   .refine((data) => data.new_password === data.confirm_password, {
     message: "Passwords don't match",
@@ -44,9 +42,7 @@ export const resetPasswordSchema = z
 export const caseSchema = z.object({
   case_name: z.string().min(2, "Case name must be at least 2 characters"),
   court_name: z.string().min(2, "Court name must be at least 2 characters"),
-  court_case_number: z
-    .string()
-    .min(2, "Court case number must be at least 2 characters"),
+  court_case_number: z.string().min(2, "Court case number must be at least 2 characters"),
   judegment_amount: z.string().min(1, "Judgment amount is required"),
   judgement_date: z.string().min(1, "Judgment date is required"),
   // Optional fields for other use cases
@@ -73,11 +69,7 @@ export const newCaseSchema = z.object({
   state: z.string().optional(),
   zipcode: z.string().optional(),
   lawyer_phone: z.string().optional(),
-  lawyer_email: z
-    .string()
-    .email("Invalid email format")
-    .optional()
-    .or(z.literal("")),
+  lawyer_email: z.string().email("Invalid email format").optional().or(z.literal("")),
 });
 
 export const employeesSchema = z.object({
@@ -91,10 +83,7 @@ export const employeesSchema = z.object({
     .min(1, "Email is required")
     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email format"),
 
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .optional(),
+  password: z.string().min(6, "Password must be at least 6 characters").optional(),
 
   date_of_birth: z
     .string()
@@ -103,19 +92,13 @@ export const employeesSchema = z.object({
 
   user_phone_number: z
     .string()
-    .regex(
-      /^\+?[0-9]{10,15}$/,
-      "Phone number must be 10-15 digits and may start with +"
-    )
+    .regex(/^\+?[0-9]{10,15}$/, "Phone number must be 10-15 digits and may start with +")
     .optional(),
 
   user_designation: z
     .string()
     .min(2, "Designation is required")
-    .regex(
-      /^[a-zA-Z\s\-_/]+$/,
-      "Designation must only contain letters, spaces, -, /, or _"
-    )
+    .regex(/^[a-zA-Z\s\-_/]+$/, "Designation must only contain letters, spaces, -, /, or _")
     .optional(),
 
   department: z

@@ -216,6 +216,8 @@ declare type TransactionData = {
   cost_amount: number;
   description?: string;
   created_at?: string;
+  accrued_interest: number;
+  principal_balance: number;
 };
 
 declare type TransactionRequest = {

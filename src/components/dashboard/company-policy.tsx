@@ -38,31 +38,20 @@ const CulturePolicies = () => {
     <>
       <Card className="h-full w-full shadow-none">
         <CardHeader>
-          <CardTitle className="font-semibold text-primary text-xl">
-            Company Documents
-          </CardTitle>
+          <CardTitle className="font-semibold text-primary text-xl">Company Documents</CardTitle>
         </CardHeader>
         <CardContent className="h-full space-y-4 overflow-y-scroll lg:h-[618px]">
           <div className="flex flex-col items-start gap-2.5">
             {data && data.length > 0 ? (
               data.map((policy: Policy, idx: number) => (
-                <div
-                  key={policy.id ?? idx}
-                  className="flex w-full items-center justify-center gap-2.5 border-b pb-3"
-                >
+                <div key={policy.id ?? idx} className="flex w-full items-center justify-center gap-2.5 border-b pb-3">
                   <div className="size-10 rounded-full bg-primary p-2 text-white">
                     <FileText className="size-full" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-medium text-sm">
-                      {truncateString(policy.file_name, 20)}
-                    </h3>
+                    <h3 className="font-medium text-sm">{truncateString(policy.file_name, 20)}</h3>
                   </div>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => handleOpenModal(policy)}
-                  >
+                  <Button size="icon" variant="ghost" onClick={() => handleOpenModal(policy)}>
                     <Paperclip className="size-4 text-muted-foreground" />
                   </Button>
                 </div>

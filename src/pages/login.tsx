@@ -5,14 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { loginSchema } from "@/lib/form-schemas";
@@ -36,8 +29,7 @@ const Login = () => {
       toast.success("Login successful!");
       navigate("/dashboard");
     } catch (error: any) {
-      const errorMessage =
-        error?.data?.detail || "Login failed. Please check your credentials.";
+      const errorMessage = error?.data?.detail || "Login failed. Please check your credentials.";
       toast.error(errorMessage);
     }
   };
@@ -54,10 +46,7 @@ const Login = () => {
         </span>
       </div>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full flex-col gap-5"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-5">
           <FormField
             control={form.control}
             name="email"
@@ -65,11 +54,7 @@ const Login = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="johndoe@example.com"
-                    {...field}
-                  />
+                  <Input type="email" placeholder="johndoe@example.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -82,35 +67,19 @@ const Login = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <PasswordInput
-                    placeholder="• • • • • • • •"
-                    {...field}
-                  />
+                  <PasswordInput placeholder="• • • • • • • •" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <div className="flex w-full justify-end">
-            <Link
-              to="/forgot-password"
-              className="text-[14px] font-medium text-primary hover:underline"
-            >
+            <Link to="/forgot-password" className="font-medium text-[14px] text-primary hover:underline">
               Forgot Password?
             </Link>
           </div>
-          <Button
-            type="submit"
-            className="w-full"
-            variant="default"
-            size="lg"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              "Sign In with Email"
-            )}
+          <Button type="submit" className="w-full" variant="default" size="lg" disabled={isLoading}>
+            {isLoading ? <Loader2 className="animate-spin" /> : "Sign In with Email"}
           </Button>
         </form>
       </Form>

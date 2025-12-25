@@ -6,20 +6,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import type z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { verifyOtpSchema } from "@/lib/form-schemas";
-import {
-  useVerifyOtpMutation,
-  useForgotPasswordMutation,
-} from "@/store/services/auth";
+import { useForgotPasswordMutation, useVerifyOtpMutation } from "@/store/services/auth";
 
 const VerifyOtp = () => {
   const navigate = useNavigate();
@@ -27,8 +17,7 @@ const VerifyOtp = () => {
   const emailParam = searchParams.get("email") || "";
 
   const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
-  const [forgotPassword, { isLoading: isResending }] =
-    useForgotPasswordMutation();
+  const [forgotPassword, { isLoading: isResending }] = useForgotPasswordMutation();
   const [canResend, setCanResend] = useState(false);
   const [countdown, setCountdown] = useState(60);
 
@@ -54,14 +43,10 @@ const VerifyOtp = () => {
       const response = await verifyOtp(data).unwrap();
       toast.success(response.message || "OTP verified successfully!");
       navigate(
-        `/reset-password?email=${encodeURIComponent(
-          data.email
-        )}&token=${encodeURIComponent(response.reset_token)}`
+        `/reset-password?email=${encodeURIComponent(data.email)}&token=${encodeURIComponent(response.reset_token)}`,
       );
     } catch (error: any) {
-      toast.error(
-        error?.data?.detail || "Verification failed. Please try again."
-      );
+      toast.error(error?.data?.detail || "Verification failed. Please try again.");
     }
   };
 
@@ -73,9 +58,7 @@ const VerifyOtp = () => {
       setCanResend(false);
       setCountdown(60);
     } catch (error: any) {
-      toast.error(
-        error?.data?.detail || "Failed to resend OTP. Please try again."
-      );
+      toast.error(error?.data?.detail || "Failed to resend OTP. Please try again.");
     }
   };
 
@@ -90,10 +73,7 @@ const VerifyOtp = () => {
         </span>
       </div>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full flex-col gap-5"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-5">
           <FormField
             control={form.control}
             name="email"
@@ -101,12 +81,7 @@ const VerifyOtp = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="johndoe@example.com"
-                    {...field}
-                    disabled
-                  />
+                  <Input type="email" placeholder="johndoe@example.com" {...field} disabled />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -131,13 +106,7 @@ const VerifyOtp = () => {
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            className="w-full"
-            variant="default"
-            size="lg"
-            disabled={isLoading}
-          >
+          <Button type="submit" className="w-full" variant="default" size="lg" disabled={isLoading}>
             {isLoading ? <Loader2 className="animate-spin" /> : "Verify OTP"}
           </Button>
         </form>
@@ -152,11 +121,7 @@ const VerifyOtp = () => {
             disabled={isResending}
             className="p-0 font-medium text-primary"
           >
-            {isResending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              "Resend Code"
-            )}
+            {isResending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Resend Code"}
           </Button>
         ) : (
           <span className="text-[#71717A]">Resend in {countdown}s</span>

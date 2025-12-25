@@ -5,14 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { signupSchema } from "@/lib/form-schemas";
@@ -36,15 +29,10 @@ const Signup = () => {
   const onSubmit = async (data: z.infer<typeof signupSchema>) => {
     try {
       const response = await register(data).unwrap();
-      toast.success(
-        response.message ||
-          "Registration successful! Please check your email for OTP."
-      );
+      toast.success(response.message || "Registration successful! Please check your email for OTP.");
       navigate(`/verify-email?email=${encodeURIComponent(data.email)}`);
     } catch (error: any) {
-      toast.error(
-        error?.data?.detail || "Registration failed. Please try again."
-      );
+      toast.error(error?.data?.detail || "Registration failed. Please try again.");
     }
   };
 
@@ -59,10 +47,7 @@ const Signup = () => {
         </span>
       </div>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full flex-col gap-5"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-5">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <FormField
               control={form.control}
@@ -98,11 +83,7 @@ const Signup = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="johndoe@example.com"
-                    {...field}
-                  />
+                  <Input type="email" placeholder="johndoe@example.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -128,27 +109,14 @@ const Signup = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <PasswordInput
-                    placeholder="• • • • • • • •"
-                    {...field}
-                  />
+                  <PasswordInput placeholder="• • • • • • • •" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            className="w-full"
-            variant="default"
-            size="lg"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              "Create Account"
-            )}
+          <Button type="submit" className="w-full" variant="default" size="lg" disabled={isLoading}>
+            {isLoading ? <Loader2 className="animate-spin" /> : "Create Account"}
           </Button>
         </form>
       </Form>

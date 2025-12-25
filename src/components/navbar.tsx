@@ -21,9 +21,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [open, setOpen] = useState<boolean>(false);
-  const user = useSelector(
-    (state: { global: GlobalState }) => state.global?.user
-  );
+  const user = useSelector((state: { global: GlobalState }) => state.global?.user);
 
   const Profile = () => {
     navigate("/profile");
@@ -73,27 +71,19 @@ const Navbar = () => {
           <img
             src={Logo}
             alt="logo"
-            className="h-full rounded-md dark:bg-white dark:px-1 cursor-pointer"
+            className="h-full cursor-pointer rounded-md dark:bg-white dark:px-1"
             onClick={() => navigate("/dashboard")}
           />
           <div className="flex items-center justify-center gap-2.5">
             <div className="">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="rounded-full"
-                  >
+                  <Button variant="outline" size="icon" className="rounded-full">
                     <Avatar>
                       {getAvatarUrl() ? (
-                        <AvatarImage
-                          src={getAvatarUrl()!}
-                          alt="Profile"
-                          className="object-cover"
-                        />
+                        <AvatarImage src={getAvatarUrl()!} alt="Profile" className="object-cover" />
                       ) : null}
-                      <AvatarFallback className="bg-primary/40 text-white font-semibold">
+                      <AvatarFallback className="bg-primary/40 font-semibold text-white">
                         {getInitials()}
                       </AvatarFallback>
                     </Avatar>
@@ -101,42 +91,22 @@ const Navbar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-36">
                   <DropdownMenuItem>
-                    <Button
-                      className="w-full gap-3.5"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => Home()}
-                    >
+                    <Button className="w-full gap-3.5" variant="ghost" size="sm" onClick={() => Home()}>
                       <HomeIcon className="size-4 text-primary" /> Home
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Button
-                      className="w-full gap-3.5"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => Membership()}
-                    >
+                    <Button className="w-full gap-3.5" variant="ghost" size="sm" onClick={() => Membership()}>
                       <CreditCardIcon className="size-4 text-primary" /> Billing
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Button
-                      className="w-full gap-3.5"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => Profile()}
-                    >
+                    <Button className="w-full gap-3.5" variant="ghost" size="sm" onClick={() => Profile()}>
                       <UserIcon className="size-4 text-primary" /> Profile
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Button
-                      className="w-full"
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => setOpen(true)}
-                    >
+                    <Button className="w-full" variant="destructive" size="sm" onClick={() => setOpen(true)}>
                       <LogOutIcon className="size-4 text-white" /> Logout
                     </Button>
                   </DropdownMenuItem>
