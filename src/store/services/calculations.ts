@@ -1,5 +1,5 @@
-import { api } from "./core";
 import { getCurrentDate } from "@/lib/utils";
+import { api } from "./core";
 
 export const calculationsApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -11,14 +11,9 @@ export const calculationsApi = api.injectEndpoints({
       }),
       invalidatesTags: ["calculations"],
     }),
-    getCalculations: build.query<
-      GetCalculationsResponse,
-      { limit?: number; offset?: number; current_date?: string }
-    >({
+    getCalculations: build.query<GetCalculationsResponse, { limit?: number; offset?: number; current_date?: string }>({
       query: ({ limit = 50, offset = 0, current_date } = {}) => {
         const date = current_date || getCurrentDate();
-        console.log(date);
-        console.log(new Date());
         return {
           url: `/api/calc/history?limit=${limit}&offset=${offset}&current_date=${date}`,
           method: "GET",
@@ -26,10 +21,7 @@ export const calculationsApi = api.injectEndpoints({
       },
       providesTags: ["calculations"],
     }),
-    getCalculation: build.query<
-      CalculationDetailResponse,
-      { id: string; current_date?: string }
-    >({
+    getCalculation: build.query<CalculationDetailResponse, { id: string; current_date?: string }>({
       query: ({ id, current_date }) => {
         const date = current_date || getCurrentDate();
         return {
@@ -39,19 +31,13 @@ export const calculationsApi = api.injectEndpoints({
       },
       providesTags: (_result, _error, { id }) => [{ type: "calculations", id }],
     }),
-    updateCalculation: build.mutation<
-      CalculationResponse,
-      { id: string; data: CalculationRequest }
-    >({
+    updateCalculation: build.mutation<CalculationResponse, { id: string; data: CalculationRequest }>({
       query: ({ id, data }) => ({
         url: `/api/calc/${id}`,
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: (_result, _error, { id }) => [
-        { type: "calculations", id },
-        "calculations",
-      ],
+      invalidatesTags: (_result, _error, { id }) => [{ type: "calculations", id }, "calculations"],
     }),
     deleteCalculation: build.mutation<{ message: string }, string>({
       query: (id) => ({
@@ -105,10 +91,7 @@ export const calculationsApi = api.injectEndpoints({
         "calculations",
       ],
     }),
-    getPayoffDemand: build.mutation<
-      PayoffDemandResponse,
-      { calculationId: string; payoff_date: string }
-    >({
+    getPayoffDemand: build.mutation<PayoffDemandResponse, { calculationId: string; payoff_date: string }>({
       query: ({ calculationId, payoff_date }) => ({
         url: `/api/calc/${calculationId}/payoff-demand`,
         method: "POST",

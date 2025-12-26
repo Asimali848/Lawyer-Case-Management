@@ -2,11 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { marked } from "marked";
-import {
-  GlobalWorkerOptions,
-  getDocument,
-  type PDFDocumentProxy,
-} from "pdfjs-dist";
+import { GlobalWorkerOptions, getDocument, type PDFDocumentProxy } from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min?url";
 import { twMerge } from "tailwind-merge";
 
@@ -29,19 +25,14 @@ export async function extractTextFromPDF(file: File): Promise<string> {
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const textContent = await page.getTextContent();
-    const pageText = textContent.items
-      .map((item) => ("str" in item ? item.str : ""))
-      .join(" ");
+    const pageText = textContent.items.map((item) => ("str" in item ? item.str : "")).join(" ");
     fullText += `${pageText}\n\n`;
   }
 
   return fullText.trim();
 }
 
-export async function downloadMarkdownAsPDF(
-  markdown: string,
-  filename: string = "document"
-): Promise<void> {
+export async function downloadMarkdownAsPDF(markdown: string, filename: string = "document"): Promise<void> {
   try {
     const html = marked(markdown);
 
@@ -187,7 +178,6 @@ export function getCurrentDate(): string {
   const day = String(now.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
-
 
 export function formatCurrency(value: number | string) {
   const num = typeof value === "string" ? parseFloat(value) : value;

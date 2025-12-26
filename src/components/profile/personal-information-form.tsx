@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { useUpdateProfileMutation } from "@/store/services/auth";
 
 interface PersonalInformationFormProps {
@@ -18,17 +18,10 @@ interface PersonalInformationFormProps {
     phoneNumber?: string;
     website?: string;
   };
-  onSave?: (data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-  }) => void;
+  onSave?: (data: { firstName: string; lastName: string; email: string }) => void;
 }
 
-const PersonalInformationForm = ({
-  initialData,
-  onSave,
-}: PersonalInformationFormProps) => {
+const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFormProps) => {
   const emptyForm = {
     firstName: "",
     lastName: "",
@@ -46,9 +39,7 @@ const PersonalInformationForm = ({
     ...emptyForm,
     ...initialData,
   });
-  const [savedData, setSavedData] = useState(
-    initialData ? { ...emptyForm, ...initialData } : null
-  );
+  const [savedData, setSavedData] = useState(initialData ? { ...emptyForm, ...initialData } : null);
   const [updateProfile, { isLoading: isSaving }] = useUpdateProfileMutation();
   const isDataSaved = savedData !== null;
 
@@ -79,9 +70,7 @@ const PersonalInformationForm = ({
       });
       toast.success("Profile saved successfully!");
     } catch (error: any) {
-      toast.error(
-        error?.data?.detail || "Failed to save profile. Please try again."
-      );
+      toast.error(error?.data?.detail || "Failed to save profile. Please try again.");
     }
   };
 
@@ -108,9 +97,7 @@ const PersonalInformationForm = ({
       });
       toast.success("Profile updated successfully!");
     } catch (error: any) {
-      toast.error(
-        error?.data?.detail || "Failed to update profile. Please try again."
-      );
+      toast.error(error?.data?.detail || "Failed to update profile. Please try again.");
     }
   };
 
@@ -124,14 +111,12 @@ const PersonalInformationForm = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-bold">
-          Personal Information
-        </CardTitle>
+        <CardTitle className="font-bold text-xl">Personal Information</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm font-medium">First Name</label>
+            <label className="font-medium text-sm">First Name</label>
             <Input
               value={formData.firstName}
               onChange={(e) => handleInputChange("firstName", e.target.value)}
@@ -139,7 +124,7 @@ const PersonalInformationForm = ({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Last Name</label>
+            <label className="font-medium text-sm">Last Name</label>
             <Input
               value={formData.lastName}
               onChange={(e) => handleInputChange("lastName", e.target.value)}
@@ -147,7 +132,7 @@ const PersonalInformationForm = ({
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
-            <label className="text-sm font-medium">Email</label>
+            <label className="font-medium text-sm">Email</label>
             <Input
               type="email"
               value={formData.email}
@@ -156,7 +141,7 @@ const PersonalInformationForm = ({
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
-            <label className="text-sm font-medium">Firm Name</label>
+            <label className="font-medium text-sm">Firm Name</label>
             <Input
               value={formData.firmName}
               onChange={(e) => handleInputChange("firmName", e.target.value)}
@@ -164,17 +149,15 @@ const PersonalInformationForm = ({
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
-            <label className="text-sm font-medium">Street Address</label>
+            <label className="font-medium text-sm">Street Address</label>
             <Input
               value={formData.streetAddress}
-              onChange={(e) =>
-                handleInputChange("streetAddress", e.target.value)
-              }
+              onChange={(e) => handleInputChange("streetAddress", e.target.value)}
               placeholder="Enter your street address"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">City</label>
+            <label className="font-medium text-sm">City</label>
             <Input
               value={formData.city}
               onChange={(e) => handleInputChange("city", e.target.value)}
@@ -182,7 +165,7 @@ const PersonalInformationForm = ({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">State</label>
+            <label className="font-medium text-sm">State</label>
             <Input
               value={formData.state}
               onChange={(e) => handleInputChange("state", e.target.value)}
@@ -190,7 +173,7 @@ const PersonalInformationForm = ({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Zip Code</label>
+            <label className="font-medium text-sm">Zip Code</label>
             <Input
               value={formData.zipCode}
               onChange={(e) => handleInputChange("zipCode", e.target.value)}
@@ -198,7 +181,7 @@ const PersonalInformationForm = ({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Phone Number</label>
+            <label className="font-medium text-sm">Phone Number</label>
             <Input
               type="tel"
               value={formData.phoneNumber}
@@ -207,7 +190,7 @@ const PersonalInformationForm = ({
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
-            <label className="text-sm font-medium">Website</label>
+            <label className="font-medium text-sm">Website</label>
             <Input
               type="url"
               value={formData.website}
@@ -218,19 +201,11 @@ const PersonalInformationForm = ({
         </div>
         <div className="mt-6 flex justify-end gap-2">
           {isDataSaved && (
-            <Button
-              variant="outline"
-              onClick={handleCancel}
-              disabled={isSaving}
-            >
+            <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
               Cancel
             </Button>
           )}
-          <Button
-            onClick={isDataSaved ? handleUpdate : handleSave}
-            disabled={isSaving}
-            className="min-w-24"
-          >
+          <Button onClick={isDataSaved ? handleUpdate : handleSave} disabled={isSaving} className="min-w-24">
             {isSaving ? "Saving..." : isDataSaved ? "Update" : "Save"}
           </Button>
         </div>

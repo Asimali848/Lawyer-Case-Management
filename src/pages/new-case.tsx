@@ -7,37 +7,25 @@ import { toast } from "sonner";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { newCaseSchema } from "@/lib/form-schemas";
+import { getCurrentDate } from "@/lib/utils";
 import {
   useCreateCalculationMutation,
-  useUpdateCalculationMutation,
   useGetCalculationsQuery,
+  useUpdateCalculationMutation,
 } from "@/store/services/calculations";
 import { useGetSubscriptionStatusQuery } from "@/store/services/subscription";
-import { getCurrentDate } from "@/lib/utils";
 
 const NewCase = () => {
   const navigate = useNavigate();
-  const [createCalculation, { isLoading: isCreating }] =
-    useCreateCalculationMutation();
-  const [updateCalculation, { isLoading: isUpdating }] =
-    useUpdateCalculationMutation();
-  const [calculationResult, setCalculationResult] =
-    useState<CalculationResponse | null>(null);
+  const [createCalculation, { isLoading: isCreating }] = useCreateCalculationMutation();
+  const [updateCalculation, { isLoading: isUpdating }] = useUpdateCalculationMutation();
+  const [calculationResult, setCalculationResult] = useState<CalculationResponse | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [savedCalculationId] = useState<string | null>(null);
-  const [, setLastCalculationRequest] = useState<CalculationRequest | null>(
-    null
-  );
+  const [, setLastCalculationRequest] = useState<CalculationRequest | null>(null);
 
   // Get subscription status and case count
   const { data: subscription } = useGetSubscriptionStatusQuery();
@@ -118,7 +106,7 @@ const NewCase = () => {
               label: "Upgrade",
               onClick: () => navigate("/billing"),
             },
-          }
+          },
         );
         return;
       }
@@ -156,8 +144,6 @@ const NewCase = () => {
       // Get today's date as end_date ONCE and store it (matches static version behavior)
       // This ensures the same end_date is used for both calculation and saving
       const today = new Date().toISOString().split("T")[0];
-      console.log(today);
-      console.log(new Date());
 
       // Prepare calculation request (matches static version exactly)
       // Store this exact request to ensure consistency
@@ -207,18 +193,10 @@ const NewCase = () => {
       // Set the result for display - this is the EXACT same result that was saved
       setCalculationResult(result);
     } catch (error: any) {
-      console.error("Calculation error:", error);
-
       // Check if it's a free tier limit error from backend
-      const errorMessage =
-        error?.data?.detail ||
-        error?.message ||
-        "Failed to calculate. Please try again.";
+      const errorMessage = error?.data?.detail || error?.message || "Failed to calculate. Please try again.";
 
-      if (
-        errorMessage.includes("Free tier limit") ||
-        errorMessage.includes("free tier limit")
-      ) {
+      if (errorMessage.includes("Free tier limit") || errorMessage.includes("free tier limit")) {
         toast.error(errorMessage, {
           duration: 5000,
           action: {
@@ -243,9 +221,7 @@ const NewCase = () => {
     }
 
     // If no calculation was done, show error
-    toast.error(
-      "Please click 'Calculate' first to calculate and save the case."
-    );
+    toast.error("Please click 'Calculate' first to calculate and save the case.");
   };
 
   return (
@@ -253,32 +229,21 @@ const NewCase = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-bold text-2xl">New Case</h1>
-          <p className="text-muted-foreground text-sm">
-            Enter judgment information
-          </p>
+          <p className="text-muted-foreground text-sm">Enter judgment information</p>
         </div>
-        <Button
-          variant="default"
-          size="sm"
-          type="button"
-          onClick={() => navigate("/dashboard")}
-        >
+        <Button variant="default" size="sm" type="button" onClick={() => navigate("/dashboard")}>
           <ArrowLeft className="ml-1 size-4" /> Back
         </Button>
       </div>
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-6"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
           {/* Judgment Information Section */}
           <Card className="bg-muted/50">
             <CardContent className="p-6">
               <div className="mb-6">
                 <h2 className="font-semibold text-green-600 text-lg">
-                  Judgment Information{" "}
-                  <span className="text-destructive">(Required)</span>
+                  Judgment Information <span className="text-destructive">(Required)</span>
                 </h2>
               </div>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -315,10 +280,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Court Name</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="e.g. Orange County Superior Court"
-                          {...field}
-                        />
+                        <Input placeholder="e.g. Orange County Superior Court" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -366,12 +328,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Interest Rate (%)</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          placeholder="10"
-                          {...field}
-                        />
+                        <Input type="number" step="0.01" placeholder="10" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -401,9 +358,7 @@ const NewCase = () => {
           <Card className="bg-muted/50">
             <CardContent className="p-6">
               <div className="mb-6">
-                <h2 className="font-semibold text-green-600 text-lg">
-                  Attorney Information (Optional)
-                </h2>
+                <h2 className="font-semibold text-green-600 text-lg">Attorney Information (Optional)</h2>
               </div>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
@@ -504,11 +459,7 @@ const NewCase = () => {
                     <FormItem className="md:col-span-2">
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="Enter email"
-                          {...field}
-                        />
+                        <Input type="email" placeholder="Enter email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -529,85 +480,47 @@ const NewCase = () => {
                   {/* Left Column */}
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-sm">
-                        Judgment Amount
-                      </span>
+                      <span className="text-muted-foreground text-sm">Judgment Amount</span>
                       <span className="font-medium">
-                        {formatCurrency2Decimals(
-                          calculationResult.initial_principal
-                        )}
+                        {formatCurrency2Decimals(calculationResult.initial_principal)}
                       </span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-sm">
-                        Principal Reduction
-                      </span>
+                      <span className="text-muted-foreground text-sm">Principal Reduction</span>
                       <span className="font-medium">
-                        {formatCurrency2Decimals(
-                          calculationResult.principal_reduction
-                        )}
+                        {formatCurrency2Decimals(calculationResult.principal_reduction)}
                       </span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-sm">
-                        Principal Balance
-                      </span>
+                      <span className="text-muted-foreground text-sm">Principal Balance</span>
                       <span className="font-medium">
-                        {formatCurrency2Decimals(
-                          calculationResult.remaining_principal
-                        )}
+                        {formatCurrency2Decimals(calculationResult.remaining_principal)}
                       </span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-sm">
-                        Costs After Judgment
-                      </span>
-                      <span className="font-medium">
-                        {formatCurrency2Decimals(calculationResult.total_costs)}
-                      </span>
+                      <span className="text-muted-foreground text-sm">Costs After Judgment</span>
+                      <span className="font-medium">{formatCurrency2Decimals(calculationResult.total_costs)}</span>
                     </div>
                   </div>
 
                   {/* Middle Column */}
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-sm">
-                        Daily Interest
-                      </span>
-                      <span className="font-medium">
-                        {formatCurrency4Decimals(
-                          calculationResult.daily_interest
-                        )}
-                      </span>
+                      <span className="text-muted-foreground text-sm">Daily Interest</span>
+                      <span className="font-medium">{formatCurrency4Decimals(calculationResult.daily_interest)}</span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-sm">
-                        Interest Accrued
-                      </span>
-                      <span className="font-medium">
-                        {formatCurrency2Decimals(
-                          calculationResult.interest_accrued
-                        )}
-                      </span>
+                      <span className="text-muted-foreground text-sm">Interest Accrued</span>
+                      <span className="font-medium">{formatCurrency2Decimals(calculationResult.interest_accrued)}</span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-sm">
-                        Interest to Date
-                      </span>
-                      <span className="font-medium">
-                        {formatCurrency2Decimals(
-                          calculationResult.interest_to_date
-                        )}
-                      </span>
+                      <span className="text-muted-foreground text-sm">Interest to Date</span>
+                      <span className="font-medium">{formatCurrency2Decimals(calculationResult.interest_to_date)}</span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-sm">
-                        Total Interest
-                      </span>
+                      <span className="text-muted-foreground text-sm">Total Interest</span>
                       <span className="font-medium">
-                        {formatCurrency2Decimals(
-                          calculationResult.total_interest_accrued
-                        )}
+                        {formatCurrency2Decimals(calculationResult.total_interest_accrued)}
                       </span>
                     </div>
                   </div>
@@ -615,12 +528,8 @@ const NewCase = () => {
                   {/* Right Column */}
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-sm">
-                        Days
-                      </span>
-                      <span className="font-medium">
-                        {calculationResult.days}
-                      </span>
+                      <span className="text-muted-foreground text-sm">Days</span>
+                      <span className="font-medium">{calculationResult.days}</span>
                     </div>
                     <div className="flex flex-col gap-1 border-t pt-4">
                       <span className="font-bold text-base">GRAND TOTAL</span>
@@ -631,9 +540,7 @@ const NewCase = () => {
                   </div>
                 </div>
               ) : (
-                <div className="text-muted-foreground text-center py-8">
-                  Click "Calculate" to see results
-                </div>
+                <div className="py-8 text-center text-muted-foreground">Click "Calculate" to see results</div>
               )}
             </CardContent>
           </Card>
@@ -659,9 +566,7 @@ const NewCase = () => {
                 {isCalculating || isLoading ? (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
-                    {savedCalculationId
-                      ? "Updating..."
-                      : "Calculating & Saving..."}
+                    {savedCalculationId ? "Updating..." : "Calculating & Saving..."}
                   </>
                 ) : savedCalculationId ? (
                   "Recalculate & Update"

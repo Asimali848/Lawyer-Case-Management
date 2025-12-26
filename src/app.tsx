@@ -3,15 +3,15 @@ import AuthLayout from "./components/auth-layout";
 import GlobalLayout from "./components/global-layout";
 import Billing from "./pages/billing";
 import Dashboard from "./pages/dashboard";
-import Login from "./pages/login";
-import Signup from "./pages/signup";
-import VerifyEmail from "./pages/verify-email";
 import ForgotPassword from "./pages/forgot-password";
-import VerifyOtp from "./pages/verify-otp";
-import ResetPassword from "./pages/reset-password";
+import Login from "./pages/login";
 import NewCase from "./pages/new-case";
 import Profile from "./pages/profile";
+import ResetPassword from "./pages/reset-password";
+import Signup from "./pages/signup";
 import UserDetail from "./pages/user-detail";
+import VerifyEmail from "./pages/verify-email";
+import VerifyOtp from "./pages/verify-otp";
 
 function App() {
   return (

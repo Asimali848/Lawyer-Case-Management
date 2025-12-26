@@ -5,14 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { forgotPasswordSchema } from "@/lib/form-schemas";
 import { useForgotPasswordMutation } from "@/store/services/auth";
@@ -31,14 +24,10 @@ const ForgotPassword = () => {
   const onSubmit = async (data: z.infer<typeof forgotPasswordSchema>) => {
     try {
       const response = await forgotPassword(data).unwrap();
-      toast.success(
-        response.message || "Password reset OTP sent to your email!"
-      );
+      toast.success(response.message || "Password reset OTP sent to your email!");
       navigate(`/verify-otp?email=${encodeURIComponent(data.email)}`);
     } catch (error: any) {
-      toast.error(
-        error?.data?.detail || "Failed to send reset email. Please try again."
-      );
+      toast.error(error?.data?.detail || "Failed to send reset email. Please try again.");
     }
   };
 
@@ -53,10 +42,7 @@ const ForgotPassword = () => {
         </span>
       </div>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full flex-col gap-5"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-5">
           <FormField
             control={form.control}
             name="email"
@@ -64,28 +50,14 @@ const ForgotPassword = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="johndoe@example.com"
-                    {...field}
-                  />
+                  <Input type="email" placeholder="johndoe@example.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            className="w-full"
-            variant="default"
-            size="lg"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              "Send Verification Code"
-            )}
+          <Button type="submit" className="w-full" variant="default" size="lg" disabled={isLoading}>
+            {isLoading ? <Loader2 className="animate-spin" /> : "Send Verification Code"}
           </Button>
         </form>
       </Form>

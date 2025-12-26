@@ -1,5 +1,6 @@
-import { Calendar, Download, Loader2, FileText } from "lucide-react";
+import { Calendar, FileText, Loader2 } from "lucide-react";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,12 +12,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { downloadPayoffStatementPDF } from "@/lib/api";
+import { generatePayoffDoc } from "@/lib/payoff-doc-generator";
 import { useGetPayoffDemandMutation } from "@/store/services/calculations";
-import {
-  downloadPayoffStatementPDF,
-  downloadPayoffDemandDocx,
-} from "@/lib/api";
-import { toast } from "sonner";
 
 interface PayoffDemandModalProps {
   open: boolean;
@@ -39,17 +37,10 @@ interface PayoffDemandModalProps {
   };
 }
 
-const PayoffDemandModal = ({
-  open,
-  setOpen,
-  caseId,
-  caseName,
-}: PayoffDemandModalProps) => {
+const PayoffDemandModal = ({ open, setOpen, caseId, caseName }: PayoffDemandModalProps) => {
   const [date, setDate] = useState("");
   const [isCalculating, setIsCalculating] = useState(false);
-  const [payoffData, setPayoffData] = useState<PayoffDemandResponse | null>(
-    null
-  );
+  const [payoffData, setPayoffData] = useState<PayoffDemandResponse | null>(null);
 
   const [getPayoffDemand] = useGetPayoffDemandMutation();
 
@@ -72,7 +63,6 @@ const PayoffDemandModal = ({
   // Calculate payoff when date is selected
   const handleCalculatePayoff = async () => {
     if (!date || !caseId) {
-      console.log("Missing date or caseId:", { date, caseId });
       return;
     }
 
@@ -80,21 +70,13 @@ const PayoffDemandModal = ({
     setPayoffData(null);
 
     try {
-      console.log("Calling payoff demand API with:", {
-        calculationId: caseId,
-        payoff_date: date,
-      });
       const result = await getPayoffDemand({
         calculationId: caseId,
         payoff_date: date,
       }).unwrap();
-
-      console.log("Payoff demand result:", result);
       setPayoffData(result);
       toast.success("Payoff calculated successfully");
     } catch (error: any) {
-      console.error("Error calculating payoff:", error);
-
       // Extract error message from validation errors or detail
       let errorMessage = "Failed to calculate payoff. Please try again.";
 
@@ -103,9 +85,7 @@ const PayoffDemandModal = ({
           errorMessage = error.data.detail;
         } else if (Array.isArray(error.data.detail)) {
           // Pydantic validation errors
-          errorMessage = error.data.detail
-            .map((err: any) => err.msg || JSON.stringify(err))
-            .join(", ");
+          errorMessage = error.data.detail.map((err: any) => err.msg || JSON.stringify(err)).join(", ");
         } else if (typeof error.data.detail === "object") {
           errorMessage = JSON.stringify(error.data.detail);
         }
@@ -127,15 +107,13 @@ const PayoffDemandModal = ({
     }
 
     try {
-      console.log("Downloading PDF with payoff data:", payoffData);
       toast.info("Generating PDF...");
 
       await downloadPayoffStatementPDF(caseId, payoffData.payoff_date);
 
       toast.success("Payoff statement downloaded successfully");
       setOpen(false);
-    } catch (error) {
-      console.error("Error generating PDF:", error);
+    } catch (_error) {
       toast.error("Error generating payoff statement PDF. Please try again.");
     }
   };
@@ -148,12 +126,10 @@ const PayoffDemandModal = ({
 
     try {
       toast.info("Generating Word document...");
-      await downloadPayoffDemandDocx(caseId, payoffData.payoff_date);
-      toast.success("Payoff demand letter downloaded successfully");
-      setOpen(false);
-    } catch (error) {
-      console.error("Error generating DOCX:", error);
-      toast.error("Error generating payoff demand letter. Please try again.");
+      await generatePayoffDoc(payoffData);
+      toast.success("Payoff statement Word document generated successfully");
+    } catch (_error) {
+      toast.error("Error generating payoff statement Word document. Please try again.");
     }
   };
 
@@ -161,17 +137,16 @@ const PayoffDemandModal = ({
   const principalBalanceNum = Number(payoffData?.principal_balance) || 0;
   const accruedInterestNum = Number(payoffData?.accrued_interest) || 0;
   const totalPayoff = Number(payoffData?.total_payoff) || 0;
-  const dailyInterestAmount = Number(payoffData?.daily_interest_amount) || 0;
+  // const dailyInterestAmount = Number(payoffData?.daily_interest_amount) || 0;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] w-full max-w-screen-2xl overflow-y-auto p-7">
         <DialogHeader>
           <DialogTitle>Payoff Demand - {caseName || "Case"}</DialogTitle>
           <DialogDescription>
-            Select a payoff date to calculate the exact amount due. The
-            calculation will include all transactions up to and including the
-            selected date.
+            Select a payoff date to calculate the exact amount due. The calculation will include all transactions up to
+            and including the selected date.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-6 py-4">
@@ -187,7 +162,6 @@ const PayoffDemandModal = ({
                   type="date"
                   value={date}
                   onChange={(e) => {
-                    console.log("Date changed to:", e.target.value);
                     setDate(e.target.value);
                   }}
                   required
@@ -196,109 +170,72 @@ const PayoffDemandModal = ({
                 />
                 <Calendar className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-3 size-4 text-muted-foreground" />
               </div>
-              <Button
-                onClick={handleCalculatePayoff}
-                disabled={isCalculating || !date}
-                variant="outline"
-                size="default"
-              >
-                {isCalculating ? (
-                  <>
-                    <Loader2 className="mr-2 size-4 animate-spin" />
-                    Calc
-                  </>
-                ) : (
-                  "Calculate"
-                )}
-              </Button>
             </div>
-            <p className="text-muted-foreground text-xs">
-              Interest will be calculated up to and including this date
-            </p>
+            <p className="text-muted-foreground text-xs">Interest will be calculated up to and including this date</p>
           </div>
 
           {isCalculating && (
             <div className="flex items-center justify-center gap-2 rounded-lg border p-4">
               <Loader2 className="size-5 animate-spin text-primary" />
-              <span className="text-muted-foreground">
-                Calculating payoff amount...
-              </span>
+              <span className="text-muted-foreground">Calculating payoff amount...</span>
             </div>
           )}
 
           {payoffData && !isCalculating && (
-            <div className="flex flex-col gap-3 rounded-lg border p-4 bg-accent/50">
+            <div
+              className="flex flex-col gap-3 rounded-lg border bg-accent/50 p-4 transition-colors"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleDownload();
+                }
+              }}
+            >
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-base">Payoff Summary</h3>
               </div>
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Payoff Date:</span>
-                  <span className="font-medium">
-                    {new Date(date).toLocaleDateString()}
-                  </span>
+                  <span className="font-medium">{new Date(date).toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    Principal Balance:
-                  </span>
-                  <span className="font-medium">
-                    ${principalBalanceNum.toFixed(2)}
-                  </span>
+                  <span className="text-muted-foreground">Principal Balance:</span>
+                  <span className="font-medium">${principalBalanceNum.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    Accrued Interest:
-                  </span>
-                  <span className="font-medium">
-                    ${accruedInterestNum.toFixed(2)}
-                  </span>
+                  <span className="text-muted-foreground">Accrued Interest:</span>
+                  <span className="font-medium">${accruedInterestNum.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between border-t pt-2">
                   <span className="font-semibold">Total Payoff:</span>
-                  <span className="font-semibold text-green-600 text-lg">
-                    ${totalPayoff.toFixed(2)}
-                  </span>
+                  <span className="font-semibold text-green-600 text-lg">${totalPayoff.toFixed(2)}</span>
                 </div>
-                <div className="mt-3 rounded-md bg-blue-50 p-3">
-                  <p className="text-blue-900 text-sm">
-                    <strong>Daily Interest:</strong> $
-                    {dailyInterestAmount.toFixed(4)} per day after{" "}
-                    {new Date(date).toLocaleDateString()}
-                  </p>
-                  <p className="mt-1 text-blue-700 text-xs">
-                    Interest will continue to accrue at this rate until paid in
-                    full.
-                  </p>
-                </div>
-                {payoffData.transactions_included &&
-                  payoffData.transactions_included.length > 0 && (
-                    <div className="mt-2 text-muted-foreground text-xs">
-                      <p>
-                        <strong>Transactions included:</strong>{" "}
-                        {payoffData.transactions_included.length} transaction(s)
-                        through {new Date(date).toLocaleDateString()}
-                      </p>
-                    </div>
-                  )}
+                {payoffData.transactions_included && payoffData.transactions_included.length > 0 && (
+                  <div className="mt-2 text-muted-foreground text-xs">
+                    <p>
+                      <strong>Transactions included:</strong> {payoffData.transactions_included.length} transaction(s)
+                      through {new Date(date).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
               </div>
-              <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <Button
+              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {/* <div
+                  className="flex items-center justify-center gap-2 text-center text-primary text-sm font-medium border p-3 rounded-lg cursor-pointer hover:bg-primary hover:text-white transition-colors"
                   onClick={handleDownload}
-                  className="flex items-center justify-center gap-2"
-                  variant="outline"
                 >
-                  <Download className="size-4" />
-                  Download PDF Statement
-                </Button>
-                <Button
+                  Download PDF
+                  <Download className="size-5 shrink-0 " />
+                </div> */}
+                <div
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border p-3 text-center font-medium text-primary text-sm transition-colors hover:bg-primary hover:text-white"
                   onClick={handleDownloadWord}
-                  className="flex items-center justify-center gap-2"
-                  variant="default"
                 >
-                  <FileText className="size-4" />
-                  Download Demand Letter
-                </Button>
+                  Download Word
+                  <FileText className="size-5 shrink-0" />
+                </div>
               </div>
             </div>
           )}
@@ -308,7 +245,7 @@ const PayoffDemandModal = ({
             <Button
               onClick={handleCalculatePayoff}
               disabled={isCalculating || !date}
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-primary hover:bg-primary/80"
             >
               {isCalculating ? (
                 <>
@@ -316,7 +253,7 @@ const PayoffDemandModal = ({
                   Calculating...
                 </>
               ) : (
-                "OK - Calculate Payoff"
+                "Calculate Payoff"
               )}
             </Button>
           </DialogFooter>

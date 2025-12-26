@@ -28,6 +28,8 @@
     "@uiw/react-md-editor": "^4.0.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "docx": "^9.5.1",
+    "file-saver": "^2.0.5",
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.544.0",
     "marked": "^16.4.0",
@@ -49,6 +51,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
     "@eslint/js": "^9.33.0",
+    "@types/file-saver": "^2.0.7",
     "@types/marked": "^5.0.2",
     "@types/node": "^24.5.0",
     "@types/react": "^19.1.10",

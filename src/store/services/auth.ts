@@ -18,9 +18,7 @@ export const endpoints = api.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           dispatch(setToken(data.access_token));
-        } catch (error) {
-          console.error("Login failed:", error);
-        }
+        } catch (_error) {}
       },
     }),
     register: build.mutation<RegisterResponse, RegisterRequest>({
@@ -44,10 +42,7 @@ export const endpoints = api.injectEndpoints({
         body: data,
       }),
     }),
-    forgotPassword: build.mutation<
-      ForgotPasswordResponse,
-      ForgotPasswordRequest
-    >({
+    forgotPassword: build.mutation<ForgotPasswordResponse, ForgotPasswordRequest>({
       query: (data) => ({
         url: "/api/auth/forgot-password",
         method: "POST",
@@ -77,9 +72,7 @@ export const endpoints = api.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           dispatch(setUser(data));
-        } catch (error) {
-          console.error("Failed to fetch user:", error);
-        }
+        } catch (_error) {}
       },
       providesTags: ["user"],
     }),
@@ -94,9 +87,7 @@ export const endpoints = api.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           dispatch(setUser(data));
-        } catch (error) {
-          console.error("Failed to update profile:", error);
-        }
+        } catch (_error) {}
       },
     }),
     uploadProfilePicture: build.mutation<UserResponse, FormData>({
@@ -110,9 +101,7 @@ export const endpoints = api.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           dispatch(setUser(data));
-        } catch (error) {
-          console.error("Failed to upload profile picture:", error);
-        }
+        } catch (_error) {}
       },
     }),
     deleteProfilePicture: build.mutation<UserResponse, void>({
@@ -125,9 +114,7 @@ export const endpoints = api.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           dispatch(setUser(data));
-        } catch (error) {
-          console.error("Failed to delete profile picture:", error);
-        }
+        } catch (_error) {}
       },
     }),
   }),

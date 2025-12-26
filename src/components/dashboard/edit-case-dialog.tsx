@@ -4,24 +4,11 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { caseSchema } from "@/lib/form-schemas";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useUpdateCalculationMutation } from "@/store/services/calculations";
 
 interface EditCaseDialogProps {
@@ -31,12 +18,7 @@ interface EditCaseDialogProps {
   onSuccess?: () => void;
 }
 
-const EditCaseDialog = ({
-  open,
-  setOpen,
-  caseData,
-  onSuccess,
-}: EditCaseDialogProps) => {
+const EditCaseDialog = ({ open, setOpen, caseData, onSuccess }: EditCaseDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [updateCalculation] = useUpdateCalculationMutation();
 
@@ -129,19 +111,12 @@ const EditCaseDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>
-            {caseData ? `Edit Case - ${caseData.case_name || ""}` : "Edit Case"}
-          </DialogTitle>
-          <DialogDescription>
-            Update the details of this case.
-          </DialogDescription>
+          <DialogTitle>{caseData ? `Edit Case - ${caseData.case_name || ""}` : "Edit Case"}</DialogTitle>
+          <DialogDescription>Update the details of this case.</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-6"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
             <FormField
               control={form.control}
               name="case_name"
@@ -217,21 +192,11 @@ const EditCaseDialog = ({
               )}
             />
             <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-                disabled={isLoading}
-              >
+              <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
                 Cancel
               </Button>
               {isLoading ? (
-                <Button
-                  type="submit"
-                  variant="default"
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                  disabled
-                >
+                <Button type="submit" variant="default" className="bg-green-600 text-white hover:bg-green-700" disabled>
                   <Loader2 className="mr-2 size-4 animate-spin" />
                   Saving...
                 </Button>
@@ -239,7 +204,7 @@ const EditCaseDialog = ({
                 <Button
                   type="submit"
                   variant="default"
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-green-600 text-white hover:bg-green-700"
                   disabled={isLoading}
                 >
                   Save Changes
@@ -254,4 +219,3 @@ const EditCaseDialog = ({
 };
 
 export default EditCaseDialog;
-

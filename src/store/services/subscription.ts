@@ -83,10 +83,7 @@ export const subscriptionApi = api.injectEndpoints({
     }),
 
     // Create checkout session for upgrading to premium
-    createCheckoutSession: build.mutation<
-      CheckoutSessionResponse,
-      CheckoutSessionRequest
-    >({
+    createCheckoutSession: build.mutation<CheckoutSessionResponse, CheckoutSessionRequest>({
       query: (data) => ({
         url: "/api/subscription/create-checkout-session",
         method: "POST",
@@ -95,10 +92,7 @@ export const subscriptionApi = api.injectEndpoints({
     }),
 
     // Create customer portal session for managing subscription
-    createPortalSession: build.mutation<
-      PortalSessionResponse,
-      PortalSessionRequest
-    >({
+    createPortalSession: build.mutation<PortalSessionResponse, PortalSessionRequest>({
       query: (data) => ({
         url: "/api/subscription/create-portal-session",
         method: "POST",
