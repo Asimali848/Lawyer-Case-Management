@@ -221,7 +221,7 @@ const PayoffDemandModal = ({ open, setOpen, caseId, caseName }: PayoffDemandModa
                   </div>
                 )}
               </div>
-              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <div className="mt-2 flex items-center justify-center w-full ">
                 {/* <div
                   className="flex items-center justify-center gap-2 text-center text-primary text-sm font-medium border p-3 rounded-lg cursor-pointer hover:bg-primary hover:text-white transition-colors"
                   onClick={handleDownload}
@@ -230,10 +230,10 @@ const PayoffDemandModal = ({ open, setOpen, caseId, caseName }: PayoffDemandModa
                   <Download className="size-5 shrink-0 " />
                 </div> */}
                 <div
-                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border p-3 text-center font-medium text-primary text-sm transition-colors hover:bg-primary hover:text-white"
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border p-3 text-center font-medium text-primary text-sm transition-colors hover:bg-primary hover:text-white w-full"
                   onClick={handleDownloadWord}
                 >
-                  Download Word
+                  Download Payoff
                   <FileText className="size-5 shrink-0" />
                 </div>
               </div>
