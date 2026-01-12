@@ -1,9 +1,4 @@
-import {
-  Document,
-  Packer,
-  Paragraph,
-  TextRun,
-} from "docx";
+import { Document, Packer, Paragraph, TextRun } from "docx";
 import { saveAs } from "file-saver";
 
 interface PayoffDocData {
@@ -64,48 +59,34 @@ export async function generatePayoffDoc(data: PayoffDocData): Promise<void> {
       {
         properties: {},
         children: [
-          // Re: Payoff Statement - [Case Name], [CASE NUMBER]
+          // Re: Payoff Statement – Case Name, Case No. CASE NUMBER
           new Paragraph({
             children: [
               new TextRun({
-                text: "Re: Payoff Statement – ",
-                bold: true,
-              }),
-              new TextRun({
-                text: `[${data.case_name || "Case Name"}], [${data.court_case_number || "CASE NUMBER"}]`,
+                text: `Re: Payoff Statement – ${
+                  data.case_name || "Case Name"
+                }, Case No. ${data.court_case_number || "N/A"}`,
                 bold: true,
               }),
             ],
           }),
           new Paragraph({ text: "" }),
 
-          // [COUNSEL’S NAME]
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `[${data.lawyer_name || "COUNSEL'S NAME"}]`,
-                bold: true,
-              }),
-            ],
-          }),
-          new Paragraph({ text: "" }),
-
-          // You requested a payoff calculation for the above-referenced matter with an anticipated payment date of [DATE].
+          // You requested a payoff calculation for the above-referenced matter with an anticipated payment date of DATE.
           new Paragraph({
             children: [
               new TextRun({
                 text: "You requested a payoff calculation for the above-referenced matter with an anticipated payment date of ",
               }),
               new TextRun({
-                text: `[${formatDate(data.payoff_date)}]`,
-                bold: true,
+                text: formatDate(data.payoff_date),
               }),
               new TextRun({ text: "." }),
             ],
           }),
           new Paragraph({ text: "" }),
 
-          // As of that date, the total amount required to fully satisfy the judgment is $[PAYOFF AMOUNT], which includes the following:
+          // As of that date, the total amount required to fully satisfy the judgment is $PAYOFF AMOUNT, which includes the following:
           new Paragraph({
             children: [
               new TextRun({
@@ -122,7 +103,7 @@ export async function generatePayoffDoc(data: PayoffDocData): Promise<void> {
           }),
           new Paragraph({ text: "" }),
 
-          // Principal: $[PRINCIPAL]
+          // Principal: $PRINCIPAL
           new Paragraph({
             bullet: {
               level: 0,
@@ -138,7 +119,7 @@ export async function generatePayoffDoc(data: PayoffDocData): Promise<void> {
             ],
           }),
 
-          // Accrued Interest: $[TOTAL INTEREST]
+          // Accrued Interest: $TOTAL INTEREST
           new Paragraph({
             bullet: {
               level: 0,
@@ -155,14 +136,14 @@ export async function generatePayoffDoc(data: PayoffDocData): Promise<void> {
           }),
           new Paragraph({ text: "" }),
 
-          // If payment is received after [DATE], please increase the total amount by $[DAILY INTEREST] for each additional day to account for continuing interest.
+          // If payment is received after DATE, please increase the total amount by $DAILY INTEREST for each additional day to account for continuing interest.
           new Paragraph({
             children: [
               new TextRun({
                 text: "If payment is received after ",
               }),
               new TextRun({
-                text: `[${formatDate(data.payoff_date)}]`,
+                text: formatDate(data.payoff_date),
                 bold: true,
               }),
               new TextRun({
@@ -179,11 +160,11 @@ export async function generatePayoffDoc(data: PayoffDocData): Promise<void> {
           }),
           new Paragraph({ text: "" }),
 
-          // Please don’t hesitate to reach out if you have any questions.
+          // Please don't hesitate to reach out if you have any questions.
           new Paragraph({
             children: [
               new TextRun({
-                text: "Please don’t hesitate to reach out if you have any questions.",
+                text: "Please don't hesitate to reach out if you have any questions.",
               }),
             ],
           }),
