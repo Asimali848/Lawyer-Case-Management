@@ -2,6 +2,7 @@ import { Calendar, FileText, Loader2 } from "lucide-react";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -195,9 +196,7 @@ const PayoffDemandModal = ({
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Payoff Date:</span>
-                  <span className="font-medium">
-                    {new Date(date).toLocaleDateString()}
-                  </span>
+                  <span className="font-medium">{formatDate(date)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">
@@ -227,7 +226,7 @@ const PayoffDemandModal = ({
                       <p>
                         <strong>Transactions included:</strong>{" "}
                         {payoffData.transactions_included.length} transaction(s)
-                        through {new Date(date).toLocaleDateString()}
+                        through {formatDate(date)}
                       </p>
                     </div>
                   )}

@@ -8,20 +8,26 @@ interface TransactionColumnsProps {
   onDelete: (transaction: Payment) => void;
 }
 
-export const useTransactionColumns = ({ onEdit, onDelete }: TransactionColumnsProps) => {
+export const useTransactionColumns = ({
+  onEdit,
+  onDelete,
+}: TransactionColumnsProps) => {
   return [
     {
       accessorKey: "payment_date",
       header: "DATE",
       cell: ({ row }: { row: Row<Payment> }) => {
         const date = row.getValue("payment_date") as string;
-        if (!date) return <span className="font-medium text-green-600">N/A</span>;
+        if (!date)
+          return <span className="font-medium text-green-600">N/A</span>;
         try {
           // Parse date string directly to avoid timezone issues
           // Date format is YYYY-MM-DD
           const [year, month, day] = date.split("-").map(Number);
           const formattedDate = `${month}/${day}/${year}`;
-          return <span className="font-medium text-green-600">{formattedDate}</span>;
+          return (
+            <span className="font-medium text-green-600">{formattedDate}</span>
+          );
         } catch {
           return <span className="font-medium text-green-600">{date}</span>;
         }
@@ -51,7 +57,17 @@ export const useTransactionColumns = ({ onEdit, onDelete }: TransactionColumnsPr
       header: "AMOUNT",
       cell: ({ row }: { row: Row<Payment> }) => {
         const amount = row.getValue("payment_amount") as string;
-        return <span>${parseFloat(amount).toFixed(2)}</span>;
+        const num = parseFloat(amount);
+        return (
+          <span>
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }).format(num)}
+          </span>
+        );
       },
     },
     {
@@ -59,7 +75,17 @@ export const useTransactionColumns = ({ onEdit, onDelete }: TransactionColumnsPr
       header: "ACCRUED INTEREST",
       cell: ({ row }: { row: Row<Payment> }) => {
         const interest = row.getValue("accrued_interest") as string;
-        return <span>${parseFloat(interest).toFixed(2)}</span>;
+        const num = parseFloat(interest);
+        return (
+          <span>
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }).format(num)}
+          </span>
+        );
       },
     },
     {
@@ -67,7 +93,17 @@ export const useTransactionColumns = ({ onEdit, onDelete }: TransactionColumnsPr
       header: "PRINCIPAL BALANCE",
       cell: ({ row }: { row: Row<Payment> }) => {
         const balance = row.getValue("principal_balance") as string;
-        return <span className="font-bold">${parseFloat(balance).toFixed(2)}</span>;
+        const num = parseFloat(balance);
+        return (
+          <span className="font-bold">
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }).format(num)}
+          </span>
+        );
       },
     },
     {

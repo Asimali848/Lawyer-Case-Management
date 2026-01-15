@@ -28,9 +28,17 @@ interface PayoffDocData {
 
 /**
  * Formats a date string to M/D/YYYY format
+ * Parses YYYY-MM-DD directly to avoid timezone issues
  */
 function formatDate(dateString: string): string {
   try {
+    if (!dateString) return "N/A";
+    // Parse YYYY-MM-DD format directly to avoid timezone conversion
+    const [year, month, day] = dateString.split("-").map(Number);
+    if (year && month && day) {
+      return `${month}/${day}/${year}`;
+    }
+    // Fallback for other formats
     const date = new Date(dateString);
     return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
   } catch {
