@@ -2,7 +2,7 @@ import { Calendar, FileText, Loader2 } from "lucide-react";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatCurrency } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -203,7 +203,7 @@ const PayoffDemandModal = ({
                     Principal Balance:
                   </span>
                   <span className="font-medium">
-                    ${principalBalanceNum.toFixed(2)}
+                    {formatCurrency(principalBalanceNum)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -211,13 +211,13 @@ const PayoffDemandModal = ({
                     Accrued Interest:
                   </span>
                   <span className="font-medium">
-                    ${accruedInterestNum.toFixed(2)}
+                    {formatCurrency(accruedInterestNum)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between border-t pt-2">
                   <span className="font-semibold">Total Payoff:</span>
                   <span className="font-semibold text-green-600 text-lg">
-                    ${totalPayoff.toFixed(2)}
+                    {formatCurrency(totalPayoff)}
                   </span>
                 </div>
                 {payoffData.transactions_included &&
