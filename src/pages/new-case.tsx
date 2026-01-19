@@ -13,10 +13,9 @@ import { newCaseSchema } from "@/lib/form-schemas";
 import { getCurrentDate } from "@/lib/utils";
 import {
   useCreateCalculationMutation,
-  useGetCalculationsQuery,
   useUpdateCalculationMutation,
 } from "@/store/services/calculations";
-import { useGetSubscriptionStatusQuery } from "@/store/services/subscription";
+import { useGetSubscriptionStatusQuery, isUserInTrialPeriod } from "@/store/services/subscription";
 
 const NewCase = () => {
   const navigate = useNavigate();
@@ -27,13 +26,8 @@ const NewCase = () => {
   const [savedCalculationId] = useState<string | null>(null);
   const [, setLastCalculationRequest] = useState<CalculationRequest | null>(null);
 
-  // Get subscription status and case count
+  // Get subscription status
   const { data: subscription } = useGetSubscriptionStatusQuery();
-  const { data: casesData } = useGetCalculationsQuery({
-    limit: 3,
-    offset: 0,
-    current_date: getCurrentDate(),
-  });
 
   const isLoading = isCreating || isUpdating;
 
@@ -94,12 +88,11 @@ const NewCase = () => {
   const handleCalculate = async () => {
     const data = form.getValues();
 
-    // Check subscription limits before allowing case creation
+    // Check if free user's 30-day trial has expired
     if (subscription?.subscription_type === "free" && !savedCalculationId) {
-      const caseCount = casesData?.calculations?.length || 0;
-      if (caseCount >= 3) {
+      if (!isUserInTrialPeriod(subscription?.created_at)) {
         toast.error(
-          "Free tier limit reached. You can only create 3 cases. Please upgrade to Premium to create unlimited cases.",
+          "Your 30-day free trial has expired. Please upgrade to Premium to continue creating cases.",
           {
             duration: 5000,
             action: {

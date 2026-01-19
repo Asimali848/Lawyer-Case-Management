@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentDate } from "@/lib/utils";
 import { useGetCalculationsQuery } from "@/store/services/calculations";
-import { useGetSubscriptionStatusQuery } from "@/store/services/subscription";
+import { useGetSubscriptionStatusQuery, isUserInTrialPeriod, getTrialDaysRemaining } from "@/store/services/subscription";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -17,6 +17,10 @@ const Dashboard = () => {
   // Get subscription status
   const { data: subscription } = useGetSubscriptionStatusQuery();
   const isFreeUser = subscription?.subscription_type === "free";
+  
+  // Calculate trial status for free users
+  const trialDaysRemaining = isFreeUser ? getTrialDaysRemaining(subscription?.created_at) : 0;
+  const isTrialExpired = isFreeUser && !isUserInTrialPeriod(subscription?.created_at);
 
   const batchSize = useState<number>(50)[0];
   const [currentOffset, setCurrentOffset] = useState<number>(0);
@@ -81,11 +85,8 @@ const Dashboard = () => {
         // Combine previous cases with new cases
         let updated = [...prev, ...uniqueNewCases];
 
-        // For free users, limit to maximum 3 cases
-        if (isFreeUser && updated.length > 3) {
-          updated = updated.slice(0, 3);
-          hasMoreData.current = false;
-        }
+        // Free users on trial can see all their cases (no limit)
+        // Note: 3-case limit removed - now using 30-day trial model
 
         // Apply FIFO (First In First Out) - sort by created_at ascending (oldest first)
         updated = updated.sort((a, b) => {
@@ -97,7 +98,7 @@ const Dashboard = () => {
 
         setTotalCases(updated.length);
 
-        if (newBatch.length < batchSize || (isFreeUser && updated.length >= 3)) {
+        if (newBatch.length < batchSize) {
           hasMoreData.current = false;
           setIsLoadingMore(false);
         }
@@ -180,9 +181,9 @@ const Dashboard = () => {
           size="sm"
           type="button"
           onClick={() => {
-            // Check if free user can create more cases
-            if (isFreeUser && allCases.length >= 3) {
-              toast.error("Free tier limit reached. You can only create 3 cases. Please upgrade to Premium.", {
+            // Check if free user's trial has expired
+            if (isTrialExpired) {
+              toast.error("Your 30-day free trial has expired. Please upgrade to Premium to create more cases.", {
                 duration: 5000,
                 action: {
                   label: "Upgrade",
@@ -200,23 +201,26 @@ const Dashboard = () => {
         </Button>
       </div>
 
-      {/* Free User Warning */}
-      {isFreeUser && allCases.length > 0 && (
+      {/* Trial Status Alert */}
+      {isFreeUser && (
         <div className="flex h-full w-full flex-col items-center justify-center gap-4 py-5">
-          <Alert className="border-amber-500 bg-amber-50 dark:bg-amber-950">
-            <Info className="h-4 w-4 text-amber-600" />
-            <AlertTitle className="text-amber-800 dark:text-amber-200">Free Tier - Limited to 3 Cases</AlertTitle>
-            <AlertDescription className="text-amber-700 dark:text-amber-300">
-              You're viewing {allCases.length} of your {allCases.length >= 3 ? "maximum 3" : allCases.length} cases.
-              {allCases.length >= 3 && " To create more cases, "}
+          <Alert className={isTrialExpired ? "border-red-500 bg-red-50 dark:bg-red-950" : "border-amber-500 bg-amber-50 dark:bg-amber-950"}>
+            <Info className={isTrialExpired ? "h-4 w-4 text-red-600" : "h-4 w-4 text-amber-600"} />
+            <AlertTitle className={isTrialExpired ? "text-red-800 dark:text-red-200" : "text-amber-800 dark:text-amber-200"}>
+              {isTrialExpired ? "Free Trial Expired" : `Free Trial - ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''} remaining`}
+            </AlertTitle>
+            <AlertDescription className={isTrialExpired ? "text-red-700 dark:text-red-300" : "text-amber-700 dark:text-amber-300"}>
+              {isTrialExpired
+                ? "Your 30-day free trial has ended. You can still view your existing cases, but "
+                : `You have ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''} left in your free trial with unlimited cases. `}
               <Button
                 variant="link"
-                className="h-auto p-0 font-semibold text-amber-800 underline dark:text-amber-200"
+                className={isTrialExpired ? "h-auto p-0 font-semibold text-red-800 underline dark:text-red-200" : "h-auto p-0 font-semibold text-amber-800 underline dark:text-amber-200"}
                 onClick={() => navigate("/billing")}
               >
                 upgrade to Premium
               </Button>
-              {allCases.length >= 3 ? " for unlimited cases." : "."}
+              {isTrialExpired ? " to create new cases." : " for continued access after trial."}
             </AlertDescription>
           </Alert>
         </div>

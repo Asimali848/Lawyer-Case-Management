@@ -14,6 +14,28 @@ export interface SubscriptionStatus {
   updated_at: string;
 }
 
+// Trial period configuration (30 days)
+export const FREE_TRIAL_DAYS = 30;
+
+// Helper function to check if user is within trial period
+export const isUserInTrialPeriod = (subscriptionCreatedAt: string | null): boolean => {
+  if (!subscriptionCreatedAt) return false;
+  const createdAt = new Date(subscriptionCreatedAt);
+  const trialEnd = new Date(createdAt);
+  trialEnd.setDate(trialEnd.getDate() + FREE_TRIAL_DAYS);
+  return new Date() < trialEnd;
+};
+
+// Helper function to get trial days remaining
+export const getTrialDaysRemaining = (subscriptionCreatedAt: string | null): number => {
+  if (!subscriptionCreatedAt) return 0;
+  const createdAt = new Date(subscriptionCreatedAt);
+  const trialEnd = new Date(createdAt);
+  trialEnd.setDate(trialEnd.getDate() + FREE_TRIAL_DAYS);
+  const remaining = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  return Math.max(0, remaining);
+};
+
 export interface StripeConfig {
   publishable_key: string;
   test_mode: boolean;
