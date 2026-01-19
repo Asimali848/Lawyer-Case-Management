@@ -32,6 +32,7 @@ const Dashboard = () => {
   const hasMoreData = useRef(true);
   // Store created_at dates for FIFO sorting
   const caseCreatedDates = useRef<Map<string, string>>(new Map());
+  //@ts-ignore
   const { data: user } = useGetCurrentUserQuery();
   const { data, isLoading, error, isFetching } = useGetCalculationsQuery(
     {
