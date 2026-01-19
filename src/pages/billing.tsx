@@ -64,7 +64,7 @@ const Billing = () => {
       price: "Free",
       priceLabel: "",
       icon: Box,
-      features: ["Basic Support", "No Usage Limit", "2 Week free trial", "No Credit Card Required"],
+      features: ["Basic Support", "No Usage Limit", "1 Month free trial", "No Credit Card Required"],
       buttonText: isFree ? "Current Plan" : "Downgrade",
       buttonVariant: "default" as const,
       isPopular: false,

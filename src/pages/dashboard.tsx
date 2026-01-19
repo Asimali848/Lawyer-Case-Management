@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getCurrentDate } from "@/lib/utils";
 import { useGetCalculationsQuery } from "@/store/services/calculations";
 import { useGetSubscriptionStatusQuery, isUserInTrialPeriod, getTrialDaysRemaining } from "@/store/services/subscription";
+import { useGetCurrentUserQuery } from "@/store/services/auth";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const Dashboard = () => {
   const hasMoreData = useRef(true);
   // Store created_at dates for FIFO sorting
   const caseCreatedDates = useRef<Map<string, string>>(new Map());
-
+  const { data: user } = useGetCurrentUserQuery();
   const { data, isLoading, error, isFetching } = useGetCalculationsQuery(
     {
       limit: batchSize,
