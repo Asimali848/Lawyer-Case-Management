@@ -12,12 +12,16 @@ import Signup from "./pages/signup";
 import UserDetail from "./pages/user-detail";
 import VerifyEmail from "./pages/verify-email";
 import VerifyOtp from "./pages/verify-otp";
+import Landing from "./pages/landing";
+import InterestRate from "./pages/interest-rate";
 
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/interest-rate" element={<InterestRate />} />
       <Route element={<AuthLayout />}>
-        <Route index element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
