@@ -21,12 +21,7 @@ export const columns: ColumnDef<PostData>[] = [
     cell: ({ row }) => {
       const link = row.original.Link;
       return link && link !== "NaN" ? (
-        <a
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 underline"
-        >
+        <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
           View
         </a>
       ) : (

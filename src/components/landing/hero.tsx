@@ -14,7 +14,7 @@ const Hero = () => {
       {/* Text Section */}
       <div className="order-1 flex w-full flex-1 flex-col items-center justify-center gap-3 px-6 py-5 md:absolute md:order-none md:items-start lg:max-w-screen-xl lg:gap-6">
         <motion.h1
-          className="text-3xl font-bold leading-tight text-primary sm:text-4xl md:text-4xl lg:text-6xl"
+          className="font-bold text-3xl text-primary leading-tight sm:text-4xl md:text-4xl lg:text-6xl"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
@@ -23,13 +23,13 @@ const Hero = () => {
         </motion.h1>
 
         <motion.p
-          className="max-w-md pb-2 text-center text-base font-semibold text-black md:w-1/3 md:text-left md:leading-5 lg:text-xl lg:leading-9"
+          className="max-w-md pb-2 text-center font-semibold text-base text-black md:w-1/3 md:text-left md:leading-5 lg:text-xl lg:leading-9"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Track Multiple Judgments Up to Date Accrued Interest Easy Transaction
-          Entry & Editing Instant Payoff Calculator
+          Track Multiple Judgments Up to Date Accrued Interest Easy Transaction Entry & Editing Instant Payoff
+          Calculator
         </motion.p>
 
         <motion.div
@@ -39,7 +39,7 @@ const Hero = () => {
         >
           <Button
             onClick={() => navigate("/login")}
-            className="w-[160px] rounded-md border-2 border-primary py-4 text-sm font-medium text-white transition-all hover:scale-105 hover:cursor-pointer hover:border-primary hover:bg-white hover:text-primary sm:w-[180px] sm:py-5 sm:text-base md:w-[200px] md:py-6 md:text-lg"
+            className="w-[160px] rounded-md border-2 border-primary py-4 font-medium text-sm text-white transition-all hover:scale-105 hover:cursor-pointer hover:border-primary hover:bg-white hover:text-primary sm:w-[180px] sm:py-5 sm:text-base md:w-[200px] md:py-6 md:text-lg"
           >
             Get Started <ArrowRight className="ml-2 inline-block" />
           </Button>

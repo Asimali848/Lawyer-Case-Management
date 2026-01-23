@@ -4,6 +4,8 @@ import GlobalLayout from "./components/global-layout";
 import Billing from "./pages/billing";
 import Dashboard from "./pages/dashboard";
 import ForgotPassword from "./pages/forgot-password";
+import InterestRate from "./pages/interest-rate";
+import Landing from "./pages/landing";
 import Login from "./pages/login";
 import NewCase from "./pages/new-case";
 import Profile from "./pages/profile";
@@ -12,8 +14,6 @@ import Signup from "./pages/signup";
 import UserDetail from "./pages/user-detail";
 import VerifyEmail from "./pages/verify-email";
 import VerifyOtp from "./pages/verify-otp";
-import Landing from "./pages/landing";
-import InterestRate from "./pages/interest-rate";
 
 function App() {
   return (

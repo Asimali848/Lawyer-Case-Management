@@ -126,34 +126,25 @@
 //   );
 // };
 // export default Faq;
-import { useRef } from "react";
 
 import { useInView } from "framer-motion";
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 
 import bg from "@/assets/img/judge-gavel-with-justice-lawyers-having-team-meeti-HMWWXEN.webp";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const faqs = [
   {
     q: "Can I use this in my state?",
     a: (
       <>
-        Yes. JudgmentCalc.com works no matter where your judgment was entered.
-        You control the interest rate that's applied — whether it's statutory,
-        contractual, or court-ordered.
+        Yes. JudgmentCalc.com works no matter where your judgment was entered. You control the interest rate that's
+        applied — whether it's statutory, contractual, or court-ordered.
         <br />
         <br />
         Not sure what rate your jurisdiction uses?{" "}
-        <Link
-          to="/interest-rate"
-          className="text-primary underline hover:text-primary/80"
-        >
+        <Link to="/interest-rate" className="text-primary underline hover:text-primary/80">
           Click here
         </Link>{" "}
         to view a guide to judgment interest rates by state.
@@ -164,14 +155,13 @@ const faqs = [
     q: "How is interest calculated?",
     a: (
       <>
-        Interest is calculated on a daily simple interest basis, using the
-        principal balance and any adjustments you've entered. When payments or
-        costs are added, the system automatically updates the balance and
-        applies interest going forward — just like a court would.
+        Interest is calculated on a daily simple interest basis, using the principal balance and any adjustments you've
+        entered. When payments or costs are added, the system automatically updates the balance and applies interest
+        going forward — just like a court would.
         <br />
         <br />
-        You choose the rate and the as-of date, and JudgmentCalc.com does the
-        rest. No compounding, no guesswork, and no spreadsheet formulas.
+        You choose the rate and the as-of date, and JudgmentCalc.com does the rest. No compounding, no guesswork, and no
+        spreadsheet formulas.
       </>
     ),
   },
@@ -179,16 +169,13 @@ const faqs = [
     q: "I'm renewing my judgment and need to compound the interest. How do I do that?",
     a: (
       <>
-        To compound interest upon renewal, enter a payment on the renewal date
-        for the full amount of unpaid accrued interest. This zeros out the
-        running interest balance. Then, immediately enter a Cost Award for that
-        same amount — effectively folding the accrued interest into the
-        principal of the renewed judgment.
+        To compound interest upon renewal, enter a payment on the renewal date for the full amount of unpaid accrued
+        interest. This zeros out the running interest balance. Then, immediately enter a Cost Award for that same amount
+        — effectively folding the accrued interest into the principal of the renewed judgment.
         <br />
         <br />
-        From that point forward, interest will accrue on the increased balance,
-        achieving proper compounding consistent with judgment renewal
-        procedures. We'll be adding an auto compound feature soon. Stay tuned!
+        From that point forward, interest will accrue on the increased balance, achieving proper compounding consistent
+        with judgment renewal procedures. We'll be adding an auto compound feature soon. Stay tuned!
       </>
     ),
   },
@@ -196,14 +183,12 @@ const faqs = [
     q: "How are costs treated?",
     a: (
       <>
-        Costs are treated as additions to the judgment principal on the date you
-        enter them. Once added, they begin to accrue interest just like the
-        original judgment amount.
+        Costs are treated as additions to the judgment principal on the date you enter them. Once added, they begin to
+        accrue interest just like the original judgment amount.
         <br />
         <br />
-        This ensures that recoverable expenses — like writ fees, levy charges,
-        or renewal costs — are fully accounted for in the growing payoff
-        balance. You control the timing and amount of each cost entry.
+        This ensures that recoverable expenses — like writ fees, levy charges, or renewal costs — are fully accounted
+        for in the growing payoff balance. You control the timing and amount of each cost entry.
       </>
     ),
   },
@@ -211,15 +196,13 @@ const faqs = [
     q: "What's your cancellation/refund policy?",
     a: (
       <>
-        We offer a free 30-day trial — no credit card required. If you decide
-        not to subscribe, your data will be automatically deleted 10 days after
-        the trial ends. We're sorry to see you go!
+        We offer a free 30-day trial — no credit card required. If you decide not to subscribe, your data will be
+        automatically deleted 10 days after the trial ends. We're sorry to see you go!
         <br />
         <br />
-        If you sign up for a paid plan, your subscription will remain active
-        through the end of the billing term (monthly or yearly) and will not
-        auto-renew. No surprise charges, no hassle. All of your data will be
-        deleted thirty days after your subscription ends.
+        If you sign up for a paid plan, your subscription will remain active through the end of the billing term
+        (monthly or yearly) and will not auto-renew. No surprise charges, no hassle. All of your data will be deleted
+        thirty days after your subscription ends.
       </>
     ),
   },
@@ -227,14 +210,12 @@ const faqs = [
     q: "Is my data secure?",
     a: (
       <>
-        Yes. Your data is encrypted in transit and stored securely using
-        industry-standard best practices. We never share, sell, or mine your
-        information — and we do not require any client-identifying details to
-        use the system.
+        Yes. Your data is encrypted in transit and stored securely using industry-standard best practices. We never
+        share, sell, or mine your information — and we do not require any client-identifying details to use the system.
         <br />
         <br />
-        You're always in control. If you cancel your account, your data is
-        permanently deleted after a short grace period.
+        You're always in control. If you cancel your account, your data is permanently deleted after a short grace
+        period.
       </>
     ),
   },
@@ -248,16 +229,16 @@ const Faq = () => {
     <div className="h-full w-full space-y-8 overflow-hidden sm:space-y-10 md:py-5">
       {/* Heading */}
       <div className="flex w-full flex-col items-center justify-center gap-3 px-4 text-center sm:gap-5">
-        <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl text-black">FAQs</h1>
+        <h1 className="font-bold text-3xl text-black sm:text-4xl md:text-5xl">FAQs</h1>
         <hr className="h-1 w-16 rounded-full bg-primary sm:w-20" />
-        <p className="max-w-2xl text-base font-semibold text-gray-600 sm:text-lg md:text-2xl">
+        <p className="max-w-2xl font-semibold text-base text-gray-600 sm:text-lg md:text-2xl">
           Find answers to the most common questions about JudgmentCalc.
         </p>
       </div>
 
       <div
         ref={ref}
-        className="flex w-full flex-col items-center justify-start bg-cover bg-center px-4 py-16 transition-all duration-1000 ease-in-out sm:py-24 lg:py-32"
+        className="flex w-full flex-col items-center justify-start bg-center bg-cover px-4 py-16 transition-all duration-1000 ease-in-out sm:py-24 lg:py-32"
         style={{
           opacity: isInView ? 1 : 0,
           transform: isInView ? "translateY(0px)" : "translateY(50px)",
@@ -267,21 +248,11 @@ const Faq = () => {
         <div className="mx-auto grid w-full max-w-screen-2xl grid-cols-1 gap-0 md:grid-cols-2 lg:gap-6">
           {/* Column 1 */}
           <div className="w-full">
-            <Accordion
-              type="single"
-              collapsible
-              className="space-y-4 p-4 text-white sm:p-5"
-            >
+            <Accordion type="single" collapsible className="space-y-4 p-4 text-white sm:p-5">
               {faqs.slice(0, 3).map((faq, i) => (
-                <AccordionItem
-                  key={i}
-                  value={`item-${i}`}
-                  className="rounded-xl bg-primary p-4 sm:p-1 sm:px-5"
-                >
-                  <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">
-                    {faq.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="rounded-lg bg-white px-3 py-2 text-sm text-primary sm:text-lg md:text-xl">
+                <AccordionItem key={i} value={`item-${i}`} className="rounded-xl bg-primary p-4 sm:p-1 sm:px-5">
+                  <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">{faq.q}</AccordionTrigger>
+                  <AccordionContent className="rounded-lg bg-white px-3 py-2 text-primary text-sm sm:text-lg md:text-xl">
                     {faq.a}
                   </AccordionContent>
                 </AccordionItem>
@@ -291,21 +262,11 @@ const Faq = () => {
 
           {/* Column 2 */}
           <div className="w-full">
-            <Accordion
-              type="single"
-              collapsible
-              className="space-y-4 p-4 text-white sm:p-5"
-            >
+            <Accordion type="single" collapsible className="space-y-4 p-4 text-white sm:p-5">
               {faqs.slice(3).map((faq, i) => (
-                <AccordionItem
-                  key={i}
-                  value={`item-${i + 3}`}
-                  className="rounded-xl bg-primary p-4 sm:p-1 sm:px-5"
-                >
-                  <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">
-                    {faq.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="rounded-lg bg-white px-3 py-2 text-sm text-primary sm:text-lg md:text-xl">
+                <AccordionItem key={i} value={`item-${i + 3}`} className="rounded-xl bg-primary p-4 sm:p-1 sm:px-5">
+                  <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">{faq.q}</AccordionTrigger>
+                  <AccordionContent className="rounded-lg bg-white px-3 py-2 text-primary text-sm sm:text-lg md:text-xl">
                     {faq.a}
                   </AccordionContent>
                 </AccordionItem>

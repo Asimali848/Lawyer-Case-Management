@@ -10,11 +10,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { newCaseSchema } from "@/lib/form-schemas";
-import {
-  useCreateCalculationMutation,
-  useUpdateCalculationMutation,
-} from "@/store/services/calculations";
-import { useGetSubscriptionStatusQuery, isUserInTrialPeriod } from "@/store/services/subscription";
+import { useCreateCalculationMutation, useUpdateCalculationMutation } from "@/store/services/calculations";
+import { isUserInTrialPeriod, useGetSubscriptionStatusQuery } from "@/store/services/subscription";
 
 const NewCase = () => {
   const navigate = useNavigate();
@@ -90,16 +87,13 @@ const NewCase = () => {
     // Check if free user's 30-day trial has expired
     if (subscription?.subscription_type === "free" && !savedCalculationId) {
       if (!isUserInTrialPeriod(subscription?.created_at)) {
-        toast.error(
-          "Your 30-day free trial has expired. Please upgrade to Premium to continue creating cases.",
-          {
-            duration: 5000,
-            action: {
-              label: "Upgrade",
-              onClick: () => navigate("/billing"),
-            },
+        toast.error("Your 30-day free trial has expired. Please upgrade to Premium to continue creating cases.", {
+          duration: 5000,
+          action: {
+            label: "Upgrade",
+            onClick: () => navigate("/billing"),
           },
-        );
+        });
         return;
       }
     }

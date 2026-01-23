@@ -1,18 +1,7 @@
 import { motion } from "framer-motion";
-import {
-  Infinity,
-  Calculator,
-  CalendarClock,
-  MousePointerClick,
-} from "lucide-react";
+import { Calculator, CalendarClock, Infinity, MousePointerClick } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const features = [
   {
@@ -79,11 +68,10 @@ const Features = () => {
       <div className="flex w-full flex-col items-center justify-start gap-8 py-16 sm:gap-10 sm:py-20 md:py-24">
         {/* Heading */}
         <div className="flex w-full flex-col items-center justify-center gap-3 px-4 text-center">
-          <h1 className="text-3xl font-bold sm:text-4xl text-black">Features</h1>
+          <h1 className="font-bold text-3xl text-black sm:text-4xl">Features</h1>
           <hr className="h-1 w-16 rounded-full bg-primary sm:w-20" />
-          <p className="max-w-xl text-sm font-semibold text-gray-500 sm:text-base md:text-lg">
-            Explore your design idea with this simple but eye-catchy minimal
-            style with icon and button.
+          <p className="max-w-xl font-semibold text-gray-500 text-sm sm:text-base md:text-lg">
+            Explore your design idea with this simple but eye-catchy minimal style with icon and button.
           </p>
         </div>
 
@@ -100,27 +88,23 @@ const Features = () => {
               //@ts-ignore
               variants={cardVariants}
             >
-              <Card className="bg-transparent flex flex-col h-[450px] w-full items-center justify-start border-2 border-primary px-3 text-center shadow-md transition duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-primary/20">
+              <Card className="flex h-[450px] w-full flex-col items-center justify-start border-2 border-primary bg-transparent px-3 text-center shadow-md transition duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-primary/20">
                 <CardHeader className="flex w-full flex-col items-center pt-3">
                   <div
                     className={`group flex items-center justify-center rounded-full p-4 transition-colors duration-300 sm:p-6 ${
-                      feature.circleBg
-                        ? "bg-primary"
-                        : "bg-gray-100 hover:bg-primary"
+                      feature.circleBg ? "bg-primary" : "bg-gray-100 hover:bg-primary"
                     } `}
                   >
                     <span
                       className={`size-8 transition-colors duration-300 ${
-                        feature.circleBg
-                          ? "text-white"
-                          : "text-primary group-hover:text-white"
+                        feature.circleBg ? "text-white" : "text-primary group-hover:text-white"
                       } `}
                     >
                       {feature.icon}
                     </span>
                   </div>
                 </CardHeader>
-                <CardTitle className="flex h-24 w-full items-center justify-center text-base text-black font-bold md:text-lg lg:text-2xl">
+                <CardTitle className="flex h-24 w-full items-center justify-center font-bold text-base text-black md:text-lg lg:text-2xl">
                   {feature.title}
                 </CardTitle>
                 <CardContent>

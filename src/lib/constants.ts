@@ -148,8 +148,7 @@ export const data: PostData[] = [
   },
   {
     State: "Indiana",
-    PostJudgmentInterestRate:
-      "8% or the rate specified in the contract not to exceed 8%.",
+    PostJudgmentInterestRate: "8% or the rate specified in the contract not to exceed 8%.",
     Cite: "Ind. Code $ 24-4.6-1-101",
     Link: null,
     Compounding: null,
@@ -180,8 +179,7 @@ export const data: PostData[] = [
   },
   {
     State: "Louisiana",
-    PostJudgmentInterestRate:
-      "3.25% plus the Federal Reserve Board of Governors discount rate.",
+    PostJudgmentInterestRate: "3.25% plus the Federal Reserve Board of Governors discount rate.",
     Cite: "LA R.S. $ 13:4202",
     Link: "https://www.frbdiscountwindow.org/pages/discount-rates/current-discount-rates",
     Compounding: null,
@@ -203,8 +201,7 @@ export const data: PostData[] = [
   },
   {
     State: "Massachusetts",
-    PostJudgmentInterestRate:
-      "12% unless contract provides otherwise. (Exceptions apply, consult statute).",
+    PostJudgmentInterestRate: "12% unless contract provides otherwise. (Exceptions apply, consult statute).",
     Cite: "M.G.L. c. 231, $$ 6B, 6C, 6H c. 235, $ 8",
     Link: null,
     Compounding: null,
@@ -215,8 +212,7 @@ export const data: PostData[] = [
       "In actions on a contract, the contractual rate, not to exceed 13%. In all other actions, 1% plus the average interest rate paid at auctions of five-year US Treasury notes during the six months immediately preceding July 1 and January 1, as certified by the state treasurer and compounded annually.",
     Cite: "MCL 600.6013",
     Link: "https://www.michigan.gov/taxes/interest-rates-for-money-judgments",
-    Compounding:
-      "Rates Change on January 1 and July 1. Interest compounds annually.",
+    Compounding: "Rates Change on January 1 and July 1. Interest compounds annually.",
   },
   {
     State: "Minnesota",
@@ -284,8 +280,7 @@ export const data: PostData[] = [
   },
   {
     State: "New Mexico",
-    PostJudgmentInterestRate:
-      "Non-Tort Cases: 8.75%, unless the contact provides otherwise. Tort Cases: 15%.",
+    PostJudgmentInterestRate: "Non-Tort Cases: 8.75%, unless the contact provides otherwise. Tort Cases: 15%.",
     Cite: "NMSA 1978, $ 56-8-4",
     Link: null,
     Compounding: null,
@@ -300,8 +295,7 @@ export const data: PostData[] = [
   },
   {
     State: "North Carolina",
-    PostJudgmentInterestRate:
-      "Contract Actions: the contract rate or 8% if the contract is silent. All Others: 8%",
+    PostJudgmentInterestRate: "Contract Actions: the contract rate or 8% if the contract is silent. All Others: 8%",
     Cite: "N.C.G.S. $$ 24-1, 24-5",
     Link: null,
     Compounding: null,
@@ -328,8 +322,7 @@ export const data: PostData[] = [
       "2% plus the prime rate, as listed in the first edition of the Wall Street Journal published for each calendar year, unless the contract provides otherwise.",
     Cite: "Okla. Stat. tit. 12, $ 727.1",
     Link: "https://www.oscn.net/applications/oscn/index.asp?ftdb=STOKIN&level=1",
-    Compounding:
-      "Rates change on January 1. Prior year's interest is compounded on January 1.",
+    Compounding: "Rates change on January 1. Prior year's interest is compounded on January 1.",
   },
   {
     State: "Oregon",
@@ -408,8 +401,7 @@ export const data: PostData[] = [
   },
   {
     State: "Virginia",
-    PostJudgmentInterestRate:
-      "Contract Actions: Greater of 6% or the contract rate. All other actions: 6%.",
+    PostJudgmentInterestRate: "Contract Actions: Greater of 6% or the contract rate. All other actions: 6%.",
     Cite: "Va. Code Ann. $ 6.2-302",
     Link: null,
     Compounding: null,

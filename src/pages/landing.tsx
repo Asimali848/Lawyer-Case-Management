@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-
 import { ArrowUp } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import Faq from "@/components/landing/faq";
 import Features from "@/components/landing/features";
@@ -57,7 +56,7 @@ const Landing = () => {
       {showScrollButton && (
         <Button
           onClick={scrollToHero}
-          className="duration-900 fixed bottom-16 right-16 z-20 size-16 animate-bounce rounded-full bg-primary p-5 text-white shadow-lg transition-colors hover:bg-primary/80"
+          className="fixed right-16 bottom-16 z-20 size-16 animate-bounce rounded-full bg-primary p-5 text-white shadow-lg transition-colors duration-900 hover:bg-primary/80"
         >
           <ArrowUp className="size-6" />
         </Button>

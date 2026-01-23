@@ -8,9 +8,13 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentDate } from "@/lib/utils";
-import { useGetCalculationsQuery } from "@/store/services/calculations";
-import { useGetSubscriptionStatusQuery, isUserInTrialPeriod, getTrialDaysRemaining } from "@/store/services/subscription";
 import { useGetCurrentUserQuery } from "@/store/services/auth";
+import { useGetCalculationsQuery } from "@/store/services/calculations";
+import {
+  getTrialDaysRemaining,
+  isUserInTrialPeriod,
+  useGetSubscriptionStatusQuery,
+} from "@/store/services/subscription";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -18,7 +22,7 @@ const Dashboard = () => {
   // Get subscription status
   const { data: subscription } = useGetSubscriptionStatusQuery();
   const isFreeUser = subscription?.subscription_type === "free";
-  
+
   // Calculate trial status for free users
   const trialDaysRemaining = isFreeUser ? getTrialDaysRemaining(subscription?.created_at) : 0;
   const isTrialExpired = isFreeUser && !isUserInTrialPeriod(subscription?.created_at);
@@ -112,7 +116,7 @@ const Dashboard = () => {
         setIsLoadingMore(false);
       }
     }
-  }, [data, batchSize, isFreeUser]);
+  }, [data, batchSize]);
 
   useEffect(() => {
     if (!hasInitialized.current && data?.calculations && data.calculations.length > 0) {
@@ -206,18 +210,34 @@ const Dashboard = () => {
       {/* Trial Status Alert */}
       {isFreeUser && (
         <div className="flex h-full w-full flex-col items-center justify-center gap-4 py-5">
-          <Alert className={isTrialExpired ? "border-red-500 bg-red-50 dark:bg-red-950" : "border-amber-500 bg-amber-50 dark:bg-amber-950"}>
+          <Alert
+            className={
+              isTrialExpired
+                ? "border-red-500 bg-red-50 dark:bg-red-950"
+                : "border-amber-500 bg-amber-50 dark:bg-amber-950"
+            }
+          >
             <Info className={isTrialExpired ? "h-4 w-4 text-red-600" : "h-4 w-4 text-amber-600"} />
-            <AlertTitle className={isTrialExpired ? "text-red-800 dark:text-red-200" : "text-amber-800 dark:text-amber-200"}>
-              {isTrialExpired ? "Free Trial Expired" : `Free Trial - ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''} remaining`}
+            <AlertTitle
+              className={isTrialExpired ? "text-red-800 dark:text-red-200" : "text-amber-800 dark:text-amber-200"}
+            >
+              {isTrialExpired
+                ? "Free Trial Expired"
+                : `Free Trial - ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? "s" : ""} remaining`}
             </AlertTitle>
-            <AlertDescription className={isTrialExpired ? "text-red-700 dark:text-red-300" : "text-amber-700 dark:text-amber-300"}>
+            <AlertDescription
+              className={isTrialExpired ? "text-red-700 dark:text-red-300" : "text-amber-700 dark:text-amber-300"}
+            >
               {isTrialExpired
                 ? "Your 30-day free trial has ended. You can still view your existing cases, but "
-                : `You have ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''} left in your free trial with unlimited cases. `}
+                : `You have ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? "s" : ""} left in your free trial with unlimited cases. `}
               <Button
                 variant="link"
-                className={isTrialExpired ? "h-auto p-0 font-semibold text-red-800 underline dark:text-red-200" : "h-auto p-0 font-semibold text-amber-800 underline dark:text-amber-200"}
+                className={
+                  isTrialExpired
+                    ? "h-auto p-0 font-semibold text-red-800 underline dark:text-red-200"
+                    : "h-auto p-0 font-semibold text-amber-800 underline dark:text-amber-200"
+                }
                 onClick={() => navigate("/billing")}
               >
                 upgrade to Premium
