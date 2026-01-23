@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import logo from "@/assets/img/Logo.png";
+import logo from "@/assets/img/logo.png";
 
 const sections = ["features", "pricing", "faq", "contact"];
 
