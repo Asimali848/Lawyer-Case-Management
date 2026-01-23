@@ -1,7 +1,7 @@
 import { Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import logo from "@/assets/img/Logo.png";
+import logo from "@/assets/img/logo.png";
 import {
   Sheet,
   SheetContent,
