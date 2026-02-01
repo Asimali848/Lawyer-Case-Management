@@ -1,15 +1,26 @@
-import { Info, Plus } from "lucide-react";
+import { Info, Plus, Shield } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import CaseListWithDetails from "@/components/dashboard/case-list-with-details";
 import Loader from "@/components/loader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { getCurrentDate } from "@/lib/utils";
 import { useGetCalculationsQuery } from "@/store/services/calculations";
-import { useGetSubscriptionStatusQuery, isUserInTrialPeriod, getTrialDaysRemaining } from "@/store/services/subscription";
+import {
+  useGetSubscriptionStatusQuery,
+  isUserInTrialPeriod,
+  getTrialDaysRemaining,
+} from "@/store/services/subscription";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -17,10 +28,15 @@ const Dashboard = () => {
   // Get subscription status
   const { data: subscription } = useGetSubscriptionStatusQuery();
   const isFreeUser = subscription?.subscription_type === "free";
-  
-  // Calculate trial status for free users
-  const trialDaysRemaining = isFreeUser ? getTrialDaysRemaining(subscription?.created_at) : 0;
-  const isTrialExpired = isFreeUser && !isUserInTrialPeriod(subscription?.created_at);
+  const isAdminUser = subscription?.subscription_type === "admin";
+  const isPremiumUser = subscription?.subscription_type === "premium";
+
+  // Calculate trial status for free users only
+  const trialDaysRemaining = isFreeUser
+    ? getTrialDaysRemaining(subscription?.created_at)
+    : 0;
+  const isTrialExpired =
+    isFreeUser && !isUserInTrialPeriod(subscription?.created_at);
 
   const batchSize = useState<number>(50)[0];
   const [currentOffset, setCurrentOffset] = useState<number>(0);
@@ -45,31 +61,36 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (data?.calculations) {
-      const newBatch: (CaseGet & { _created_at?: string })[] = data.calculations.map((calc: any) => ({
-        id: calc.id,
-        case_name: calc.case_name || "N/A",
-        court_name: calc.court_name || "N/A",
-        court_case_number: calc.court_number || "N/A",
-        court_number: calc.court_number || "N/A",
-        client_name: calc.client_name,
-        judegment_amount: (calc.judgment_amount || 0).toFixed(2),
-        judgment_amount: calc.judgment_amount || 0,
-        judgement_date: calc.judgment_date,
-        judgment_date: calc.judgment_date,
-        annual_interest_rate: calc.annual_interest_rate || 10,
-        last_payment_date: calc.end_date || calc.judgment_date,
-        total_payment_to_date: (calc.principal_reduction || 0).toFixed(2),
-        principal_reduction: calc.principal_reduction || 0,
-        interest_to_date: (calc.totalInterest || calc.total_interest_accrued || 0).toFixed(2),
-        total_interest_accrued: calc.total_interest_accrued || 0,
-        today_payoff: (calc.total_due || 0).toFixed(2),
-        total_due: calc.total_due || 0,
-        daily_interest: calc.daily_interest || 0,
-        interest_accrued: calc.interest_accrued || 0,
-        transactions: calc.transactions || [],
-        // Store created_at for FIFO sorting (oldest first)
-        _created_at: calc.created_at || calc.judgment_date || "",
-      }));
+      const newBatch: (CaseGet & { _created_at?: string })[] =
+        data.calculations.map((calc: any) => ({
+          id: calc.id,
+          case_name: calc.case_name || "N/A",
+          court_name: calc.court_name || "N/A",
+          court_case_number: calc.court_number || "N/A",
+          court_number: calc.court_number || "N/A",
+          client_name: calc.client_name,
+          judegment_amount: (calc.judgment_amount || 0).toFixed(2),
+          judgment_amount: calc.judgment_amount || 0,
+          judgement_date: calc.judgment_date,
+          judgment_date: calc.judgment_date,
+          annual_interest_rate: calc.annual_interest_rate || 10,
+          last_payment_date: calc.end_date || calc.judgment_date,
+          total_payment_to_date: (calc.principal_reduction || 0).toFixed(2),
+          principal_reduction: calc.principal_reduction || 0,
+          interest_to_date: (
+            calc.totalInterest ||
+            calc.total_interest_accrued ||
+            0
+          ).toFixed(2),
+          total_interest_accrued: calc.total_interest_accrued || 0,
+          today_payoff: (calc.total_due || 0).toFixed(2),
+          total_due: calc.total_due || 0,
+          daily_interest: calc.daily_interest || 0,
+          interest_accrued: calc.interest_accrued || 0,
+          transactions: calc.transactions || [],
+          // Store created_at for FIFO sorting (oldest first)
+          _created_at: calc.created_at || calc.judgment_date || "",
+        }));
 
       setAllCases((prev) => {
         const existingIds = new Set(prev.map((c) => c.id));
@@ -90,8 +111,14 @@ const Dashboard = () => {
 
         // Apply FIFO (First In First Out) - sort by created_at ascending (oldest first)
         updated = updated.sort((a, b) => {
-          const dateA = (a.id ? caseCreatedDates.current.get(a.id) : null) || a.judgement_date || "";
-          const dateB = (b.id ? caseCreatedDates.current.get(b.id) : null) || b.judgement_date || "";
+          const dateA =
+            (a.id ? caseCreatedDates.current.get(a.id) : null) ||
+            a.judgement_date ||
+            "";
+          const dateB =
+            (b.id ? caseCreatedDates.current.get(b.id) : null) ||
+            b.judgement_date ||
+            "";
           // Sort ascending (oldest first) for FIFO
           return dateA.localeCompare(dateB);
         });
@@ -113,7 +140,11 @@ const Dashboard = () => {
   }, [data, batchSize, isFreeUser]);
 
   useEffect(() => {
-    if (!hasInitialized.current && data?.calculations && data.calculations.length > 0) {
+    if (
+      !hasInitialized.current &&
+      data?.calculations &&
+      data.calculations.length > 0
+    ) {
       hasInitialized.current = true;
 
       if (data.calculations.length === batchSize && currentOffset === 0) {
@@ -143,7 +174,15 @@ const Dashboard = () => {
     } else if (data?.calculations && data.calculations.length < batchSize) {
       setIsLoadingMore(false);
     }
-  }, [currentOffset, isLoading, isFetching, error, data, batchSize, isLoadingMore]);
+  }, [
+    currentOffset,
+    isLoading,
+    isFetching,
+    error,
+    data,
+    batchSize,
+    isLoadingMore,
+  ]);
 
   if (!isLoading && currentOffset === 0 && !allCases.length) {
     return (
@@ -151,7 +190,9 @@ const Dashboard = () => {
         <Card className="mx-4 w-full max-w-md shadow-lg">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">No Cases Available</CardTitle>
-            <CardDescription className="mt-2 text-base">Please enter the case to get started</CardDescription>
+            <CardDescription className="mt-2 text-base">
+              Please enter the case to get started
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
             <Button
@@ -175,7 +216,17 @@ const Dashboard = () => {
   return (
     <div className="flex h-full w-full flex-col gap-3 overflow-hidden sm:gap-4 md:gap-5 md:p-4 lg:p-5">
       <div className="mb-2 flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-        <h1 className="font-bold text-primary text-xl sm:text-2xl">Dashboard</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="font-bold text-primary text-xl sm:text-2xl">
+            Dashboard
+          </h1>
+          {isAdminUser && (
+            <Badge className="bg-slate-700 text-slate-200 hover:bg-slate-600 flex items-center gap-1">
+              <Shield className="h-3 w-3" />
+              Admin
+            </Badge>
+          )}
+        </div>
         <Button
           variant="default"
           size="sm"
@@ -183,13 +234,16 @@ const Dashboard = () => {
           onClick={() => {
             // Check if free user's trial has expired
             if (isTrialExpired) {
-              toast.error("Your 30-day free trial has expired. Please upgrade to Premium to create more cases.", {
-                duration: 5000,
-                action: {
-                  label: "Upgrade",
-                  onClick: () => navigate("/billing"),
+              toast.error(
+                "Your 30-day free trial has expired. Please upgrade to Premium to create more cases.",
+                {
+                  duration: 5000,
+                  action: {
+                    label: "Upgrade",
+                    onClick: () => navigate("/billing"),
+                  },
                 },
-              });
+              );
               return;
             }
             navigate("/add-case");
@@ -204,23 +258,55 @@ const Dashboard = () => {
       {/* Trial Status Alert */}
       {isFreeUser && (
         <div className="flex h-full w-full flex-col items-center justify-center gap-4 py-5">
-          <Alert className={isTrialExpired ? "border-red-500 bg-red-50 dark:bg-red-950" : "border-amber-500 bg-amber-50 dark:bg-amber-950"}>
-            <Info className={isTrialExpired ? "h-4 w-4 text-red-600" : "h-4 w-4 text-amber-600"} />
-            <AlertTitle className={isTrialExpired ? "text-red-800 dark:text-red-200" : "text-amber-800 dark:text-amber-200"}>
-              {isTrialExpired ? "Free Trial Expired" : `Free Trial - ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''} remaining`}
+          <Alert
+            className={
+              isTrialExpired
+                ? "border-red-500 bg-red-50 dark:bg-red-950"
+                : "border-amber-500 bg-amber-50 dark:bg-amber-950"
+            }
+          >
+            <Info
+              className={
+                isTrialExpired
+                  ? "h-4 w-4 text-red-600"
+                  : "h-4 w-4 text-amber-600"
+              }
+            />
+            <AlertTitle
+              className={
+                isTrialExpired
+                  ? "text-red-800 dark:text-red-200"
+                  : "text-amber-800 dark:text-amber-200"
+              }
+            >
+              {isTrialExpired
+                ? "Free Trial Expired"
+                : `Free Trial - ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? "s" : ""} remaining`}
             </AlertTitle>
-            <AlertDescription className={isTrialExpired ? "text-red-700 dark:text-red-300" : "text-amber-700 dark:text-amber-300"}>
+            <AlertDescription
+              className={
+                isTrialExpired
+                  ? "text-red-700 dark:text-red-300"
+                  : "text-amber-700 dark:text-amber-300"
+              }
+            >
               {isTrialExpired
                 ? "Your 30-day free trial has ended. You can still view your existing cases, but "
-                : `You have ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''} left in your free trial with unlimited cases. `}
+                : `You have ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? "s" : ""} left in your free trial with unlimited cases. `}
               <Button
                 variant="link"
-                className={isTrialExpired ? "h-auto p-0 font-semibold text-red-800 underline dark:text-red-200" : "h-auto p-0 font-semibold text-amber-800 underline dark:text-amber-200"}
+                className={
+                  isTrialExpired
+                    ? "h-auto p-0 font-semibold text-red-800 underline dark:text-red-200"
+                    : "h-auto p-0 font-semibold text-amber-800 underline dark:text-amber-200"
+                }
                 onClick={() => navigate("/billing")}
               >
                 upgrade to Premium
               </Button>
-              {isTrialExpired ? " to create new cases." : " for continued access after trial."}
+              {isTrialExpired
+                ? " to create new cases."
+                : " for continued access after trial."}
             </AlertDescription>
           </Alert>
         </div>
