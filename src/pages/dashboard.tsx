@@ -29,7 +29,6 @@ const Dashboard = () => {
   const { data: subscription } = useGetSubscriptionStatusQuery();
   const isFreeUser = subscription?.subscription_type === "free";
   const isAdminUser = subscription?.subscription_type === "admin";
-  const isPremiumUser = subscription?.subscription_type === "premium";
 
   // Calculate trial status for free users only
   const trialDaysRemaining = isFreeUser

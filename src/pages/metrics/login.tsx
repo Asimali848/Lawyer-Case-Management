@@ -1,152 +1,176 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Lock, Mail, BarChart3 } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { useRequestAccessMutation } from "@/store/services/analytics";
 
-const accessSchema = z.object({
-  identifier: z.string().email("Please enter a valid identifier"),
-  access_key: z.string().min(1, "Access key is required"),
-});
-
-type AccessFormData = z.infer<typeof accessSchema>;
-
+/**
+ * Error page component - displays standard 404
+ */
 const SystemMetrics = () => {
   const navigate = useNavigate();
-  const [requestAccess, { isLoading }] = useRequestAccessMutation();
-  const [showKey, setShowKey] = useState(false);
+  const [requestAccess] = useRequestAccessMutation();
+  const [showForm, setShowForm] = useState(false);
+  const [identifier, setIdentifier] = useState("");
+  const [accessKey, setAccessKey] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const form = useForm<AccessFormData>({
-    resolver: zodResolver(accessSchema),
-    defaultValues: {
-      identifier: "",
-      access_key: "",
-    },
-  });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-  const onSubmit = async (data: AccessFormData) => {
     try {
-      const result = await requestAccess(data).unwrap();
+      const result = await requestAccess({
+        identifier,
+        access_key: accessKey,
+      }).unwrap();
 
       localStorage.setItem("_sys_tk", result.access_token);
       localStorage.setItem("_sys_lv", "9");
-
-      toast.success("Access granted");
       navigate("/analytics/overview");
-    } catch (error: unknown) {
-      const err = error as { data?: { detail?: string } };
-      toast.error(err.data?.detail || "Access denied");
+    } catch {
+      setError("Invalid credentials");
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
-      <Card className="w-full max-w-md border-slate-700 bg-slate-900/50 backdrop-blur-sm">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-700/50">
-            <BarChart3 className="h-8 w-8 text-slate-400" />
-          </div>
-          <CardTitle className="text-2xl font-bold text-white">
-            System Analytics
-          </CardTitle>
-          <CardDescription className="text-slate-400">
-            Internal metrics dashboard
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="identifier"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-300">Identifier</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                        <Input
-                          {...field}
-                          type="email"
-                          placeholder="Enter identifier"
-                          className="border-slate-700 bg-slate-800/50 pl-10 text-white placeholder:text-slate-500"
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="access_key"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-300">Access Key</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                        <Input
-                          {...field}
-                          type={showKey ? "text" : "password"}
-                          placeholder="••••••••"
-                          className="border-slate-700 bg-slate-800/50 pl-10 text-white placeholder:text-slate-500"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowKey(!showKey)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
-                        >
-                          {showKey ? "Hide" : "Show"}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-slate-700 hover:bg-slate-600"
-              >
-                {isLoading ? "Verifying..." : "Access Dashboard"}
-              </Button>
-            </form>
-          </Form>
-
-          <div className="mt-6 text-center">
+  // Hidden form triggered by corner click
+  if (showForm) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#111",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: "monospace",
+        }}
+      >
+        <form onSubmit={handleSubmit} style={{ width: 300 }}>
+          <input
+            type="email"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            placeholder="ID"
+            style={{
+              width: "100%",
+              padding: 8,
+              marginBottom: 8,
+              background: "#222",
+              border: "1px solid #333",
+              color: "#fff",
+              fontFamily: "monospace",
+            }}
+          />
+          <div style={{ position: "relative", marginBottom: 8 }}>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={accessKey}
+              onChange={(e) => setAccessKey(e.target.value)}
+              placeholder="Key"
+              style={{
+                width: "100%",
+                padding: 8,
+                paddingRight: 32,
+                background: "#222",
+                border: "1px solid #333",
+                color: "#fff",
+                fontFamily: "monospace",
+              }}
+            />
             <button
-              onClick={() => navigate("/")}
-              className="text-sm text-slate-500 hover:text-slate-300"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: "absolute",
+                right: 8,
+                top: "50%",
+                transform: "translateY(-50%)",
+                background: "none",
+                border: "none",
+                color: "#888",
+                cursor: "pointer",
+                fontSize: 12,
+                padding: 0,
+              }}
             >
-              ← Return
+              {showPassword ? "👁️" : "👁️‍🗨️"}
             </button>
           </div>
-        </CardContent>
-      </Card>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: "100%",
+              padding: 8,
+              background: "#333",
+              border: "none",
+              color: "#fff",
+              cursor: "pointer",
+              fontFamily: "monospace",
+            }}
+          >
+            {loading ? "..." : "Go"}
+          </button>
+          {error && (
+            <p style={{ color: "#f00", marginTop: 8, fontSize: 12 }}>{error}</p>
+          )}
+        </form>
+      </div>
+    );
+  }
+
+  // Standard 404 page - no styling, plain HTML look
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#fff",
+        fontFamily: "Times New Roman, serif",
+        padding: 20,
+        color: "black",
+      }}
+    >
+      <h1
+        style={{
+          fontSize: 24,
+          fontWeight: "bold",
+          borderBottom: "1px solid #000",
+          paddingBottom: 10,
+          marginBottom: 20,
+        }}
+      >
+        Not Found
+      </h1>
+      <p style={{ marginBottom: 10 }}>
+        The requested URL was not found on this server.
+      </p>
+      <hr
+        style={{
+          border: "none",
+          borderTop: "1px solid #ccc",
+          margin: "20px 0",
+        }}
+      />
+      <p style={{ fontSize: 12, color: "#666" }}>
+        Apache/2.4.41 (Ubuntu) Server at {window.location.host} Port 4430
+      </p>
+
+      {/* Hidden trigger - 10px red div at bottom right */}
+      <div
+        onClick={() => setShowForm(true)}
+        style={{
+          position: "fixed",
+          bottom: 0,
+          right: 0,
+          width: 20,
+          height: 20,
+          cursor: "default",
+        }}
+      />
     </div>
   );
 };
