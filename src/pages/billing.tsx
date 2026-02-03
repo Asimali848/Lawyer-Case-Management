@@ -218,7 +218,9 @@ const Billing = () => {
             <div className="mx-auto mb-4 flex size-20 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20">
               <Rocket className="size-10 text-primary" />
             </div>
-            <h1 className="mb-2 font-bold text-3xl text-foreground">Admin Access</h1>
+            <h1 className="mb-2 font-bold text-3xl text-foreground">
+              Admin Access
+            </h1>
             <p className="text-muted-foreground">
               You have unlimited access to all features.
             </p>
@@ -227,14 +229,18 @@ const Billing = () => {
             <div className="space-y-4">
               <div className="rounded-lg border border-border bg-sidebar p-6">
                 <Check className="mx-auto mb-3 size-8 text-green-600 dark:text-green-500" />
-                <h3 className="mb-2 font-semibold text-foreground text-lg">Unlimited Cases</h3>
+                <h3 className="mb-2 font-semibold text-foreground text-lg">
+                  Unlimited Cases
+                </h3>
                 <p className="text-muted-foreground text-sm">
                   Create and manage unlimited cases without any restrictions.
                 </p>
               </div>
               <div className="rounded-lg border border-border bg-sidebar p-6">
                 <Check className="mx-auto mb-3 size-8 text-green-600 dark:text-green-500" />
-                <h3 className="mb-2 font-semibold text-foreground text-lg">Priority Support</h3>
+                <h3 className="mb-2 font-semibold text-foreground text-lg">
+                  Priority Support
+                </h3>
                 <p className="text-muted-foreground text-sm">
                   Get dedicated support whenever you need assistance.
                 </p>
