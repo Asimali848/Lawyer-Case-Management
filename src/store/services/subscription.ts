@@ -3,7 +3,7 @@ import { api } from "./core";
 export interface SubscriptionStatus {
   id: string;
   user_id: string;
-  subscription_type: "free" | "premium";
+  subscription_type: "free" | "premium" | "admin";
   status: string;
   current_period_start: string | null;
   current_period_end: string | null;
@@ -18,7 +18,9 @@ export interface SubscriptionStatus {
 export const FREE_TRIAL_DAYS = 30;
 
 // Helper function to check if user is within trial period
-export const isUserInTrialPeriod = (subscriptionCreatedAt: string | null): boolean => {
+export const isUserInTrialPeriod = (
+  subscriptionCreatedAt: string | null,
+): boolean => {
   if (!subscriptionCreatedAt) return false;
   const createdAt = new Date(subscriptionCreatedAt);
   const trialEnd = new Date(createdAt);
@@ -27,12 +29,16 @@ export const isUserInTrialPeriod = (subscriptionCreatedAt: string | null): boole
 };
 
 // Helper function to get trial days remaining
-export const getTrialDaysRemaining = (subscriptionCreatedAt: string | null): number => {
+export const getTrialDaysRemaining = (
+  subscriptionCreatedAt: string | null,
+): number => {
   if (!subscriptionCreatedAt) return 0;
   const createdAt = new Date(subscriptionCreatedAt);
   const trialEnd = new Date(createdAt);
   trialEnd.setDate(trialEnd.getDate() + FREE_TRIAL_DAYS);
-  const remaining = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  const remaining = Math.ceil(
+    (trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+  );
   return Math.max(0, remaining);
 };
 
@@ -105,7 +111,10 @@ export const subscriptionApi = api.injectEndpoints({
     }),
 
     // Create checkout session for upgrading to premium
-    createCheckoutSession: build.mutation<CheckoutSessionResponse, CheckoutSessionRequest>({
+    createCheckoutSession: build.mutation<
+      CheckoutSessionResponse,
+      CheckoutSessionRequest
+    >({
       query: (data) => ({
         url: "/api/subscription/create-checkout-session",
         method: "POST",
@@ -114,7 +123,10 @@ export const subscriptionApi = api.injectEndpoints({
     }),
 
     // Create customer portal session for managing subscription
-    createPortalSession: build.mutation<PortalSessionResponse, PortalSessionRequest>({
+    createPortalSession: build.mutation<
+      PortalSessionResponse,
+      PortalSessionRequest
+    >({
       query: (data) => ({
         url: "/api/subscription/create-portal-session",
         method: "POST",

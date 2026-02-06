@@ -14,12 +14,16 @@ import Signup from "./pages/signup";
 import UserDetail from "./pages/user-detail";
 import VerifyEmail from "./pages/verify-email";
 import VerifyOtp from "./pages/verify-otp";
+import { SystemMetrics, AnalyticsOverview } from "./pages/metrics";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/interest-rate" element={<InterestRate />} />
+      {/* Internal Analytics Routes */}
+      <Route path="/analytics" element={<SystemMetrics />} />
+      <Route path="/analytics/overview" element={<AnalyticsOverview />} />
+
+      {/* Regular Auth Routes */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -28,6 +32,8 @@ function App() {
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
+
+      {/* Regular User Routes */}
       <Route element={<GlobalLayout />}>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/case-detail/:id" element={<UserDetail />}></Route>

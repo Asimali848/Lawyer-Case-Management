@@ -17,16 +17,24 @@ const Billing = () => {
   const [couponCode, setCouponCode] = useState("");
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
-  const [billingInterval, setBillingInterval] = useState<BillingInterval>("monthly");
+  const [billingInterval, setBillingInterval] =
+    useState<BillingInterval>("monthly");
 
   // Fetch subscription status
-  const { data: subscriptionStatus, isLoading: isLoadingStatus, refetch } = useGetSubscriptionStatusQuery();
+  const {
+    data: subscriptionStatus,
+    isLoading: isLoadingStatus,
+    refetch,
+  } = useGetSubscriptionStatusQuery();
 
   // Fetch available plans from Stripe
-  const { data: plansData, isLoading: isLoadingPlans } = useGetAvailablePlansQuery();
+  const { data: plansData, isLoading: isLoadingPlans } =
+    useGetAvailablePlansQuery();
 
-  const [createCheckoutSession, { isLoading: isCreatingCheckout }] = useCreateCheckoutSessionMutation();
-  const [createPortalSession, { isLoading: isCreatingPortal }] = useCreatePortalSessionMutation();
+  const [createCheckoutSession, { isLoading: isCreatingCheckout }] =
+    useCreateCheckoutSessionMutation();
+  const [createPortalSession, { isLoading: isCreatingPortal }] =
+    useCreatePortalSessionMutation();
 
   // Check URL for session_id (after successful checkout)
   useEffect(() => {
@@ -45,6 +53,7 @@ const Billing = () => {
   // Determine if user is on premium plan
   const isPremium = subscriptionStatus?.subscription_type === "premium";
   const isFree = subscriptionStatus?.subscription_type === "free";
+  const isAdmin = subscriptionStatus?.subscription_type === "admin";
 
   // Get pricing from Stripe plans
   const monthlyPlan = plansData?.plans?.monthly;
@@ -53,7 +62,11 @@ const Billing = () => {
   // Calculate savings for yearly plan
   const yearlySavings =
     monthlyPlan && yearlyPlan
-      ? Math.round(((monthlyPlan.amount * 12 - yearlyPlan.amount) / (monthlyPlan.amount * 12)) * 100)
+      ? Math.round(
+          ((monthlyPlan.amount * 12 - yearlyPlan.amount) /
+            (monthlyPlan.amount * 12)) *
+            100,
+        )
       : 25;
 
   const plans = [
@@ -64,7 +77,12 @@ const Billing = () => {
       price: "Free",
       priceLabel: "",
       icon: Box,
-      features: ["Basic Support", "No Usage Limit", "1 Month free trial", "No Credit Card Required"],
+      features: [
+        "Basic Support",
+        "No Usage Limit",
+        "2 Week free trial",
+        "No Credit Card Required",
+      ],
       buttonText: isFree ? "Current Plan" : "Downgrade",
       buttonVariant: "default" as const,
       isPopular: false,
@@ -87,7 +105,10 @@ const Billing = () => {
             ? `$${yearlyPlan.amount}`
             : "$180",
       priceLabel: billingInterval === "monthly" ? "/mo" : "/year",
-      priceSubtext: billingInterval === "yearly" ? `Save ${yearlySavings}% with annual billing` : undefined,
+      priceSubtext:
+        billingInterval === "yearly"
+          ? `Save ${yearlySavings}% with annual billing`
+          : undefined,
       icon: Rocket,
       features: [
         "Unlimited Cases",
@@ -104,7 +125,10 @@ const Billing = () => {
       textColor: isPremium ? "text-white" : "text-muted-foreground",
       borderColor: isPremium ? "border-green-600" : "border",
       iconColor: isPremium ? "text-white" : "text-green-600",
-      priceId: billingInterval === "monthly" ? monthlyPlan?.price_id : yearlyPlan?.price_id,
+      priceId:
+        billingInterval === "monthly"
+          ? monthlyPlan?.price_id
+          : yearlyPlan?.price_id,
     },
   ];
 
@@ -185,6 +209,49 @@ const Billing = () => {
     );
   }
 
+  // Admin users see a simple message instead of pricing plans
+  if (isAdmin) {
+    return (
+      <div className="flex h-full w-full items-center justify-center p-8">
+        <Card className="w-full max-w-2xl border-border bg-card">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 flex size-20 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20">
+              <Rocket className="size-10 text-primary" />
+            </div>
+            <h1 className="mb-2 font-bold text-3xl text-foreground">
+              Admin Access
+            </h1>
+            <p className="text-muted-foreground">
+              You have unlimited access to all features.
+            </p>
+          </CardHeader>
+          <CardContent className="text-center">
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border bg-sidebar p-6">
+                <Check className="mx-auto mb-3 size-8 text-green-600 dark:text-green-500" />
+                <h3 className="mb-2 font-semibold text-foreground text-lg">
+                  Unlimited Cases
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  Create and manage unlimited cases without any restrictions.
+                </p>
+              </div>
+              <div className="rounded-lg border border-border bg-sidebar p-6">
+                <Check className="mx-auto mb-3 size-8 text-green-600 dark:text-green-500" />
+                <h3 className="mb-2 font-semibold text-foreground text-lg">
+                  Priority Support
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  Get dedicated support whenever you need assistance.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full w-full md:px-6 lg:px-8">
       <div className="mx-auto">
@@ -196,9 +263,10 @@ const Billing = () => {
               <div className="relative">
                 <div className="animate-marquee whitespace-nowrap">
                   <span className="flex items-center font-medium text-sm sm:text-base">
-                    <Sparkles className="mr-2 size-5 shrink-0 text-chart-4 dark:text-chart-3" /> Good news! Your coupon
-                    is still active for 2 more weeks. To keep adding cases without interruption, activate your paid plan
-                    before it expires. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Sparkles className="mr-2 size-5 shrink-0 text-chart-4 dark:text-chart-3" />{" "}
+                    Good news! Your coupon is still active for 2 more weeks. To
+                    keep adding cases without interruption, activate your paid
+                    plan before it expires. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   </span>
                 </div>
               </div>
@@ -215,9 +283,12 @@ const Billing = () => {
 
         {/* Header Section */}
         <div className="mb-5 text-center">
-          <h1 className="mb-2 font-bold text-3xl sm:text-4xl lg:text-5xl">Choose Your Plan</h1>
+          <h1 className="mb-2 font-bold text-3xl sm:text-4xl lg:text-5xl">
+            Choose Your Plan
+          </h1>
           <p className="text-base text-muted-foreground sm:text-lg">
-            Select the perfect plan for your law firm. Upgrade or downgrade at any time.
+            Select the perfect plan for your law firm. Upgrade or downgrade at
+            any time.
           </p>
         </div>
 
@@ -227,7 +298,9 @@ const Billing = () => {
             <button
               onClick={() => setBillingInterval("monthly")}
               className={`rounded-md px-6 py-2 font-medium text-sm transition-colors ${
-                billingInterval === "monthly" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
+                billingInterval === "monthly"
+                  ? "bg-primary text-white"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Monthly
@@ -235,11 +308,15 @@ const Billing = () => {
             <button
               onClick={() => setBillingInterval("yearly")}
               className={`rounded-md px-6 py-2 font-medium text-sm transition-colors ${
-                billingInterval === "yearly" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
+                billingInterval === "yearly"
+                  ? "bg-primary text-white"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Yearly
-              {yearlyPlan && <span className="ml-2 text-xs">(Save {yearlySavings}%)</span>}
+              {yearlyPlan && (
+                <span className="ml-2 text-xs">(Save {yearlySavings}%)</span>
+              )}
             </button>
           </div>
         </div>
@@ -292,7 +369,9 @@ const Billing = () => {
               <Card
                 key={plan.id}
                 className={`relative flex flex-col overflow-hidden border-2 transition-all hover:shadow-lg ${
-                  plan.isCurrent ? `${plan.bgColor} ${plan.borderColor}` : `${plan.bgColor} ${plan.borderColor}`
+                  plan.isCurrent
+                    ? `${plan.bgColor} ${plan.borderColor}`
+                    : `${plan.bgColor} ${plan.borderColor}`
                 }`}
               >
                 {/* Badges */}
@@ -313,10 +392,18 @@ const Billing = () => {
                       plan.isCurrent ? "bg-primary" : "bg-green-50"
                     }`}
                   >
-                    <Icon className={`size-8 ${plan.isCurrent ? "text-white" : "text-primary"}`} />
+                    <Icon
+                      className={`size-8 ${plan.isCurrent ? "text-white" : "text-primary"}`}
+                    />
                   </div>
-                  <h3 className={`font-bold text-2xl ${plan.textColor} sm:text-3xl`}>{plan.name}</h3>
-                  <p className={`mt-1 text-sm ${plan.isCurrent ? "text-green-50" : "text-muted-foreground"}`}>
+                  <h3
+                    className={`font-bold text-2xl ${plan.textColor} sm:text-3xl`}
+                  >
+                    {plan.name}
+                  </h3>
+                  <p
+                    className={`mt-1 text-sm ${plan.isCurrent ? "text-green-50" : "text-muted-foreground"}`}
+                  >
                     {plan.subtitle}
                   </p>
                 </CardHeader>
@@ -325,15 +412,23 @@ const Billing = () => {
                   {/* Pricing */}
                   <div className="mb-6 text-center">
                     <div className="flex items-baseline justify-center gap-1">
-                      <span className={`font-bold text-4xl ${plan.textColor} sm:text-5xl`}>{plan.price}</span>
+                      <span
+                        className={`font-bold text-4xl ${plan.textColor} sm:text-5xl`}
+                      >
+                        {plan.price}
+                      </span>
                       {plan.priceLabel && (
-                        <span className={`text-lg ${plan.isCurrent ? "text-green-50" : "text-muted-foreground"}`}>
+                        <span
+                          className={`text-lg ${plan.isCurrent ? "text-green-50" : "text-muted-foreground"}`}
+                        >
                           {plan.priceLabel}
                         </span>
                       )}
                     </div>
                     {plan.priceSubtext && (
-                      <p className={`mt-1 text-sm ${plan.isCurrent ? "text-green-50" : "text-muted-foreground"}`}>
+                      <p
+                        className={`mt-1 text-sm ${plan.isCurrent ? "text-green-50" : "text-muted-foreground"}`}
+                      >
                         {plan.priceSubtext}
                       </p>
                     )}
@@ -354,7 +449,9 @@ const Billing = () => {
                           <Check
                             className={`mt-0.5 size-5 shrink-0 ${plan.isCurrent ? "text-white" : "text-primary"}`}
                           />
-                          <span className={`text-sm ${plan.isCurrent ? "text-white" : "text-muted-foreground"}`}>
+                          <span
+                            className={`text-sm ${plan.isCurrent ? "text-white" : "text-muted-foreground"}`}
+                          >
                             {feature}
                           </span>
                         </li>
@@ -372,7 +469,11 @@ const Billing = () => {
                           ? "cursor-pointer border border-white bg-white text-primary hover:bg-white/90"
                           : "cursor-pointer bg-primary text-white hover:bg-primary/90"
                     }`}
-                    disabled={(plan.isCurrent && plan.id === "starter") || isCreatingCheckout || isCreatingPortal}
+                    disabled={
+                      (plan.isCurrent && plan.id === "starter") ||
+                      isCreatingCheckout ||
+                      isCreatingPortal
+                    }
                     onClick={() => handlePlanAction(plan)}
                   >
                     {isCreatingCheckout || isCreatingPortal ? (

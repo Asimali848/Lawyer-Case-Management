@@ -4,6 +4,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 import { api } from "./services/core";
+import { analyticsApi } from "./services/analytics";
 import globalReducer from "./slices/global";
 
 const persistConfig = {
@@ -14,10 +15,14 @@ const persistConfig = {
 const store = configureStore({
   reducer: {
     [api.reducerPath]: api.reducer,
+    [analyticsApi.reducerPath]: analyticsApi.reducer,
     // @ts-expect-error: Type 'unknown' is not assignable to type '(GlobalState & PersistPartial) | undefined'.
     global: persistReducer(persistConfig, globalReducer),
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }).concat(api.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false })
+      .concat(api.middleware)
+      .concat(analyticsApi.middleware),
 });
 
 setupListeners(store.dispatch);

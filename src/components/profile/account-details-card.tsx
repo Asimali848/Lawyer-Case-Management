@@ -11,7 +11,10 @@ interface AccountDetailsCardProps {
   onPasswordChange: () => void;
 }
 
-const AccountDetailsCard = ({ memberSince, onPasswordChange }: AccountDetailsCardProps) => {
+const AccountDetailsCard = ({
+  memberSince,
+  onPasswordChange,
+}: AccountDetailsCardProps) => {
   const navigate = useNavigate();
   const { data: subscription, isLoading } = useGetSubscriptionStatusQuery();
 
@@ -20,8 +23,13 @@ const AccountDetailsCard = ({ memberSince, onPasswordChange }: AccountDetailsCar
   };
 
   const isPremium = subscription?.subscription_type === "premium";
-  const planName = isPremium ? "Premium" : "Free";
-  const planColor = isPremium ? "bg-chart-4 dark:bg-chart-3" : "bg-gray-500";
+  const isAdmin = subscription?.subscription_type === "admin";
+  const planName = isAdmin ? "Admin" : isPremium ? "Premium" : "Free";
+  const planColor = isAdmin
+    ? "bg-purple-600 dark:bg-purple-500"
+    : isPremium
+      ? "bg-chart-4 dark:bg-chart-3"
+      : "bg-gray-500";
 
   return (
     <Card>
@@ -44,8 +52,15 @@ const AccountDetailsCard = ({ memberSince, onPasswordChange }: AccountDetailsCar
             )}
           </div>
         </div>
-        <Button className="w-full bg-primary text-white hover:bg-primary/90" onClick={handleUpgradePlan}>
-          {isPremium ? "Manage Plan" : "Upgrade Plan"}
+        <Button
+          className="w-full bg-primary text-white hover:bg-primary/90"
+          onClick={handleUpgradePlan}
+        >
+          {isAdmin
+            ? "Admin Access"
+            : isPremium
+              ? "Manage Plan"
+              : "Upgrade Plan"}
         </Button>
         <div className="flex items-center justify-between">
           <div>
@@ -61,7 +76,12 @@ const AccountDetailsCard = ({ memberSince, onPasswordChange }: AccountDetailsCar
             <p className="font-medium text-sm">Security</p>
             <p className="text-muted-foreground text-xs">Password protected</p>
           </div>
-          <Button variant="outline" size="sm" className="gap-2" onClick={onPasswordChange}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={onPasswordChange}
+          >
             <Lock className="size-4" />
             Change Password
           </Button>

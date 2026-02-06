@@ -10,8 +10,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { newCaseSchema } from "@/lib/form-schemas";
-import { useCreateCalculationMutation, useUpdateCalculationMutation } from "@/store/services/calculations";
-import { isUserInTrialPeriod, useGetSubscriptionStatusQuery } from "@/store/services/subscription";
+import {
+  useCreateCalculationMutation,
+  useUpdateCalculationMutation,
+} from "@/store/services/calculations";
+import { useGetSubscriptionStatusQuery, isUserInTrialPeriod } from "@/store/services/subscription";
 
 const NewCase = () => {
   const navigate = useNavigate();
