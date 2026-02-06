@@ -2,7 +2,6 @@ import { Calendar, FileText, Loader2 } from "lucide-react";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { generatePayoffDoc } from "@/lib/payoff-doc-generator";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import { useGetPayoffDemandMutation } from "@/store/services/calculations";
 
 interface PayoffDemandModalProps {
@@ -37,17 +37,10 @@ interface PayoffDemandModalProps {
   };
 }
 
-const PayoffDemandModal = ({
-  open,
-  setOpen,
-  caseId,
-  caseName,
-}: PayoffDemandModalProps) => {
+const PayoffDemandModal = ({ open, setOpen, caseId, caseName }: PayoffDemandModalProps) => {
   const [date, setDate] = useState("");
   const [isCalculating, setIsCalculating] = useState(false);
-  const [payoffData, setPayoffData] = useState<PayoffDemandResponse | null>(
-    null
-  );
+  const [payoffData, setPayoffData] = useState<PayoffDemandResponse | null>(null);
 
   const [getPayoffDemand] = useGetPayoffDemandMutation();
 
@@ -92,9 +85,7 @@ const PayoffDemandModal = ({
           errorMessage = error.data.detail;
         } else if (Array.isArray(error.data.detail)) {
           // Pydantic validation errors
-          errorMessage = error.data.detail
-            .map((err: any) => err.msg || JSON.stringify(err))
-            .join(", ");
+          errorMessage = error.data.detail.map((err: any) => err.msg || JSON.stringify(err)).join(", ");
         } else if (typeof error.data.detail === "object") {
           errorMessage = JSON.stringify(error.data.detail);
         }
@@ -120,9 +111,7 @@ const PayoffDemandModal = ({
       await generatePayoffDoc(payoffData);
       toast.success("Payoff statement Word document generated successfully");
     } catch (_error) {
-      toast.error(
-        "Error generating payoff statement Word document. Please try again."
-      );
+      toast.error("Error generating payoff statement Word document. Please try again.");
     }
   };
 
@@ -138,9 +127,8 @@ const PayoffDemandModal = ({
         <DialogHeader>
           <DialogTitle>Payoff Demand - {caseName || "Case"}</DialogTitle>
           <DialogDescription>
-            Select a payoff date to calculate the exact amount due. The
-            calculation will include all transactions up to and including the
-            selected date.
+            Select a payoff date to calculate the exact amount due. The calculation will include all transactions up to
+            and including the selected date.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-6 py-4">
@@ -165,17 +153,13 @@ const PayoffDemandModal = ({
                 <Calendar className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-3 size-4 text-muted-foreground" />
               </div>
             </div>
-            <p className="text-muted-foreground text-xs">
-              Interest will be calculated up to and including this date
-            </p>
+            <p className="text-muted-foreground text-xs">Interest will be calculated up to and including this date</p>
           </div>
 
           {isCalculating && (
             <div className="flex items-center justify-center gap-2 rounded-lg border p-4">
               <Loader2 className="size-5 animate-spin text-primary" />
-              <span className="text-muted-foreground">
-                Calculating payoff amount...
-              </span>
+              <span className="text-muted-foreground">Calculating payoff amount...</span>
             </div>
           )}
 
@@ -199,41 +183,29 @@ const PayoffDemandModal = ({
                   <span className="font-medium">{formatDate(date)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    Principal Balance:
-                  </span>
-                  <span className="font-medium">
-                    ${principalBalanceNum.toFixed(2)}
-                  </span>
+                  <span className="text-muted-foreground">Principal Balance:</span>
+                  <span className="font-medium">{formatCurrency(principalBalanceNum)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    Accrued Interest:
-                  </span>
-                  <span className="font-medium">
-                    ${accruedInterestNum.toFixed(2)}
-                  </span>
+                  <span className="text-muted-foreground">Accrued Interest:</span>
+                  <span className="font-medium">{formatCurrency(accruedInterestNum)}</span>
                 </div>
                 <div className="flex items-center justify-between border-t pt-2">
                   <span className="font-semibold">Total Payoff:</span>
-                  <span className="font-semibold text-green-600 text-lg">
-                    ${totalPayoff.toFixed(2)}
-                  </span>
+                  <span className="font-semibold text-green-600 text-lg">{formatCurrency(totalPayoff)}</span>
                 </div>
-                {payoffData.transactions_included &&
-                  payoffData.transactions_included.length > 0 && (
-                    <div className="mt-2 text-muted-foreground text-xs">
-                      <p>
-                        <strong>Transactions included:</strong>{" "}
-                        {payoffData.transactions_included.length} transaction(s)
-                        through {formatDate(date)}
-                      </p>
-                    </div>
-                  )}
+                {payoffData.transactions_included && payoffData.transactions_included.length > 0 && (
+                  <div className="mt-2 text-muted-foreground text-xs">
+                    <p>
+                      <strong>Transactions included:</strong> {payoffData.transactions_included.length} transaction(s)
+                      through {formatDate(date)}
+                    </p>
+                  </div>
+                )}
               </div>
-              <div className="mt-2 flex items-center justify-center w-full ">
+              <div className="mt-2 flex w-full items-center justify-center">
                 <div
-                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border p-3 text-center font-medium text-primary text-sm transition-colors hover:bg-primary hover:text-white w-full"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border p-3 text-center font-medium text-primary text-sm transition-colors hover:bg-primary hover:text-white"
                   onClick={handleDownloadWord}
                 >
                   Download Payoff

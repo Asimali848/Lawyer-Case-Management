@@ -8,26 +8,20 @@ interface TransactionColumnsProps {
   onDelete: (transaction: Payment) => void;
 }
 
-export const useTransactionColumns = ({
-  onEdit,
-  onDelete,
-}: TransactionColumnsProps) => {
+export const useTransactionColumns = ({ onEdit, onDelete }: TransactionColumnsProps) => {
   return [
     {
       accessorKey: "payment_date",
       header: "DATE",
       cell: ({ row }: { row: Row<Payment> }) => {
         const date = row.getValue("payment_date") as string;
-        if (!date)
-          return <span className="font-medium text-green-600">N/A</span>;
+        if (!date) return <span className="font-medium text-green-600">N/A</span>;
         try {
           // Parse date string directly to avoid timezone issues
           // Date format is YYYY-MM-DD
           const [year, month, day] = date.split("-").map(Number);
           const formattedDate = `${month}/${day}/${year}`;
-          return (
-            <span className="font-medium text-green-600">{formattedDate}</span>
-          );
+          return <span className="font-medium text-green-600">{formattedDate}</span>;
         } catch {
           return <span className="font-medium text-green-600">{date}</span>;
         }

@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getCurrentDate } from "@/lib/utils";
+import { useGetCurrentUserQuery } from "@/store/services/auth";
 import { useGetCalculationsQuery } from "@/store/services/calculations";
 import {
   useGetSubscriptionStatusQuery,
@@ -46,7 +47,8 @@ const Dashboard = () => {
   const hasMoreData = useRef(true);
   // Store created_at dates for FIFO sorting
   const caseCreatedDates = useRef<Map<string, string>>(new Map());
-
+  //@ts-ignore
+  const { data: user } = useGetCurrentUserQuery();
   const { data, isLoading, error, isFetching } = useGetCalculationsQuery(
     {
       limit: batchSize,
@@ -136,7 +138,7 @@ const Dashboard = () => {
         setIsLoadingMore(false);
       }
     }
-  }, [data, batchSize, isFreeUser]);
+  }, [data, batchSize]);
 
   useEffect(() => {
     if (

@@ -4,6 +4,8 @@ import GlobalLayout from "./components/global-layout";
 import Billing from "./pages/billing";
 import Dashboard from "./pages/dashboard";
 import ForgotPassword from "./pages/forgot-password";
+import InterestRate from "./pages/interest-rate";
+import Landing from "./pages/landing";
 import Login from "./pages/login";
 import NewCase from "./pages/new-case";
 import Profile from "./pages/profile";
@@ -23,7 +25,7 @@ function App() {
 
       {/* Regular Auth Routes */}
       <Route element={<AuthLayout />}>
-        <Route index element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

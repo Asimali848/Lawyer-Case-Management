@@ -90,16 +90,13 @@ const NewCase = () => {
     // Check if free user's 30-day trial has expired
     if (subscription?.subscription_type === "free" && !savedCalculationId) {
       if (!isUserInTrialPeriod(subscription?.created_at)) {
-        toast.error(
-          "Your 30-day free trial has expired. Please upgrade to Premium to continue creating cases.",
-          {
-            duration: 5000,
-            action: {
-              label: "Upgrade",
-              onClick: () => navigate("/billing"),
-            },
+        toast.error("Your 30-day free trial has expired. Please upgrade to Premium to continue creating cases.", {
+          duration: 5000,
+          action: {
+            label: "Upgrade",
+            onClick: () => navigate("/billing"),
           },
-        );
+        });
         return;
       }
     }
