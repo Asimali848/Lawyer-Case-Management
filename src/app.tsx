@@ -22,9 +22,8 @@ function App() {
       {/* Internal Analytics Routes */}
       <Route path="/analytics" element={<SystemMetrics />} />
       <Route path="/analytics/overview" element={<AnalyticsOverview />} />
-            
-      <Route path="/" element={<Landing/>} />
-      <Route path="/interest-rate" element={<InterestRate/>} />
+      <Route path="/" element={<Landing />} />
+      <Route path="/interest-rate" element={<InterestRate />} />
       {/* Regular Auth Routes */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
