@@ -243,7 +243,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Case Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter case name" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -256,7 +256,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Client Name (Optional)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter client name" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -269,7 +269,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Court Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. Orange County Superior Court" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -282,7 +282,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Case Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter case number" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -357,7 +357,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Lawyer Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter lawyer name" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -370,7 +370,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Firm Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter firm name" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -383,7 +383,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Street Address</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter street address" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -396,7 +396,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>City</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter city" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -409,7 +409,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>State</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter state" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -422,7 +422,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Zip Code</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter zip code" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -435,7 +435,7 @@ const NewCase = () => {
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter phone number" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -448,7 +448,7 @@ const NewCase = () => {
                     <FormItem className="md:col-span-2">
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="Enter email" {...field} />
+                        <Input type="email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

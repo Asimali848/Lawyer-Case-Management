@@ -120,7 +120,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.firstName}
               onChange={(e) => handleInputChange("firstName", e.target.value)}
-              placeholder="Enter your first name"
             />
           </div>
           <div className="space-y-2">
@@ -128,7 +127,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.lastName}
               onChange={(e) => handleInputChange("lastName", e.target.value)}
-              placeholder="Enter your last name"
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
@@ -137,7 +135,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
-              placeholder="Enter your email address"
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
@@ -145,7 +142,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.firmName}
               onChange={(e) => handleInputChange("firmName", e.target.value)}
-              placeholder="Enter your firm name"
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
@@ -153,7 +149,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.streetAddress}
               onChange={(e) => handleInputChange("streetAddress", e.target.value)}
-              placeholder="Enter your street address"
             />
           </div>
           <div className="space-y-2">
@@ -161,7 +156,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.city}
               onChange={(e) => handleInputChange("city", e.target.value)}
-              placeholder="Enter your city"
             />
           </div>
           <div className="space-y-2">
@@ -169,7 +163,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.state}
               onChange={(e) => handleInputChange("state", e.target.value)}
-              placeholder="Enter your state"
             />
           </div>
           <div className="space-y-2">
@@ -177,7 +170,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.zipCode}
               onChange={(e) => handleInputChange("zipCode", e.target.value)}
-              placeholder="Enter your zip code"
             />
           </div>
           <div className="space-y-2">
@@ -186,7 +178,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
               type="tel"
               value={formData.phoneNumber}
               onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
-              placeholder="Enter your phone number"
             />
           </div>
           <div className="space-y-2 sm:col-span-2">

@@ -129,7 +129,7 @@ const TransactionSheet = ({ open, setOpen, caseId, caseName, transaction }: Tran
           <SheetTitle>{transaction ? "Edit Transaction" : "Add New Transaction"}</SheetTitle>
           {caseName && caseId && (
             <SheetDescription className="font-medium text-base">
-              {caseName} - {caseId}
+              {caseName}
             </SheetDescription>
           )}
         </SheetHeader>
@@ -167,7 +167,7 @@ const TransactionSheet = ({ open, setOpen, caseId, caseName, transaction }: Tran
                 <FormItem>
                   <FormLabel>Amount</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" placeholder="0" {...field} />
+                    <Input type="number" step="0.01" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

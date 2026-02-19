@@ -28,8 +28,7 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Track Multiple Judgments Up to Date Accrued Interest Easy Transaction Entry & Editing Instant Payoff
-          Calculator
+          Trak Multiple Judgments <br /> Up to Date Accrued Interest Display <br /> Easy Transaction Entry & Editing <br /> Instant Payoff Calculator <br /> Generate Accurate Payment Letters
         </motion.p>
 
         <motion.div
