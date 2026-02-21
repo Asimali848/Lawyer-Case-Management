@@ -15,7 +15,7 @@ const Providers = ({ children }: ProvidersProps) => {
     <Provider store={store}>
       <PersistGate persistor={persistor}>
         <BrowserRouter>
-          <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+          <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
             <Toaster richColors={true} duration={1500} />
             {children}
           </ThemeProvider>
