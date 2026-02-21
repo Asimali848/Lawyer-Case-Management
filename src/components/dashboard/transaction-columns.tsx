@@ -66,7 +66,7 @@ export const useTransactionColumns = ({ onEdit, onDelete }: TransactionColumnsPr
     },
     {
       accessorKey: "accrued_interest",
-      header: "ACCRUED INTEREST",
+      header: "Interest Accrued Since Last Payment",
       cell: ({ row }: { row: Row<Payment> }) => {
         const interest = row.getValue("accrued_interest") as string;
         const num = parseFloat(interest);

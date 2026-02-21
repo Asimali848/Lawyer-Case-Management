@@ -315,7 +315,20 @@ const NewCase = () => {
                   name="interest_rate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Interest Rate (%)</FormLabel>
+                      <FormLabel>
+                        Interest Rate (%) (
+                        <a
+                          href="https://judgmentcalc.com/interest-rate"
+                          className="font-medium text-primary hover:underline"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            window.open("https://judgmentcalc.com/interest-rate", "InterestRatePopUp", "width=800,height=600");
+                          }}
+                        >
+                          Not Sure?
+                        </a>
+                        )
+                      </FormLabel>
                       <FormControl>
                         <Input type="number" step="0.01" placeholder="10" {...field} />
                       </FormControl>
@@ -499,7 +512,7 @@ const NewCase = () => {
                       <span className="font-medium">{formatCurrency4Decimals(calculationResult.daily_interest)}</span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <span className="text-muted-foreground text-sm">Interest Accrued</span>
+                      <span className="text-muted-foreground text-sm">Interest Accrued Since Last Payment</span>
                       <span className="font-medium">{formatCurrency2Decimals(calculationResult.interest_accrued)}</span>
                     </div>
                     <div className="flex flex-col gap-1">

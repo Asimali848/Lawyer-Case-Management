@@ -19,7 +19,7 @@ const baseQueryWith401Handling: typeof baseQuery = async (
 ) => {
   const result = await baseQuery(args, api, extraOptions);
 
-  if (result.error?.status === 401 || result.error?.status === 403) {
+  if ((result.error?.status === 401 || result.error?.status === 403) && typeof args === 'object' && (args as any)?.url !== "/api/auth/login") {
     localStorage.clear();
     setTimeout(() => {
       window.location.replace("/");

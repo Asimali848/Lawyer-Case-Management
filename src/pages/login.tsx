@@ -31,6 +31,7 @@ const Login = () => {
     } catch (error: any) {
       const errorMessage = error?.data?.detail || "Login failed. Please check your credentials.";
       toast.error(errorMessage);
+      navigate("/");
     }
   };
 

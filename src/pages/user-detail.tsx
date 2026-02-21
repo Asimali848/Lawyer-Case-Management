@@ -353,11 +353,21 @@ const UserDetail = () => {
           <div className="order-1 w-full lg:order-2">
             <Card className="h-full w-full shadow-none">
               <CardContent className="flex h-full w-full flex-col gap-3 p-4">
-                <Button variant="default" className="w-full justify-start" onClick={handleAddTransaction}>
+                <Button
+                  variant="default"
+                  className="w-full justify-start"
+                  onClick={handleAddTransaction}
+                  title="Download Transaction List"
+                >
                   <Receipt className="mr-2 size-4" />
                   Transaction
                 </Button>
-                <Button variant="default" className="w-full justify-start" onClick={() => setPayoffDemandOpen(true)}>
+                <Button
+                  variant="default"
+                  className="w-full justify-start"
+                  onClick={() => setPayoffDemandOpen(true)}
+                  title="Generate a Payoff Demand Letter"
+                >
                   <FileText className="mr-2 size-4" />
                   Payoff Demand
                 </Button>

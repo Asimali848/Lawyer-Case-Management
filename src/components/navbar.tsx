@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { setToken, setUser } from "@/store/slices/global";
 import MaxWidthWrapper from "./max-width-wrapper";
-import { ModeToggle } from "./mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import WarningModal from "./warning-modal";
@@ -114,7 +113,6 @@ const Navbar = () => {
               </DropdownMenu>
             </div>
             <span className="">
-              <ModeToggle />
             </span>
           </div>
         </MaxWidthWrapper>

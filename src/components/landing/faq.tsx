@@ -197,12 +197,19 @@ const faqs = [
     a: (
       <>
         We offer a free 30-day trial — no credit card required. If you decide not to subscribe, your data will be
-        automatically deleted 10 days after the trial ends. We're sorry to see you go!
+        automatically deleted 15 days after the trial ends. We're sorry to see you go!
         <br />
         <br />
-        If you sign up for a paid plan, your subscription will remain active through the end of the billing term
-        (monthly or yearly) and will not auto-renew. No surprise charges, no hassle. All of your data will be deleted
-        thirty days after your subscription ends.
+        If you sign up for a paid plan, your subscription renews automatically each month (or year) unless you cancel
+        before your next billing date. You can cancel anytime from your account settings — no calls, no emails, no
+        runaround.
+        <br />
+        <br />
+        We do not offer prorated refunds. If you cancel, your access will continue through the end of the term you’ve
+        already paid for. After your subscription ends, your data will be permanently deleted 15 days later.
+        <br />
+        <br />
+        No surprise charges. No hassle.
       </>
     ),
   },
