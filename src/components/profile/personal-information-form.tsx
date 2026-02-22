@@ -15,7 +15,6 @@ interface PersonalInformationFormProps {
     city?: string;
     state?: string;
     zipCode?: string;
-    phoneNumber?: string;
     website?: string;
   };
   onSave?: (data: { firstName: string; lastName: string; email: string }) => void;
@@ -31,7 +30,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
     city: "",
     state: "",
     zipCode: "",
-    phoneNumber: "",
     website: "",
   };
 
@@ -52,7 +50,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
       await updateProfile({
         first_name: formData.firstName,
         last_name: formData.lastName,
-        phone_number: formData.phoneNumber,
         firm_name: formData.firmName,
         street_address: formData.streetAddress,
         city: formData.city,
@@ -79,7 +76,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
       await updateProfile({
         first_name: formData.firstName,
         last_name: formData.lastName,
-        phone_number: formData.phoneNumber,
         firm_name: formData.firmName,
         street_address: formData.streetAddress,
         city: formData.city,
@@ -172,14 +168,14 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
               onChange={(e) => handleInputChange("zipCode", e.target.value)}
             />
           </div>
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <label className="font-medium text-sm">Phone Number</label>
             <Input
               type="tel"
               value={formData.phoneNumber}
               onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
             />
-          </div>
+          </div> */}
           <div className="space-y-2 sm:col-span-2">
             <label className="font-medium text-sm">Website</label>
             <Input

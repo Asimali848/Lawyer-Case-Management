@@ -21,7 +21,6 @@ const Signup = () => {
       first_name: "",
       last_name: "",
       email: "",
-      phone_number: "",
       password: "",
     },
   });
@@ -89,7 +88,7 @@ const Signup = () => {
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="phone_number"
             render={({ field }) => (
@@ -101,7 +100,7 @@ const Signup = () => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <FormField
             control={form.control}
             name="password"

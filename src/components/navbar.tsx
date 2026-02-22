@@ -82,13 +82,13 @@ const Navbar = () => {
                       {getAvatarUrl() ? (
                         <AvatarImage src={getAvatarUrl()!} alt="Profile" className="object-cover" />
                       ) : null}
-                      <AvatarFallback className="bg-primary/40 font-semibold text-white">
+                      <AvatarFallback className="bg-primary/70 font-semibold text-white">
                         {getInitials()}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-36">
+                <DropdownMenuContent align="end" className="w-40">
                   <DropdownMenuItem>
                     <Button className="w-full gap-3.5" variant="ghost" size="sm" onClick={() => Home()}>
                       <HomeIcon className="size-4 text-primary" /> Home
