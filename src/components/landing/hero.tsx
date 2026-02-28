@@ -28,7 +28,7 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Trak Multiple Judgments <br />
+          Track Multiple Judgments <br />
           Up to Date Accrued Interest Display <br />
           Easy Transaction Entry & Editing <br />
           Instant Payoff Calculator <br />
