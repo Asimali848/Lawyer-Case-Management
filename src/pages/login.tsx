@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import type z from "zod";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,9 @@ import { useLoginMutation } from "@/store/services/auth";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [login, { isLoading }] = useLoginMutation();
+  const redirectPath = searchParams.get("redirect");
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -27,7 +29,8 @@ const Login = () => {
     try {
       await login(data).unwrap();
       toast.success("Login successful!");
-      navigate("/dashboard");
+      // Redirect to the original page or dashboard
+      navigate(redirectPath || "/dashboard");
     } catch (error: any) {
       const errorMessage = error?.data?.detail || "Login failed. Please check your credentials.";
       toast.error(errorMessage);

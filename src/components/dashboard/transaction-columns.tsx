@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 interface TransactionColumnsProps {
   onEdit: (transaction: Payment) => void;
   onDelete: (transaction: Payment) => void;
+  readOnly?: boolean;
 }
 
-export const useTransactionColumns = ({ onEdit, onDelete }: TransactionColumnsProps) => {
-  return [
+export const useTransactionColumns = ({ onEdit, onDelete, readOnly = false }: TransactionColumnsProps) => {
+  const columns = [
     {
       accessorKey: "payment_date",
       header: "DATE",
@@ -108,7 +109,12 @@ export const useTransactionColumns = ({ onEdit, onDelete }: TransactionColumnsPr
         return <span className="font-bold">{description || "N/A"}</span>;
       },
     },
-    {
+  ];
+
+  // Only show actions column for owners (not read-only)
+  if (!readOnly) {
+    columns.push({
+      // @ts-ignore
       id: "actions",
       header: "ACTIONS",
       cell: ({ row }: { row: Row<Payment> }) => {
@@ -135,6 +141,9 @@ export const useTransactionColumns = ({ onEdit, onDelete }: TransactionColumnsPr
           </div>
         );
       },
-    },
-  ];
+    });
+  }
+
+  return columns;
 };
+

@@ -1,5 +1,6 @@
 import { ArrowLeft, CreditCard, FileText, Pencil, Printer, Receipt, Trash } from "lucide-react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import CompanySheet from "@/components/dashboard/company-sheet";
@@ -24,6 +25,7 @@ import {
 const UserDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const user = useSelector((state: { global: GlobalState }) => state.global?.user);
   const [edit, setEdit] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
   const [transactionOpen, setTransactionOpen] = useState<boolean>(false);
@@ -44,6 +46,9 @@ const UserDetail = () => {
   );
   const [deleteCalculation] = useDeleteCalculationMutation();
   const [deleteTransaction] = useDeleteTransactionMutation();
+
+  // Determine if current user is the owner (external_id matches user.id)
+  const isOwner = !calculation?.external_id || calculation.external_id === user?.id;
 
   // Transform transactions to Payment format for the table with timeline data
   // Apply LIFO (Last In First Out) ordering - most recent transactions first
@@ -164,6 +169,7 @@ const UserDetail = () => {
   const columns = useTransactionColumns({
     onEdit: handleEditTransaction,
     onDelete: handleDeleteTransaction,
+    readOnly: !isOwner,
   });
 
   if (isLoading) {
@@ -212,20 +218,31 @@ const UserDetail = () => {
               {calculation?.case_name ?? "Case Not Found"}
             </Label>
           </div>
-          <div className="hidden flex-col gap-2.5 md:flex md:flex-row">
-            <Button variant="default" size="sm" type="button" onClick={() => setEdit(true)}>
-              Edit Case
-              <Pencil className="ml-1 size-4" />
-            </Button>
-            <Button variant="destructive" size="sm" type="button" onClick={() => setWarningModalOpen(true)}>
-              Delete Case <Trash className="ml-1 size-4" />
-            </Button>
-          </div>
-          <div className="flex gap-2.5 md:hidden">
-            <Button variant="default" size="sm" type="button" disabled>
-              <CreditCard className="ml-1 size-4" />
-            </Button>
-          </div>
+          {isOwner && (
+            <div className="hidden flex-col gap-2.5 md:flex md:flex-row">
+              <Button variant="default" size="sm" type="button" onClick={() => setEdit(true)}>
+                Edit Case
+                <Pencil className="ml-1 size-4" />
+              </Button>
+              <Button variant="destructive" size="sm" type="button" onClick={() => setWarningModalOpen(true)}>
+                Delete Case <Trash className="ml-1 size-4" />
+              </Button>
+            </div>
+          )}
+          {isOwner && (
+            <div className="flex gap-2.5 md:hidden">
+              <Button variant="default" size="sm" type="button" disabled>
+                <CreditCard className="ml-1 size-4" />
+              </Button>
+            </div>
+          )}
+          {!isOwner && (
+            <div className="flex items-center">
+              <span className="rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                Read Only
+              </span>
+            </div>
+          )}
         </div>
         <Card className="w-full rounded-xl shadow-none">
           <CardContent className="space-y-6">
@@ -353,14 +370,18 @@ const UserDetail = () => {
           <div className="order-1 w-full lg:order-2">
             <Card className="h-full w-full shadow-none">
               <CardContent className="flex h-full w-full flex-col gap-3 p-4">
-                <Button variant="default" className="w-full justify-start" onClick={handleAddTransaction}>
-                  <Receipt className="mr-2 size-4" />
-                  Transaction
-                </Button>
-                <Button variant="default" className="w-full justify-start" onClick={() => setPayoffDemandOpen(true)}>
-                  <FileText className="mr-2 size-4" />
-                  Payoff Demand
-                </Button>
+                {isOwner && (
+                  <>
+                    <Button variant="default" className="w-full justify-start" onClick={handleAddTransaction}>
+                      <Receipt className="mr-2 size-4" />
+                      Transaction
+                    </Button>
+                    <Button variant="default" className="w-full justify-start" onClick={() => setPayoffDemandOpen(true)}>
+                      <FileText className="mr-2 size-4" />
+                      Payoff Demand
+                    </Button>
+                  </>
+                )}
                 <Button variant="default" className="w-full justify-start" onClick={handlePrintTransactions}>
                   <Printer className="mr-2 size-4" />
                   Print
