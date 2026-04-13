@@ -408,3 +408,86 @@ declare type PayoffDemandResponse = {
   total_payments_made: number;
   total_costs_added: number;
 };
+
+// ============================================================================
+// Sharing Types
+// ============================================================================
+
+declare type ShareLink = {
+  id: string;
+  calculation_id?: string;
+  token: string;
+  is_active: boolean;
+  created_at: string;
+};
+
+declare type ShareLinksResponse = {
+  links: ShareLink[];
+};
+
+declare type GenerateShareLinkResponse = ShareLink;
+
+declare type AccessStatusResponse = {
+  status: "pending" | "approved" | "rejected" | "rejected_cooldown";
+  message: string;
+  calculation_id?: string;
+  case_name?: string;
+  is_owner?: boolean;
+  cooldown_seconds?: number;
+};
+
+declare type AccessRequestItem = {
+  id: string;
+  calculation_id: string;
+  user_id: string;
+  status: string;
+  created_at: string;
+  case_name?: string;
+  court_name?: string;
+  court_number?: string;
+  requester_name?: string;
+  requester_email?: string;
+  requester_first_name?: string;
+  requester_last_name?: string;
+};
+
+declare type AccessRequestsResponse = {
+  requests: AccessRequestItem[];
+};
+
+declare type SharedCaseItem = {
+  access_id: string;
+  calculation_id: string;
+  case_name?: string;
+  court_name?: string;
+  court_number?: string;
+  judgment_amount: number;
+  judgment_date: string;
+  access_granted_at: string;
+};
+
+declare type SharedCasesResponse = {
+  cases: SharedCaseItem[];
+};
+
+declare type ShareNotification = {
+  id: string;
+  calculation_id: string;
+  status: string;
+  case_name?: string;
+  requester_name?: string;
+  requester_email?: string;
+  created_at?: string;
+  reviewed_at?: string;
+  type: "owner_request" | "user_update";
+  message: string;
+};
+
+declare type NotificationsResponse = {
+  notifications: ShareNotification[];
+};
+
+declare type NotificationCountResponse = {
+  count: number;
+};
+

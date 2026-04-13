@@ -1,8 +1,9 @@
-import { Download, FileText, MoreVertical, Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { Download, FileText, MoreVertical, Pencil, Plus, RefreshCw, Share2, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import DeleteConfirmationModal from "@/components/dashboard/delete-confirmation-modal";
 import EditCaseDialog from "@/components/dashboard/edit-case-dialog";
+import ShareCaseDialog from "@/components/dashboard/share-case-dialog";
 import PayoffDemandModal from "@/components/dashboard/payoff-demand-modal";
 import { useTransactionColumns } from "@/components/dashboard/transaction-columns";
 import TransactionSheet from "@/components/dashboard/transaction-sheet";
@@ -37,6 +38,7 @@ const CaseListWithDetails = ({ cases, isLoading, error, isLoadingMore, totalCase
   const [editCaseOpen, setEditCaseOpen] = useState<boolean>(false);
   const [deleteCaseOpen, setDeleteCaseOpen] = useState<boolean>(false);
   const [payoffDemandOpen, setPayoffDemandOpen] = useState<boolean>(false);
+  const [shareCaseOpen, setShareCaseOpen] = useState<boolean>(false);
 
   // Get selected case data from the cases array (already loaded from history)
   const selectedCase = cases.find((c) => c.id === selectedCaseId);
@@ -266,6 +268,14 @@ const CaseListWithDetails = ({ cases, isLoading, error, isLoadingMore, totalCase
                         <Pencil className="mr-2 size-4" />
                         Edit Case
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setShareCaseOpen(true)}>
+                        <Share2 className="mr-2 size-4" />
+                        Share Case
+                      </DropdownMenuItem>
+                      {/* <DropdownMenuItem onClick={handlePrintCase}>
+                        <Printer className="mr-2 size-4" />
+                        Print Case
+                      </DropdownMenuItem> */}
                       <DropdownMenuItem
                         onClick={() => setDeleteCaseOpen(true)}
                         className="text-destructive focus:text-destructive"
@@ -428,6 +438,16 @@ const CaseListWithDetails = ({ cases, isLoading, error, isLoadingMore, totalCase
 
       {/* Edit Case Dialog */}
       {selectedCase && <EditCaseDialog open={editCaseOpen} setOpen={setEditCaseOpen} caseData={selectedCase as any} />}
+
+      {/* Share Case Dialog */}
+      {selectedCaseId && (
+        <ShareCaseDialog
+          open={shareCaseOpen}
+          setOpen={setShareCaseOpen}
+          caseId={selectedCaseId}
+          caseName={selectedCase?.case_name}
+        />
+      )}
 
       {/* Delete Case Warning Modal */}
       <WarningModal

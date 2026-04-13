@@ -1,4 +1,4 @@
-import { CreditCardIcon, HomeIcon, LogOutIcon, UserIcon } from "lucide-react";
+import { CreditCardIcon, HomeIcon, LogOutIcon, Shield, UserIcon } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { setToken, setUser } from "@/store/slices/global";
 import MaxWidthWrapper from "./max-width-wrapper";
+import { ModeToggle } from "./mode-toggle";
+import NotificationBell from "./notification-bell";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import WarningModal from "./warning-modal";
@@ -105,6 +107,11 @@ const Navbar = () => {
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
+                    <Button className="w-full gap-3.5" variant="ghost" size="sm" onClick={() => navigate("/access-requests")}>
+                      <Shield className="size-4 text-primary" /> Requests
+                    </Button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
                     <Button className="w-full" variant="destructive" size="sm" onClick={() => setOpen(true)}>
                       <LogOutIcon className="size-4 text-white" /> Logout
                     </Button>
@@ -112,6 +119,7 @@ const Navbar = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            <NotificationBell />
             <span className="">
             </span>
           </div>
