@@ -222,9 +222,8 @@ const CaseListWithDetails = ({ cases, isLoading, error, isLoadingMore, totalCase
                   <div
                     key={caseItem.id}
                     onClick={() => handleCaseClick(caseItem.id)}
-                    className={`cursor-pointer rounded-lg border p-3 transition-colors sm:p-4 ${
-                      selectedCaseId === caseItem.id ? "border-green-300 bg-primary/10" : ""
-                    }`}
+                    className={`cursor-pointer rounded-lg border p-3 transition-colors sm:p-4 ${selectedCaseId === caseItem.id ? "border-green-300 bg-primary/10" : ""
+                      }`}
                   >
                     <div className="mb-1 break-words font-semibold text-base sm:text-lg">{caseItem.case_name}</div>
                     <div className="mb-2 break-words text-muted-foreground text-xs sm:text-sm">
@@ -333,7 +332,7 @@ const CaseListWithDetails = ({ cases, isLoading, error, isLoadingMore, totalCase
                       <div className="font-medium text-sm sm:text-base">{formatCurrency(totalPayments)}</div>
                     </div>
                     <div>
-                      <div className="mb-1 text-muted-foreground text-xs sm:text-sm">Interest Accrued</div>
+                      <div className="mb-1 text-muted-foreground text-xs sm:text-sm">Interest Accrued Since Last Payment</div>
                       <div className="font-medium text-sm sm:text-base">
                         {formatCurrency((selectedCase as any).interest_accrued || 0)}
                       </div>
@@ -361,9 +360,8 @@ const CaseListWithDetails = ({ cases, isLoading, error, isLoadingMore, totalCase
 
         {/* Recent Transactions Section */}
         <Card
-          className={`flex flex-1 flex-col overflow-hidden ${
-            selectedCaseId ? "col-span-1 lg:col-span-4" : "hidden"
-          } h-auto lg:h-[500px]`}
+          className={`flex flex-1 flex-col overflow-hidden ${selectedCaseId ? "col-span-1 lg:col-span-4" : "hidden"
+            } h-auto lg:h-[500px]`}
         >
           <CardHeader className="flex flex-col items-start justify-between gap-3 px-4 pb-3 sm:flex-row sm:items-center sm:px-6">
             <div className="w-full sm:w-auto">
@@ -378,6 +376,7 @@ const CaseListWithDetails = ({ cases, isLoading, error, isLoadingMore, totalCase
                 size="sm"
                 onClick={handleDownloadTransactionPDF}
                 className="flex-1 bg-primary text-white hover:bg-primary/90 sm:flex-none"
+                title="Download Transaction List"
               >
                 <Download className="mr-1 size-4" />
                 Transaction
@@ -387,6 +386,7 @@ const CaseListWithDetails = ({ cases, isLoading, error, isLoadingMore, totalCase
                 size="sm"
                 onClick={() => setPayoffDemandOpen(true)}
                 className="flex-1 bg-primary text-white hover:bg-primary/90 sm:flex-none"
+                title="Generate a Payoff Demand Letter"
               >
                 <FileText className="mr-1 size-4" />
                 Payoff Demand

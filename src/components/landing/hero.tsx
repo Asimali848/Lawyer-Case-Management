@@ -23,13 +23,16 @@ const Hero = () => {
         </motion.h1>
 
         <motion.p
-          className="max-w-md pb-2 text-center font-semibold text-base text-black md:w-1/3 md:text-left md:leading-5 lg:text-xl lg:leading-9"
+          className="max-w-md pb-2 text-center font-semibold text-base text-black md:w-1/3 md:text-left md:leading-6 lg:text-xl lg:leading-10"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Track Multiple Judgments Up to Date Accrued Interest Easy Transaction Entry & Editing Instant Payoff
-          Calculator
+          Track Multiple Judgments <br />
+          Up to Date Accrued Interest Display <br />
+          Easy Transaction Entry & Editing <br />
+          Instant Payoff Calculator <br />
+          Generate Accurate Payment Letters
         </motion.p>
 
         <motion.div

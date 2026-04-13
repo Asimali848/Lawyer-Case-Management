@@ -59,29 +59,19 @@ const Billing = () => {
   const monthlyPlan = plansData?.plans?.monthly;
   const yearlyPlan = plansData?.plans?.yearly;
 
-  // Calculate savings for yearly plan
-  const yearlySavings =
-    monthlyPlan && yearlyPlan
-      ? Math.round(
-          ((monthlyPlan.amount * 12 - yearlyPlan.amount) /
-            (monthlyPlan.amount * 12)) *
-            100,
-        )
-      : 25;
-
   const plans = [
     {
       id: "starter",
-      name: "Starter",
-      subtitle: "For growing law firms",
+      name: "Free Trial",
+      subtitle: "",
       price: "Free",
       priceLabel: "",
       icon: Box,
       features: [
-        "Basic Support",
-        "No Usage Limit",
-        "2 Week free trial",
+        "30 Day Free Trial",
+        "No Usage Limits",
         "No Credit Card Required",
+        "After 30 Days, Data Automatically Deleted",
       ],
       buttonText: isFree ? "Current Plan" : "Downgrade",
       buttonVariant: "default" as const,
@@ -94,30 +84,18 @@ const Billing = () => {
     },
     {
       id: "pro",
-      name: "Pro",
-      subtitle: "For Big Law Firms",
-      price:
-        billingInterval === "monthly"
-          ? monthlyPlan
-            ? `$${monthlyPlan.amount}`
-            : "$20"
-          : yearlyPlan
-            ? `$${yearlyPlan.amount}`
-            : "$180",
+      name: "Paid Plan",
+      subtitle: "",
+      price: billingInterval === "monthly" ? "$12.50" : "$100",
       priceLabel: billingInterval === "monthly" ? "/mo" : "/year",
-      priceSubtext:
-        billingInterval === "yearly"
-          ? `Save ${yearlySavings}% with annual billing`
-          : undefined,
+      priceSubtext: billingInterval === "yearly" ? "Save $50" : undefined,
       icon: Rocket,
       features: [
         "Unlimited Cases",
-        billingInterval === "yearly"
-          ? `$${yearlyPlan ? yearlyPlan.amount : 180} Per Year (save ${yearlySavings}%)`
-          : `$${monthlyPlan ? monthlyPlan.amount : 20} Per Month`,
+        "Generate Payoff Demand Letters",
         "Priority Support",
       ],
-      buttonText: isPremium ? "Manage Subscription" : "Upgrade to Pro",
+      buttonText: isPremium ? "Manage Subscription" : "Upgrade to Paid Plan",
       buttonVariant: "default" as const,
       isPopular: true,
       isCurrent: isPremium,
@@ -264,7 +242,7 @@ const Billing = () => {
                 <div className="animate-marquee whitespace-nowrap">
                   <span className="flex items-center font-medium text-sm sm:text-base">
                     <Sparkles className="mr-2 size-5 shrink-0 text-chart-4 dark:text-chart-3" />{" "}
-                    Good news! Your coupon is still active for 2 more weeks. To
+                    Good news! Your free trial is active for 30 days. To
                     keep adding cases without interruption, activate your paid
                     plan before it expires. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   </span>
@@ -297,26 +275,22 @@ const Billing = () => {
           <div className="inline-flex rounded-lg border border-border bg-sidebar p-1">
             <button
               onClick={() => setBillingInterval("monthly")}
-              className={`rounded-md px-6 py-2 font-medium text-sm transition-colors ${
-                billingInterval === "monthly"
-                  ? "bg-primary text-white"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`rounded-md px-6 py-2 font-medium text-sm transition-colors ${billingInterval === "monthly"
+                ? "bg-primary text-white"
+                : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBillingInterval("yearly")}
-              className={`rounded-md px-6 py-2 font-medium text-sm transition-colors ${
-                billingInterval === "yearly"
-                  ? "bg-primary text-white"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`rounded-md px-6 py-2 font-medium text-sm transition-colors ${billingInterval === "yearly"
+                ? "bg-primary text-white"
+                : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               Yearly
-              {yearlyPlan && (
-                <span className="ml-2 text-xs">(Save {yearlySavings}%)</span>
-              )}
+              <span className="ml-2 text-xs">(Save $50)</span>
             </button>
           </div>
         </div>
@@ -368,11 +342,10 @@ const Billing = () => {
             return (
               <Card
                 key={plan.id}
-                className={`relative flex flex-col overflow-hidden border-2 transition-all hover:shadow-lg ${
-                  plan.isCurrent
-                    ? `${plan.bgColor} ${plan.borderColor}`
-                    : `${plan.bgColor} ${plan.borderColor}`
-                }`}
+                className={`relative flex flex-col overflow-hidden border-2 transition-all hover:shadow-lg ${plan.isCurrent
+                  ? `${plan.bgColor} ${plan.borderColor}`
+                  : `${plan.bgColor} ${plan.borderColor}`
+                  }`}
               >
                 {/* Badges */}
                 {plan.isPopular && (
@@ -388,9 +361,8 @@ const Billing = () => {
 
                 <CardHeader className="flex flex-col items-center pt-8 pb-4 text-center">
                   <div
-                    className={`mb-4 flex size-16 items-center justify-center rounded-lg ${
-                      plan.isCurrent ? "bg-primary" : "bg-green-50"
-                    }`}
+                    className={`mb-4 flex size-16 items-center justify-center rounded-lg ${plan.isCurrent ? "bg-primary" : "bg-green-50"
+                      }`}
                   >
                     <Icon
                       className={`size-8 ${plan.isCurrent ? "text-white" : "text-primary"}`}
@@ -437,9 +409,8 @@ const Billing = () => {
                   {/* Features List */}
                   <div className="mb-6 flex-1">
                     <h4
-                      className={`mb-4 font-semibold text-sm ${
-                        plan.isCurrent ? "text-white" : "text-muted-foreground"
-                      }`}
+                      className={`mb-4 font-semibold text-sm ${plan.isCurrent ? "text-white" : "text-muted-foreground"
+                        }`}
                     >
                       What's Included
                     </h4>
@@ -462,13 +433,12 @@ const Billing = () => {
                   {/* Button */}
                   <Button
                     variant={plan.buttonVariant}
-                    className={`w-full ${
-                      plan.isCurrent && plan.id === "starter"
-                        ? "cursor-pointer border border-muted-foreground bg-white text-primary hover:bg-primary/90"
-                        : plan.isCurrent && plan.id === "pro"
-                          ? "cursor-pointer border border-white bg-white text-primary hover:bg-white/90"
-                          : "cursor-pointer bg-primary text-white hover:bg-primary/90"
-                    }`}
+                    className={`w-full ${plan.isCurrent && plan.id === "starter"
+                      ? "cursor-pointer border border-muted-foreground bg-white text-primary hover:bg-primary/90"
+                      : plan.isCurrent && plan.id === "pro"
+                        ? "cursor-pointer border border-white bg-white text-primary hover:bg-white/90"
+                        : "cursor-pointer bg-primary text-white hover:bg-primary/90"
+                      }`}
                     disabled={
                       (plan.isCurrent && plan.id === "starter") ||
                       isCreatingCheckout ||

@@ -15,7 +15,6 @@ interface PersonalInformationFormProps {
     city?: string;
     state?: string;
     zipCode?: string;
-    phoneNumber?: string;
     website?: string;
   };
   onSave?: (data: { firstName: string; lastName: string; email: string }) => void;
@@ -31,7 +30,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
     city: "",
     state: "",
     zipCode: "",
-    phoneNumber: "",
     website: "",
   };
 
@@ -52,7 +50,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
       await updateProfile({
         first_name: formData.firstName,
         last_name: formData.lastName,
-        phone_number: formData.phoneNumber,
         firm_name: formData.firmName,
         street_address: formData.streetAddress,
         city: formData.city,
@@ -79,7 +76,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
       await updateProfile({
         first_name: formData.firstName,
         last_name: formData.lastName,
-        phone_number: formData.phoneNumber,
         firm_name: formData.firmName,
         street_address: formData.streetAddress,
         city: formData.city,
@@ -120,7 +116,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.firstName}
               onChange={(e) => handleInputChange("firstName", e.target.value)}
-              placeholder="Enter your first name"
             />
           </div>
           <div className="space-y-2">
@@ -128,7 +123,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.lastName}
               onChange={(e) => handleInputChange("lastName", e.target.value)}
-              placeholder="Enter your last name"
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
@@ -137,7 +131,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
-              placeholder="Enter your email address"
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
@@ -145,7 +138,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.firmName}
               onChange={(e) => handleInputChange("firmName", e.target.value)}
-              placeholder="Enter your firm name"
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
@@ -153,7 +145,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.streetAddress}
               onChange={(e) => handleInputChange("streetAddress", e.target.value)}
-              placeholder="Enter your street address"
             />
           </div>
           <div className="space-y-2">
@@ -161,7 +152,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.city}
               onChange={(e) => handleInputChange("city", e.target.value)}
-              placeholder="Enter your city"
             />
           </div>
           <div className="space-y-2">
@@ -169,7 +159,6 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.state}
               onChange={(e) => handleInputChange("state", e.target.value)}
-              placeholder="Enter your state"
             />
           </div>
           <div className="space-y-2">
@@ -177,18 +166,16 @@ const PersonalInformationForm = ({ initialData, onSave }: PersonalInformationFor
             <Input
               value={formData.zipCode}
               onChange={(e) => handleInputChange("zipCode", e.target.value)}
-              placeholder="Enter your zip code"
             />
           </div>
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <label className="font-medium text-sm">Phone Number</label>
             <Input
               type="tel"
               value={formData.phoneNumber}
               onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
-              placeholder="Enter your phone number"
             />
-          </div>
+          </div> */}
           <div className="space-y-2 sm:col-span-2">
             <label className="font-medium text-sm">Website</label>
             <Input
