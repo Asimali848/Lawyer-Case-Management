@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { setToken, setUser } from "@/store/slices/global";
 import MaxWidthWrapper from "./max-width-wrapper";
-import { ModeToggle } from "./mode-toggle";
 import NotificationBell from "./notification-bell";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
