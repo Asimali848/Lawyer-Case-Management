@@ -410,7 +410,7 @@ declare type PayoffDemandResponse = {
 };
 
 // ============================================================================
-// Sharing Types
+// Sharing Types (Public sharing — no auth required for viewing)
 // ============================================================================
 
 declare type ShareLink = {
@@ -421,73 +421,28 @@ declare type ShareLink = {
   created_at: string;
 };
 
-declare type ShareLinksResponse = {
-  links: ShareLink[];
-};
-
 declare type GenerateShareLinkResponse = ShareLink;
 
-declare type AccessStatusResponse = {
-  status: "pending" | "approved" | "rejected" | "rejected_cooldown";
-  message: string;
-  calculation_id?: string;
-  case_name?: string;
-  is_owner?: boolean;
-  cooldown_seconds?: number;
+declare type PublicTransaction = {
+  date: string;
+  type: "PAYMENT" | "COST";
+  amount: number;
+  description: string;
+  accrued_interest: number;
+  principal_balance: number;
 };
 
-declare type AccessRequestItem = {
-  id: string;
-  calculation_id: string;
-  user_id: string;
-  status: string;
-  created_at: string;
-  case_name?: string;
-  court_name?: string;
-  court_number?: string;
-  requester_name?: string;
-  requester_email?: string;
-  requester_first_name?: string;
-  requester_last_name?: string;
-};
-
-declare type AccessRequestsResponse = {
-  requests: AccessRequestItem[];
-};
-
-declare type SharedCaseItem = {
-  access_id: string;
-  calculation_id: string;
-  case_name?: string;
-  court_name?: string;
-  court_number?: string;
+declare type PublicSharedCaseResponse = {
+  case_name: string;
+  court_name: string;
   judgment_amount: number;
   judgment_date: string;
-  access_granted_at: string;
+  annual_interest_rate: number;
+  end_date: string;
+  total_due: number;
+  total_interest_accrued: number;
+  principal_reduction: number;
+  transactions: PublicTransaction[];
 };
 
-declare type SharedCasesResponse = {
-  cases: SharedCaseItem[];
-};
-
-declare type ShareNotification = {
-  id: string;
-  calculation_id: string;
-  status: string;
-  case_name?: string;
-  requester_name?: string;
-  requester_email?: string;
-  created_at?: string;
-  reviewed_at?: string;
-  type: "owner_request" | "user_update";
-  message: string;
-};
-
-declare type NotificationsResponse = {
-  notifications: ShareNotification[];
-};
-
-declare type NotificationCountResponse = {
-  count: number;
-};
 

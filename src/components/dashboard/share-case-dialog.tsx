@@ -156,10 +156,7 @@ const ShareCaseDialog = ({ open, setOpen, caseId, caseName }: ShareCaseDialogPro
             </div>
           )}
 
-          {/* Info text */}
-          <p className="text-[11px] text-muted-foreground sm:text-xs">
-            Anyone with this link must log in and request access. You'll be notified to approve or reject.
-          </p>
+          
         </div>
       </DialogContent>
     </Dialog>

@@ -16,7 +16,6 @@ import VerifyEmail from "./pages/verify-email";
 import VerifyOtp from "./pages/verify-otp";
 import { SystemMetrics, AnalyticsOverview } from "./pages/metrics";
 import SharedCase from "./pages/shared-case";
-import AccessRequests from "./pages/access-requests";
 
 function App() {
   return (
@@ -26,7 +25,7 @@ function App() {
       <Route path="/analytics/overview" element={<AnalyticsOverview />} />
       <Route path="/" element={<Landing />} />
       <Route path="/interest-rate" element={<InterestRate />} />
-      {/* Shared case route (needs special auth handling, outside layouts) */}
+      {/* Public shared case view (no auth required) */}
       <Route path="/shared/:token" element={<SharedCase />} />
 
       {/* Regular Auth Routes */}
@@ -47,7 +46,6 @@ function App() {
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/billing" element={<Billing />}></Route>
         <Route path="/add-case" element={<NewCase />}></Route>
-        <Route path="/access-requests" element={<AccessRequests />}></Route>
       </Route>
     </Routes>
   );
