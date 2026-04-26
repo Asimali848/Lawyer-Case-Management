@@ -1,5 +1,5 @@
 import { CheckCircle, Copy, Link2, Loader2, Share2, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +27,12 @@ const ShareCaseDialog = ({ open, setOpen, caseId, caseName }: ShareCaseDialogPro
 
   const [generateLink, { isLoading: isGenerating }] = useGenerateShareLinkMutation();
   const [deactivateLink, { isLoading: isDeactivating }] = useDeactivateShareLinkMutation();
+
+  // Reset state when selected case changes
+  useEffect(() => {
+    setShareLink(null);
+    setCopied(false);
+  }, [caseId]);
 
   const handleGetLink = async () => {
     try {
@@ -72,6 +78,8 @@ const ShareCaseDialog = ({ open, setOpen, caseId, caseName }: ShareCaseDialogPro
     setOpen(value);
     if (!value) {
       setCopied(false);
+      // Reset share link when dialog closes so it doesn't leak or persist incorrectly
+      setTimeout(() => setShareLink(null), 300);
     }
   };
 
