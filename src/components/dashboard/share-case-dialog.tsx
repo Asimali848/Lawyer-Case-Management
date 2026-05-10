@@ -35,18 +35,33 @@ const ShareCaseDialog = ({ open, setOpen, caseId, caseName }: ShareCaseDialogPro
   }, [caseId]);
 
   const handleGetLink = async () => {
+    let result;
     try {
-      const result = await generateLink(caseId).unwrap();
-      setShareLink({ id: result.id, token: result.token });
+      const response: any = await generateLink(caseId).unwrap();
+      
+      // Handle cases where the backend might wrap the response
+      result = response?.data || response;
+      
+      if (!result?.id || !result?.token) {
+        throw new Error("Invalid response format from server");
+      }
 
-      // Auto-copy to clipboard
+      setShareLink({ id: result.id, token: result.token });
+    } catch (error: any) {
+      toast.error(error?.data?.detail || error?.message || "Failed to generate share link");
+      return;
+    }
+
+    // Auto-copy to clipboard
+    try {
       const shareUrl = `${window.location.origin}/shared/${result.token}`;
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
-      toast.success("Share link copied to clipboard!");
+      toast.success("Share link generated and copied!");
       setTimeout(() => setCopied(false), 3000);
-    } catch (error: any) {
-      toast.error(error?.data?.detail || "Failed to generate share link");
+    } catch (clipboardError) {
+      // If clipboard copy fails (e.g., non-HTTPS environment), just show success for generation
+      toast.success("Share link generated successfully!");
     }
   };
 

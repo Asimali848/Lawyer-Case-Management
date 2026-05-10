@@ -82,7 +82,7 @@ const SharedCase = () => {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4 ">
         <SummaryCard label="Judgment Amount" value={fmt(judgment_amount)} icon={<Gavel className="size-4 text-primary" />} />
         <SummaryCard label="Interest Rate" value={`${annual_interest_rate}%`} icon={<ArrowUpRight className="size-4 text-amber-500" />} />
         <SummaryCard label="Total Interest" value={fmt(total_interest_accrued)} icon={<Banknote className="size-4 text-orange-500" />} />
@@ -111,7 +111,7 @@ const SharedCase = () => {
         ) : (
           <>
             {/* Desktop table */}
-            <div className="hidden overflow-hidden rounded-lg border sm:block">
+            <div className="hidden overflow-hidden rounded-lg border sm:block ">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b bg-muted/50">
@@ -198,12 +198,12 @@ const SharedCase = () => {
 
 // ─── Reusable layout shell ──────────────────────────────────────────
 const Shell = ({ children }: { children: React.ReactNode }) => (
-  <div className="min-h-[100dvh] bg-background">
+  <div className="min-h-[100dvh]">
     {/* Mini navbar */}
-    <nav className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
+    <nav className="sticky top-0 z-10 border-b backdrop-blur">
       <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3 sm:px-6">
         <img src={Logo} alt="JudgmentCalc" className="h-8 rounded dark:bg-white dark:px-1 sm:h-9" />
-        <Badge variant="outline" className="text-[10px] sm:text-xs">
+        <Badge variant="default" className="text-[10px] text-white sm:text-xs bg-yellow-600">
           Read-Only View
         </Badge>
       </div>
