@@ -1,286 +1,107 @@
-// import {
-//   Accordion,
-//   AccordionContent,
-//   AccordionItem,
-//   AccordionTrigger,
-// } from "@/components/ui/accordion";
-// import { useInView } from "framer-motion";
-// import { useRef } from "react";
-// const Faq = () => {
-//   const ref = useRef(null);
-//   const isInView = useInView(ref, { once: true });
-//   return (
-//     <div className="w-full h-full overflow-hidden  space-y-8 sm:space-y-10  md:py-5 ">
-//       {/* Heading */}
-//       <div className="w-full flex flex-col justify-center items-center gap-3 sm:gap-5 px-4 text-center">
-//         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">FAQs</h1>
-//         <hr className="w-16 sm:w-20 h-1 bg-primary rounded-full" />
-//         <p className="text-base sm:text-lg md:text-2xl font-semibold text-gray-600 max-w-2xl">
-//           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-//         </p>
-//       </div>
-//       <div
-//         ref={ref}
-//         className="w-full py-16 sm:py-24 lg:py-32 flex flex-col justify-start items-center transition-all duration-1000 ease-in-out bg-cover bg-center px-4 "
-//         style={{
-//           opacity: isInView ? 1 : 0,
-//           transform: isInView ? "translateY(0px)" : "translateY(50px)",
-//           backgroundImage:
-//             "url(https://www.judgmentcalc.com/wp-content/uploads/2025/06/judge-gavel-with-justice-lawyers-having-team-meeti-HMWWXEN.webp)",
-//         }}
-//       >
-//         <div className="grid grid-cols-1 md:grid-cols-2 gap-0 lg:gap-6 w-full mx-auto max-w-screen-2xl ">
-//           {/* Column 1 */}
-//           <div className="w-full">
-//             <Accordion
-//               type="single"
-//               collapsible
-//               className="space-y-4 p-4 sm:p-5 text-white"
-//             >
-//               <AccordionItem
-//                 value="item-1"
-//                 className="bg-primary rounded-xl p-4 sm:p-1 sm:px-5"
-//               >
-//                 <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">
-//                   What is JudgmentCalc used for?
-//                 </AccordionTrigger>
-//                 <AccordionContent className="text-sm sm:text-lg md:text-xl bg-white py-2 px-3 text-primary rounded-lg">
-//                   JudgmentCalc helps you track judgments, calculate accrued
-//                   interest, and manage transactions with ease.
-//                 </AccordionContent>
-//               </AccordionItem>
-//               <AccordionItem
-//                 value="item-2"
-//                 className="bg-primary rounded-xl p-4 sm:p-1 sm:px-5"
-//               >
-//                 <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">
-//                   Can I track multiple judgments?
-//                 </AccordionTrigger>
-//                 <AccordionContent className="text-sm sm:text-lg md:text-xl bg-white py-2 px-3 text-primary rounded-lg">
-//                   Yes, you can track and manage multiple judgments at once,
-//                   including payments and interest calculations.
-//                 </AccordionContent>
-//               </AccordionItem>
-//               <AccordionItem
-//                 value="item-3"
-//                 className="bg-primary rounded-xl p-4 sm:p-1 sm:px-5"
-//               >
-//                 <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">
-//                   Is interest calculation automatic?
-//                 </AccordionTrigger>
-//                 <AccordionContent className="text-sm sm:text-lg md:text-xl bg-white py-2 px-3 text-primary rounded-lg">
-//                   Absolutely. Our tool automatically calculates accrued interest
-//                   up to date based on your settings.
-//                 </AccordionContent>
-//               </AccordionItem>
-//             </Accordion>
-//           </div>
-//           {/* Column 2 */}
-//           <div className="w-full">
-//             <Accordion
-//               type="single"
-//               collapsible
-//               className="space-y-4 p-4 sm:p-5 text-white"
-//             >
-//               <AccordionItem
-//                 value="item-1"
-//                 className="bg-primary rounded-xl p-4 sm:p-1 sm:px-5"
-//               >
-//                 <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">
-//                   What is JudgmentCalc used for?
-//                 </AccordionTrigger>
-//                 <AccordionContent className="text-sm sm:text-lg md:text-xl bg-white py-2 px-3 text-primary rounded-lg">
-//                   JudgmentCalc helps you track judgments, calculate accrued
-//                   interest, and manage transactions with ease.
-//                 </AccordionContent>
-//               </AccordionItem>
-//               <AccordionItem
-//                 value="item-2"
-//                 className="bg-primary rounded-xl p-4 sm:p-1 sm:px-5"
-//               >
-//                 <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">
-//                   Can I track multiple judgments?
-//                 </AccordionTrigger>
-//                 <AccordionContent className="text-sm sm:text-lg md:text-xl bg-white py-2 px-3 text-primary rounded-lg">
-//                   Yes, you can track and manage multiple judgments at once,
-//                   including payments and interest calculations.
-//                 </AccordionContent>
-//               </AccordionItem>
-//               <AccordionItem
-//                 value="item-3"
-//                 className="bg-primary rounded-xl p-4 sm:p-1 sm:px-5"
-//               >
-//                 <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">
-//                   Is interest calculation automatic?
-//                 </AccordionTrigger>
-//                 <AccordionContent className="text-sm sm:text-lg md:text-xl bg-white py-2 px-3 text-primary rounded-lg">
-//                   Absolutely. Our tool automatically calculates accrued interest
-//                   up to date based on your settings.
-//                 </AccordionContent>
-//               </AccordionItem>
-//             </Accordion>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-// export default Faq;
-
-import { useInView } from "framer-motion";
-import { useRef } from "react";
-import { Link } from "react-router-dom";
-
-import bg from "@/assets/img/judge-gavel-with-justice-lawyers-having-team-meeti-HMWWXEN.webp";
+import { motion, useReducedMotion } from "framer-motion";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-const faqs = [
+const questions = [
   {
-    q: "Can I use this in my state?",
-    a: (
-      <>
-        Yes. JudgmentCalc.com works no matter where your judgment was entered. You control the interest rate that's
-        applied — whether it's statutory, contractual, or court-ordered.
-        <br />
-        <br />
-        Not sure what rate your jurisdiction uses?{" "}
-        <Link to="/interest-rate" className="text-primary underline hover:text-primary/80">
-          Click here
-        </Link>{" "}
-        to view a guide to judgment interest rates by state.
-      </>
-    ),
+    question: "What is JudgmentCalc?",
+    answer:
+      "JudgmentCalc is a cloud-based judgment interest calculator and judgment enforcement software designed for attorneys. It helps you calculate accrued interest, track payments and costs, manage judgment balances, and generate payoff demand letters from one secure platform.",
   },
   {
-    q: "How is interest calculated?",
-    a: (
-      <>
-        Interest is calculated on a daily simple interest basis, using the principal balance and any adjustments you've
-        entered. When payments or costs are added, the system automatically updates the balance and applies interest
-        going forward — just like a court would.
-        <br />
-        <br />
-        You choose the rate and the as-of date, and JudgmentCalc.com does the rest. No compounding, no guesswork, and no
-        spreadsheet formulas.
-      </>
-    ),
+    question: "Can I use JudgmentCalc in my state?",
+    answer:
+      "JudgmentCalc is designed to support attorneys handling post-judgment collection and enforcement matters. We continue to expand support for different jurisdictions. If you have questions about your state's rules, please contact our team before subscribing.",
   },
   {
-    q: "I'm renewing my judgment and need to compound the interest. How do I do that?",
-    a: (
-      <>
-        To compound interest upon renewal, enter a payment on the renewal date for the full amount of unpaid accrued
-        interest. This zeros out the running interest balance. Then, immediately enter a Cost Award for that same amount
-        — effectively folding the accrued interest into the principal of the renewed judgment.
-        <br />
-        <br />
-        From that point forward, interest will accrue on the increased balance, achieving proper compounding consistent
-        with judgment renewal procedures. We'll be adding an auto compound feature soon. Stay tuned!
-      </>
-    ),
+    question: "How is judgment interest calculated?",
+    answer:
+      "JudgmentCalc automatically calculates accrued interest based on your judgment details, applicable interest rate, payments, and other case activity. Your balance is updated whenever new transactions are added.",
   },
   {
-    q: "How are costs treated?",
-    a: (
-      <>
-        Costs are treated as additions to the judgment principal on the date you enter them. Once added, they begin to
-        accrue interest just like the original judgment amount.
-        <br />
-        <br />
-        This ensures that recoverable expenses — like writ fees, levy charges, or renewal costs — are fully accounted
-        for in the growing payoff balance. You control the timing and amount of each cost entry.
-      </>
-    ),
+    question: "I'm renewing my judgment and need to compound the interest. How do I do that?",
+    answer:
+      "JudgmentCalc allows you to update your judgment information when renewing a case. If your jurisdiction allows compounded interest, you can adjust your case accordingly. Our support team is also available to help guide you through the process.",
   },
   {
-    q: "What's your cancellation/refund policy?",
-    a: (
-      <>
-        We offer a free 30-day trial — no credit card required. If you decide not to subscribe, your data will be
-        automatically deleted 15 days after the trial ends. We're sorry to see you go!
-        <br />
-        <br />
-        If you sign up for a paid plan, your subscription renews automatically each month (or year) unless you cancel
-        before your next billing date. You can cancel anytime from your account settings — no calls, no emails, no
-        runaround.
-        <br />
-        <br />
-        We do not offer prorated refunds. If you cancel, your access will continue through the end of the term you’ve
-        already paid for. After your subscription ends, your data will be permanently deleted 15 days later.
-        <br />
-        <br />
-        No surprise charges. No hassle.
-      </>
-    ),
+    question: "How are costs treated?",
+    answer:
+      "You can record enforcement costs, court-approved expenses, and other eligible costs directly within your case. JudgmentCalc automatically includes these updates when calculating your current judgment balance.",
   },
   {
-    q: "Is my data secure?",
-    a: (
-      <>
-        Yes. Your data is encrypted in transit and stored securely using industry-standard best practices. We never
-        share, sell, or mine your information — and we do not require any client-identifying details to use the system.
-        <br />
-        <br />
-        You're always in control. If you cancel your account, your data is permanently deleted after a short grace
-        period.
-      </>
-    ),
+    question: "Can I track payments and costs?",
+    answer:
+      "Yes. You can record payments, credits, enforcement costs, and other transactions. Every update automatically recalculates your judgment balance and accrued interest.",
+  },
+  {
+    question: "Can I generate payoff demand letters?",
+    answer:
+      "Yes. JudgmentCalc allows you to generate professional payoff demand letters using your latest case information, helping you provide accurate payoff amounts quickly.",
+  },
+  {
+    question: "What's your cancellation and refund policy?",
+    answer:
+      "You can cancel your subscription at any time before your next billing cycle. If you have questions about refunds or billing, please contact our support team for assistance.",
+  },
+  {
+    question: "Is my data secure?",
+    answer:
+      "Yes. Your data is stored on a secure cloud-based platform with security measures designed to help protect your case information and provide reliable access whenever you need it.",
+  },
+  {
+    question: "Do I need to install any software?",
+    answer:
+      "No. JudgmentCalc is completely cloud-based, so you can access your account from any modern web browser without downloading or installing software.",
   },
 ];
 
 const Faq = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+  const reduceMotion = useReducedMotion();
 
   return (
-    <div className="h-full w-full space-y-8 overflow-hidden sm:space-y-10 md:py-5">
-      {/* Heading */}
-      <div className="flex w-full flex-col items-center justify-center gap-3 px-4 text-center sm:gap-5">
-        <h1 className="font-bold text-3xl text-black sm:text-4xl md:text-5xl">FAQs</h1>
-        <hr className="h-1 w-16 rounded-full bg-primary sm:w-20" />
-        <p className="max-w-2xl font-semibold text-base text-gray-600 sm:text-lg md:text-2xl">
-          Find answers to the most common questions about JudgmentCalc.
-        </p>
-      </div>
+    <div className="relative w-full overflow-hidden border-y border-slate-200/80 bg-[#f8faf9] py-14 sm:py-16 lg:py-20">
+      <div className="absolute -left-36 top-28 size-96 rounded-full bg-emerald-100/50 blur-3xl" />
+      <div className="absolute -right-32 bottom-16 size-96 rounded-full bg-amber-100/40 blur-3xl" />
 
-      <div
-        ref={ref}
-        className="flex w-full flex-col items-center justify-start bg-center bg-cover px-4 py-16 transition-all duration-1000 ease-in-out sm:py-24 lg:py-32"
-        style={{
-          opacity: isInView ? 1 : 0,
-          transform: isInView ? "translateY(0px)" : "translateY(50px)",
-          backgroundImage: bg && `url(${bg})`,
-        }}
-      >
-        <div className="mx-auto grid w-full max-w-screen-2xl grid-cols-1 gap-0 md:grid-cols-2 lg:gap-6">
-          {/* Column 1 */}
-          <div className="w-full">
-            <Accordion type="single" collapsible className="space-y-4 p-4 text-white sm:p-5">
-              {faqs.slice(0, 3).map((faq, i) => (
-                <AccordionItem key={i} value={`item-${i}`} className="rounded-xl bg-primary p-4 sm:p-1 sm:px-5">
-                  <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">{faq.q}</AccordionTrigger>
-                  <AccordionContent className="rounded-lg bg-white px-3 py-2 text-primary text-sm sm:text-lg md:text-xl">
-                    {faq.a}
+      <div className="relative mx-auto w-full max-w-5xl px-5 sm:px-8 lg:px-10">
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-10 text-center sm:mb-12"
+        >
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-emerald-700 sm:text-sm">Questions & Answers</p>
+          <h2 className="text-3xl font-bold tracking-[-0.04em] text-slate-950 sm:text-4xl lg:text-[2.75rem]">
+            Frequently Asked Questions
+          </h2>
+        </motion.div>
+
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, x: 28 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.12 }}
+          transition={{ duration: 0.75, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Accordion type="single" collapsible defaultValue="faq-0" className="space-y-3">
+              {questions.map(({ question, answer }, index) => (
+                <AccordionItem
+                  key={question}
+                  value={`faq-${index}`}
+                  className="group overflow-hidden rounded-2xl border border-slate-200 bg-white px-5 shadow-[0_10px_32px_rgba(15,23,42,0.05)] transition-all duration-300 data-[state=open]:border-emerald-200 data-[state=open]:shadow-[0_18px_45px_rgba(15,23,42,0.08)] sm:px-6"
+                >
+                  <AccordionTrigger className="py-5 text-base font-bold leading-6 text-slate-900 no-underline hover:text-primary hover:no-underline [&_svg]:size-5 [&_svg]:text-slate-400 group-data-[state=open]:[&_svg]:text-primary sm:text-lg">
+                    <span className="flex items-start gap-3 text-left">
+                      <span className="mt-0.5 text-xs font-black tracking-[0.08em] text-emerald-600 sm:text-sm">{String(index + 1).padStart(2, "0")}</span>
+                      {question}
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-5 pl-8 pr-7 text-sm leading-7 text-slate-600 sm:pl-10 sm:text-base sm:leading-8">
+                    {answer}
                   </AccordionContent>
                 </AccordionItem>
               ))}
-            </Accordion>
-          </div>
-
-          {/* Column 2 */}
-          <div className="w-full">
-            <Accordion type="single" collapsible className="space-y-4 p-4 text-white sm:p-5">
-              {faqs.slice(3).map((faq, i) => (
-                <AccordionItem key={i} value={`item-${i + 3}`} className="rounded-xl bg-primary p-4 sm:p-1 sm:px-5">
-                  <AccordionTrigger className="text-lg sm:text-xl lg:text-2xl">{faq.q}</AccordionTrigger>
-                  <AccordionContent className="rounded-lg bg-white px-3 py-2 text-primary text-sm sm:text-lg md:text-xl">
-                    {faq.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </div>
+          </Accordion>
+        </motion.div>
       </div>
     </div>
   );

@@ -1,126 +1,184 @@
-import { motion } from "framer-motion";
-import { Calculator, CalendarClock, Infinity, MousePointerClick } from "lucide-react";
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { motion, useMotionTemplate, useMotionValue, useReducedMotion } from "framer-motion";
+import {
+  ArrowUpRight,
+  Calculator,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Layers3,
+  Link2,
+  ReceiptText,
+  Scale,
+} from "lucide-react";
+import { useState } from "react";
 
 const features = [
   {
-    icon: <Calculator className="size-8" />,
-    title: "Precision Interest Calculations",
-    description: [
-      "Crunches numbers so you don't.",
-      "Interest adds up like magic.",
-      "No spreadsheets, no sweat.",
-      "See exactly what they owe.",
-    ],
+    number: "01",
+    icon: Calculator,
+    title: "Accurate Judgment Interest Calculations",
+    description:
+      "Calculate judgment interest automatically with accurate, up-to-date balances. Reduce manual calculations and keep every judgment account compliant and organized.",
   },
   {
-    icon: <CalendarClock className="size-8 text-white" />,
-    title: "Live Payoff Tracking",
-    description: [
-      "Track every penny from judgment to collection.",
-      "Payments, costs, and credits update in real time.",
-      "Your balance is always current.",
-    ],
-    circleBg: "bg-primary",
+    number: "02",
+    icon: ReceiptText,
+    title: "Track Payments & Costs",
+    description:
+      "Record payments, credits, enforcement costs, and other transactions in one place. Your judgment balance updates automatically after every entry.",
   },
   {
-    icon: <MousePointerClick className="size-8" />,
-    title: "Easy to use",
-    description: [
-      "Built for lawyers, not engineers.",
-      "No manuals. No downloads. No BS.",
-      "Just enter your numbers and go.",
-      "Fast, intuitive, courtroom-ready.",
-    ],
+    number: "03",
+    icon: FileText,
+    title: "Generate Payoff Demand Letters",
+    description:
+      "Create professional payoff demand letters using your latest case information. Provide accurate payoff amounts without manual calculations.",
   },
   {
-    icon: <Infinity className="size-8 text-white" />,
-    title: "Unlimited Cases, Unlimited Transactions",
-    description: [
-      "Stop retyping the same numbers.",
-      "Save every case, payment, and cost.",
-      "Jump back in anytime, fully synced.",
-      "Manage all your judgments in one place.",
-    ],
-    circleBg: "bg-primary",
+    number: "04",
+    icon: Link2,
+    title: "Client Share with Real-Time Updates",
+    description:
+      "Give clients secure, read-only access to their judgment balance through a unique shareable link. They can view the latest payoff information anytime without requesting updates.",
+  },
+  {
+    number: "05",
+    icon: Layers3,
+    title: "Unlimited Cases & Transactions",
+    description:
+      "Manage unlimited judgment cases and record as many transactions as needed. Keep all your case information securely stored and easily accessible.",
+  },
+  {
+    number: "06",
+    icon: Scale,
+    title: "Built by an Attorney for Attorneys",
+    description:
+      "Developed by an attorney with over 30 years of litigation and judgment enforcement experience, JudgmentCalc is built around real legal workflows to help attorneys work faster and more accurately.",
+    featured: true,
   },
 ];
 
-// Animation variants
-const cardVariants = {
-  hidden: { opacity: 0, y: 50, scale: 0.95 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      delay: i * 0.2,
-      duration: 0.5,
-      ease: "easeOut",
-    },
-  }),
-};
-
 const Features = () => {
-  return (
-    <div className="mx-auto h-full w-full max-w-screen-2xl">
-      <div className="flex w-full flex-col items-center justify-start gap-8 py-16 sm:gap-10 sm:py-20 md:py-24">
-        {/* Heading */}
-        <div className="flex w-full flex-col items-center justify-center gap-3 px-4 text-center">
-          <h1 className="font-bold text-3xl text-black sm:text-4xl">Features</h1>
-          <hr className="h-1 w-16 rounded-full bg-primary sm:w-20" />
-          <p className="max-w-xl font-semibold text-gray-500 text-sm sm:text-base md:text-lg">
-            Explore your design idea with this simple but eye-catchy minimal style with icon and button.
-          </p>
-        </div>
+  const reduceMotion = useReducedMotion();
+  const [isIntroExpanded, setIsIntroExpanded] = useState(false);
+  const [focusedFeature, setFocusedFeature] = useState<number | null>(null);
+  const glowX = useMotionValue(-500);
+  const glowY = useMotionValue(-500);
+  const glow = useMotionTemplate`radial-gradient(420px circle at ${glowX}px ${glowY}px, rgba(16, 185, 129, 0.10), transparent 72%)`;
 
-        {/* Feature Cards */}
-        <div className="grid w-full max-w-screen-2xl grid-cols-1 gap-3 px-4 sm:grid-cols-2 sm:px-6 md:px-10 lg:grid-cols-4">
-          {features.map((feature, idx) => (
-            <motion.div
-              className="w-full"
-              key={idx}
-              custom={idx}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              //@ts-ignore
-              variants={cardVariants}
-            >
-              <Card className="flex h-[450px] w-full flex-col items-center justify-start border-2 border-primary bg-transparent px-3 text-center shadow-md transition duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-primary/20">
-                <CardHeader className="flex w-full flex-col items-center pt-3">
-                  <div
-                    className={`group flex items-center justify-center rounded-full p-4 transition-colors duration-300 sm:p-6 ${
-                      feature.circleBg ? "bg-primary" : "bg-gray-100 hover:bg-primary"
-                    } `}
-                  >
-                    <span
-                      className={`size-8 transition-colors duration-300 ${
-                        feature.circleBg ? "text-white" : "text-primary group-hover:text-white"
-                      } `}
-                    >
-                      {feature.icon}
-                    </span>
-                  </div>
-                </CardHeader>
-                <CardTitle className="flex h-24 w-full items-center justify-center font-bold text-base text-black md:text-lg lg:text-2xl">
+  return (
+    <div className="relative w-full overflow-hidden bg-white py-14 sm:py-16 lg:py-20">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-200 to-transparent" />
+      <div className="absolute -right-32 top-24 size-96 rounded-full bg-emerald-50 blur-3xl" />
+      <div className="absolute -left-40 bottom-12 size-96 rounded-full bg-amber-50/80 blur-3xl" />
+
+      <div className="relative mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-10 xl:px-12">
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="group/header relative flex flex-col overflow-hidden rounded-3xl px-1 py-2"
+          onMouseMove={(event) => {
+            const bounds = event.currentTarget.getBoundingClientRect();
+            glowX.set(event.clientX - bounds.left);
+            glowY.set(event.clientY - bounds.top);
+          }}
+          onMouseLeave={() => {
+            glowX.set(-500);
+            glowY.set(-500);
+          }}
+        >
+          <motion.div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover/header:opacity-100" style={{ background: glow }} />
+          <motion.div whileHover={reduceMotion ? undefined : { y: -2 }} transition={{ type: "spring", stiffness: 300, damping: 24 }} className="relative flex flex-col items-center text-center">
+            <div className="mb-5 flex items-center justify-center gap-3">
+              <span className="h-px w-10 bg-primary transition-all duration-500 group-hover/header:w-16" aria-hidden="true" />
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700 sm:text-sm">A complete collection workspace</p>
+            </div>
+            <h2 className="max-w-4xl text-[clamp(2.25rem,4vw,3.25rem)] font-bold leading-[1.05] tracking-[-0.045em] text-slate-950">
+              Features Built for <span className="relative text-primary after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:origin-left after:scale-x-0 after:bg-emerald-300 after:transition-transform after:duration-500 group-hover/header:after:scale-x-100">Judgment Enforcement</span>
+            </h2>
+          </motion.div>
+          <motion.p
+            layout
+            className={`relative mx-auto mt-7 max-w-5xl text-center text-base leading-7 text-slate-600 transition-colors duration-300 group-hover/header:text-slate-700 sm:text-lg sm:leading-8 ${isIntroExpanded ? "line-clamp-none" : "line-clamp-4 sm:line-clamp-none"}`}
+          >
+            JudgmentCalc is trusted by attorneys who need an <span className="font-medium text-slate-700 transition-colors group-hover/header:text-emerald-700">accurate judgment interest calculator</span> and reliable judgment enforcement software. From calculating accrued interest to tracking payments and generating payoff demand letters, every feature is designed to simplify post-judgment collection while saving time and reducing manual errors.
+          </motion.p>
+          <button
+            type="button"
+            onClick={() => setIsIntroExpanded((current) => !current)}
+            aria-expanded={isIntroExpanded}
+            className="group/more relative mx-auto mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/90 py-1.5 pl-4 pr-2 text-sm font-bold text-emerald-800 shadow-[0_8px_24px_rgba(15,23,42,0.07)] backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 sm:hidden"
+          >
+            {isIntroExpanded ? "Show less" : "Show more"}
+            <span className="flex size-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 transition-colors group-hover/more:bg-emerald-600 group-hover/more:text-white">
+              {isIntroExpanded ? <ChevronUp className="size-4" aria-hidden="true" /> : <ChevronDown className="size-4" aria-hidden="true" />}
+            </span>
+          </button>
+        </motion.div>
+
+        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:mt-14 lg:grid-cols-3 lg:gap-5">
+          {features.map((feature, index) => {
+            const Icon = feature.icon;
+            const isFocused = focusedFeature === index;
+
+            return (
+              <motion.article
+                key={feature.title}
+                initial={reduceMotion ? false : { opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ amount: 0.62, margin: "-6% 0px -6% 0px" }}
+                transition={{ duration: 0.58, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={reduceMotion ? undefined : { y: -6 }}
+                onViewportEnter={() => {
+                  if (window.matchMedia("(max-width: 1023px)").matches) setFocusedFeature(index);
+                }}
+                onViewportLeave={() => {
+                  if (window.matchMedia("(max-width: 1023px)").matches) {
+                    setFocusedFeature((current) => (current === index ? null : current));
+                  }
+                }}
+                onFocus={() => setFocusedFeature(index)}
+                onBlur={() => setFocusedFeature((current) => (current === index ? null : current))}
+                onClick={() => setFocusedFeature((current) => (current === index ? null : index))}
+                tabIndex={0}
+                className={`group relative flex min-h-72 flex-col overflow-hidden rounded-3xl border p-6 transition-[border-color,box-shadow,background-color] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:p-7 ${
+                  feature.featured
+                    ? "border-emerald-700 bg-gradient-to-br from-emerald-700 via-emerald-700 to-emerald-800 text-white shadow-[0_24px_60px_rgba(5,150,105,0.2)]"
+                    : isFocused
+                      ? "-translate-y-1 border-emerald-300 bg-emerald-50/40 text-slate-950 shadow-[0_24px_60px_rgba(15,23,42,0.12)]"
+                      : "border-slate-200/90 bg-white text-slate-950 shadow-[0_14px_42px_rgba(15,23,42,0.06)] hover:border-emerald-200 hover:shadow-[0_24px_60px_rgba(15,23,42,0.1)]"
+                }`}
+              >
+                <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${feature.featured ? "from-amber-300 via-emerald-200 to-transparent" : "from-emerald-500 via-emerald-300 to-transparent"}`} />
+                <div className={`absolute -right-20 -top-20 size-52 rounded-full border transition-transform duration-500 group-hover:scale-110 ${feature.featured ? "border-white/10 bg-white/[0.04]" : "border-emerald-100 bg-emerald-50/60"}`} />
+
+                <div className="relative flex items-start justify-between gap-4">
+                  <span className={`flex size-12 items-center justify-center rounded-2xl transition-all duration-300 group-hover:-rotate-3 group-hover:scale-105 ${feature.featured ? "bg-white/15 text-emerald-100" : isFocused ? "-rotate-3 scale-105 bg-emerald-600 text-white shadow-lg shadow-emerald-900/15" : "bg-emerald-50 text-emerald-700"}`}>
+                    <Icon className="size-5" strokeWidth={1.8} />
+                  </span>
+                  <span className={`text-xs font-bold tracking-[0.18em] ${feature.featured ? "text-emerald-200" : "text-slate-400"}`}>FEATURE {feature.number}</span>
+                </div>
+
+                <h3 className="relative mt-8 max-w-sm text-xl font-bold leading-7 tracking-[-0.025em] sm:text-2xl sm:leading-8">
                   {feature.title}
-                </CardTitle>
-                <CardContent>
-                  <CardDescription className="mx-auto w-full font-medium text-gray-500">
-                    <ul className="list-disc space-y-2 text-left text-sm">
-                      {feature.description.map((point, i) => (
-                        <li className="text-sm" key={i}>
-                          {point}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+                </h3>
+                <p className={`relative mt-4 text-sm leading-7 sm:text-base ${feature.featured ? "text-emerald-50/85" : "text-slate-600"}`}>
+                  {feature.description}
+                </p>
+
+                <div className={`relative mt-auto flex items-center justify-between border-t pt-5 ${feature.featured ? "border-white/15" : "border-slate-200"}`}>
+                  <span className={`text-xs font-bold uppercase tracking-[0.12em] ${feature.featured ? "text-emerald-200" : "text-emerald-700"}`}>
+                    Built into your workflow
+                  </span>
+                  <span className={`flex size-9 items-center justify-center rounded-full transition-all duration-300 group-hover:rotate-45 ${feature.featured ? "bg-white/10 text-white group-hover:bg-white group-hover:text-emerald-700" : "bg-slate-100 text-slate-500 group-hover:bg-emerald-50 group-hover:text-primary"}`}>
+                    <ArrowUpRight className="size-4" />
+                  </span>
+                </div>
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </div>

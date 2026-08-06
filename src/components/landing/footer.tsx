@@ -1,89 +1,105 @@
-import { useEffect, useState } from "react";
+import { Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import logo from "@/assets/img/logo.png";
 
-const sections = ["features", "pricing", "faq", "contact"];
+const productLinks = [
+  { label: "Features", section: "features" },
+  { label: "How It Works", section: "how-it-works" },
+  { label: "Pricing", section: "pricing" },
+  { label: "FAQs", section: "faq" },
+];
+
+const companyLinks = [
+  { label: "About Us", path: "/about-us" },
+  { label: "Contact Us", path: "/contact-us" },
+  { label: "Log in", path: "/login" },
+];
+
+const plans = ["Free 30-Day Trial", "Professional — $12.50/mo", "Enterprise — $20/mo"];
 
 const Footer = () => {
-  const [activeSection, setActiveSection] = useState("");
-
-  useEffect(() => {
-    const handleScroll = () => {
-      let currentSection = "";
-      for (const id of sections) {
-        const el = document.getElementById(id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 80 && rect.bottom >= 80) {
-            currentSection = id;
-            break;
-          }
-        }
-      }
-      setActiveSection(currentSection);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // initialize
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const navigate = useNavigate();
 
   const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
     }
+    navigate(`/#${id}`);
   };
 
   return (
-    <footer className="w-full bg-white px-4 py-10 text-gray-800 sm:px-8 md:px-16 lg:px-20">
-      <div className="mx-auto grid max-w-screen-xl grid-cols-1 gap-10 text-left sm:grid-cols-2 md:grid-cols-3">
-        {/* Logo and Description */}
-        <div className="flex flex-col items-center md:items-start">
-          <img src={logo} alt="Logo" className="w-40 pb-3" />
-          <p className="max-w-md text-gray-700 text-sm sm:text-base">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque pharetra condimentum.
-          </p>
+    <footer className="relative w-full overflow-hidden bg-slate-950 text-white">
+      <div className="pointer-events-none absolute -left-40 top-12 size-96 rounded-full bg-emerald-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 size-80 rounded-full bg-amber-300/5 blur-3xl" />
+
+      <div className="relative mx-auto w-full max-w-[1280px] px-5 pb-7 pt-12 sm:px-8 sm:pt-14 lg:px-10 xl:px-12">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 border-b border-white/10 pb-11 lg:grid-cols-[1.5fr_0.8fr_0.8fr_1fr] lg:gap-8">
+          <div className="col-span-2 lg:col-span-1">
+            <button type="button" onClick={() => navigate("/")} className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
+              <span className="inline-flex rounded-2xl bg-white px-3 py-2">
+                <img src={logo} alt="JudgmentCalc home" className="h-14 w-auto object-contain" />
+              </span>
+            </button>
+            <p className="mt-5 max-w-md text-sm leading-7 text-slate-300">
+              JudgmentCalc is a cloud-based judgment interest calculator and judgment enforcement software built for attorneys. Manage judgment cases, track payments, calculate accrued interest, and generate accurate payoff demand letters with confidence.
+            </p>
+          </div>
+
+          <nav aria-label="Footer product navigation">
+            <h3 className="text-sm font-bold uppercase tracking-[0.14em] text-emerald-300">Product</h3>
+            <ul className="mt-5 space-y-3">
+              {productLinks.map((link) => (
+                <li key={link.label}>
+                  <button type="button" onClick={() => scrollToSection(link.section)} className="text-sm text-slate-300 transition-colors hover:text-white">
+                    {link.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-label="Footer company navigation">
+            <h3 className="text-sm font-bold uppercase tracking-[0.14em] text-emerald-300">Company</h3>
+            <ul className="mt-5 space-y-3">
+              {companyLinks.map((link) => (
+                <li key={link.label}>
+                  <button type="button" onClick={() => navigate(link.path)} className="text-sm text-slate-300 transition-colors hover:text-white">
+                    {link.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="col-span-2 lg:col-span-1">
+            <h3 className="text-sm font-bold uppercase tracking-[0.14em] text-emerald-300">Plans</h3>
+            <ul className="mt-5 space-y-3">
+              {plans.map((plan) => (
+                <li key={plan}>
+                  <button type="button" onClick={() => scrollToSection("pricing")} className="flex items-start gap-2 text-left text-sm leading-5 text-slate-300 transition-colors hover:text-white">
+                    <Check className="mt-0.5 size-4 shrink-0 text-emerald-400" /> {plan}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        {/* Quick Links */}
-        <div>
-          <h4 className="mb-3 font-bold text-lg text-primary sm:text-xl">QUICK LINKS</h4>
-          <ul className="flex flex-col gap-2 font-semibold sm:gap-3">
-            {sections.map((section) => (
-              <li key={section}>
-                <button
-                  className={`transition-colors hover:text-primary ${activeSection === section ? "" : ""}`}
-                  onClick={() => scrollToSection(section)}
-                >
-                  {section.charAt(0).toUpperCase() + section.slice(1)}
-                </button>
-              </li>
-            ))}
-          </ul>
+        <div className="flex flex-col gap-3 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} JudgmentCalc. All rights reserved.</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <button type="button" onClick={() => navigate("/privacy-policy")} className="shrink-0 whitespace-nowrap transition-colors hover:text-white">
+              Privacy Policy
+            </button>
+            <button type="button" onClick={() => navigate("/terms-and-conditions")} className="shrink-0 whitespace-nowrap transition-colors hover:text-white">
+              Terms &amp; Conditions
+            </button>
+            <p>Built for attorneys managing post-judgment enforcement.</p>
+          </div>
         </div>
-
-        {/* Pricing Plans */}
-        <div>
-          <h4 className="mb-3 font-bold text-lg text-primary sm:text-xl">PRICING PLANS</h4>
-          <ul className="flex flex-col gap-2 font-semibold sm:gap-3">
-            <li>
-              <button className="transition-colors hover:text-primary" onClick={() => scrollToSection("pricing")}>
-                Free
-              </button>
-            </li>
-            <li>
-              <button className="transition-colors hover:text-primary" onClick={() => scrollToSection("pricing")}>
-                Paid
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Bottom Copyright */}
-      <div className="mt-10 border-primary border-t pt-4 text-center text-gray-600 text-xs sm:text-sm">
-        © {new Date().getFullYear()} Judgmentcalc. All Rights Reserved.
       </div>
     </footer>
   );

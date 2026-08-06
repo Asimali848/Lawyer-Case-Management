@@ -1,12 +1,13 @@
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import ContactCta from "@/components/landing/contact-cta";
 import Faq from "@/components/landing/faq";
 import Features from "@/components/landing/features";
-import Footer from "@/components/landing/footer";
 import Hero from "@/components/landing/hero";
-import Navbar from "@/components/landing/navbar";
+import HowItWorks from "@/components/landing/how-it-works";
 import Pricingplan from "@/components/landing/pricing";
+import WhyAttorneys from "@/components/landing/why-attorneys";
 import { Button } from "@/components/ui/button";
 
 const Landing = () => {
@@ -20,6 +21,12 @@ const Landing = () => {
   };
 
   useEffect(() => {
+    if (window.location.hash) {
+      window.setTimeout(() => {
+        document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ behavior: "smooth" });
+      }, 0);
+    }
+
     const handleScroll = () => {
       const hero = document.getElementById("hero");
       if (hero) {
@@ -37,20 +44,21 @@ const Landing = () => {
 
   return (
     <div className="mx-auto flex h-full w-full flex-col items-center justify-center bg-white">
-      <Navbar />
       <section id="hero" className="w-full">
         <Hero />
       </section>
+      <WhyAttorneys />
       <section id="features" className="w-full">
         <Features />
       </section>
+      <HowItWorks />
       <section id="pricing" className="w-full">
         <Pricingplan />
       </section>
+      <ContactCta />
       <section id="faq" className="w-full">
         <Faq />
       </section>
-      <Footer />
 
       {/* Arrow Up Button */}
       {showScrollButton && (
