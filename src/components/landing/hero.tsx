@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import heroImage from "@/assets/img/Depositphotos_221861706_XL.webp";
 import { Button } from "@/components/ui/button";
+import { getScrollBehavior } from "@/lib/utils";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const Hero = () => {
   });
 
   const showDemo = () => {
-    document.getElementById("features")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("features")?.scrollIntoView({ behavior: getScrollBehavior(), block: "start" });
   };
 
   return (

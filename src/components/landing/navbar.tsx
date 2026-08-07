@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "@/assets/img/logo.png";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { getScrollBehavior } from "@/lib/utils";
 
 const navigationItems = [
   { label: "Home", path: "/", icon: Home },
@@ -32,7 +33,7 @@ const Navbar = () => {
     setMobileMenuOpen(false);
     const section = document.getElementById(id);
     if (section) {
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
+      section.scrollIntoView({ behavior: getScrollBehavior(), block: "start" });
       return;
     }
     navigate(`/#${id}`);

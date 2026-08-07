@@ -95,14 +95,6 @@ const WhyAttorneys = () => {
                 onClick={() => setActiveBenefit(isActive ? null : index)}
                 onMouseEnter={() => setActiveBenefit(index)}
                 onFocus={() => setActiveBenefit(index)}
-                onViewportEnter={() => {
-                  if (window.matchMedia("(max-width: 1023px)").matches) setActiveBenefit(index);
-                }}
-                onViewportLeave={() => {
-                  if (window.matchMedia("(max-width: 1023px)").matches) {
-                    setActiveBenefit((current) => (current === index ? null : current));
-                  }
-                }}
                 viewport={{ amount: 0.62, margin: "-6% 0px -6% 0px" }}
                 whileInView={reduceMotion ? undefined : { y: -4 }}
                 layout

@@ -9,6 +9,7 @@ import HowItWorks from "@/components/landing/how-it-works";
 import Pricingplan from "@/components/landing/pricing";
 import WhyAttorneys from "@/components/landing/why-attorneys";
 import { Button } from "@/components/ui/button";
+import { getScrollBehavior } from "@/lib/utils";
 
 const Landing = () => {
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -16,14 +17,14 @@ const Landing = () => {
   const scrollToHero = () => {
     const el = document.getElementById("hero");
     if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+      el.scrollIntoView({ behavior: getScrollBehavior() });
     }
   };
 
   useEffect(() => {
     if (window.location.hash) {
       window.setTimeout(() => {
-        document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ behavior: "smooth" });
+        document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ behavior: getScrollBehavior(), block: "start" });
       }, 0);
     }
 

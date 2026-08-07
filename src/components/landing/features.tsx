@@ -131,14 +131,6 @@ const Features = () => {
                 viewport={{ amount: 0.62, margin: "-6% 0px -6% 0px" }}
                 transition={{ duration: 0.58, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={reduceMotion ? undefined : { y: -6 }}
-                onViewportEnter={() => {
-                  if (window.matchMedia("(max-width: 1023px)").matches) setFocusedFeature(index);
-                }}
-                onViewportLeave={() => {
-                  if (window.matchMedia("(max-width: 1023px)").matches) {
-                    setFocusedFeature((current) => (current === index ? null : current));
-                  }
-                }}
                 onFocus={() => setFocusedFeature(index)}
                 onBlur={() => setFocusedFeature((current) => (current === index ? null : current))}
                 onClick={() => setFocusedFeature((current) => (current === index ? null : index))}

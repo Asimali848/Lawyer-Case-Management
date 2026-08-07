@@ -12,6 +12,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function getScrollBehavior(): ScrollBehavior {
+  if (typeof window === "undefined") return "auto";
+  return window.innerWidth <= 767 ? "auto" : "smooth";
+}
+
 export function truncateString(str: string, num: number) {
   return str.length > num ? `${str.slice(0, num)}...` : str;
 }

@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import logo from "@/assets/img/logo.png";
+import { getScrollBehavior } from "@/lib/utils";
 
 const productLinks = [
   { label: "Features", section: "features" },
@@ -24,7 +25,7 @@ const Footer = () => {
   const scrollToSection = (id: string) => {
     const section = document.getElementById(id);
     if (section) {
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
+      section.scrollIntoView({ behavior: getScrollBehavior(), block: "start" });
       return;
     }
     navigate(`/#${id}`);

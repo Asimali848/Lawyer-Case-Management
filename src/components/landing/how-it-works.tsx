@@ -139,9 +139,6 @@ const HowItWorks = () => {
                   viewport={{ amount: 0.62, margin: "-6% 0px -6% 0px" }}
                   transition={{ duration: 0.58, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
                   whileHover={reduceMotion ? undefined : { y: -5 }}
-                  onViewportEnter={() => {
-                    if (window.matchMedia("(max-width: 1023px)").matches) setActiveStep(index);
-                  }}
                   onClick={() => setActiveStep(index)}
                   onMouseEnter={() => setActiveStep(index)}
                   onFocus={() => setActiveStep(index)}
