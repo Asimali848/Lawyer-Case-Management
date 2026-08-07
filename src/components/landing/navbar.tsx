@@ -45,7 +45,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/90 shadow-[0_8px_30px_rgba(15,23,42,0.06)] backdrop-blur-xl before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-emerald-700 before:via-emerald-400 before:to-amber-400">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/90 shadow-[0_8px_30px_rgba(15,23,42,0.06)] backdrop-blur-xl">
       <nav
         aria-label="Primary navigation"
         className="mx-auto flex h-[76px] w-full max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-8"

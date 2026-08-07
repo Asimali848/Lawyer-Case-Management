@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, BriefcaseBusiness, Check, ChevronDown, ChevronUp, FileCheck2, ReceiptText } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -35,10 +35,31 @@ const HowItWorks = () => {
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const [activeStep, setActiveStep] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const [isIntroExpanded, setIsIntroExpanded] = useState(false);
 
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 1023px)");
+    const update = (event: MediaQueryListEvent | MediaQueryList) => setIsMobile(event.matches);
+
+    update(query);
+    if (query.addEventListener) {
+      query.addEventListener("change", update);
+    } else {
+      query.addListener(update);
+    }
+
+    return () => {
+      if (query.removeEventListener) {
+        query.removeEventListener("change", update);
+      } else {
+        query.removeListener(update);
+      }
+    };
+  }, []);
+
   return (
-    <section className="relative w-full overflow-hidden border-y border-slate-200/80 bg-[#f8faf9] py-14 sm:py-16 lg:py-20">
+    <section id="how-it-works" className="relative w-full overflow-hidden border-y border-slate-200/80 bg-[#f8faf9] py-14 sm:py-16 lg:py-20">
       <div className="absolute -left-32 top-16 size-96 rounded-full bg-emerald-100/50 blur-3xl" />
       <div className="absolute -right-32 bottom-16 size-96 rounded-full bg-amber-100/40 blur-3xl" />
 
@@ -136,12 +157,13 @@ const HowItWorks = () => {
                   type="button"
                   initial={reduceMotion ? false : { opacity: 0, y: 28 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ amount: 0.62, margin: "-6% 0px -6% 0px" }}
+                  viewport={{ once: true, amount: 0.62, margin: "-6% 0px -6% 0px" }}
                   transition={{ duration: 0.58, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
                   whileHover={reduceMotion ? undefined : { y: -5 }}
-                  onClick={() => setActiveStep(index)}
-                  onMouseEnter={() => setActiveStep(index)}
-                  onFocus={() => setActiveStep(index)}
+                  onClick={() => !isMobile && setActiveStep(index)}
+                  onMouseEnter={() => !isMobile && setActiveStep(index)}
+                  onFocus={() => !isMobile && setActiveStep(index)}
+                  onViewportEnter={() => isMobile && setActiveStep(index)}
                   className={`group relative flex min-h-72 flex-col rounded-3xl border p-6 text-left transition-[background-color,border-color,box-shadow] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:p-7 ${
                     isActive
                       ? "-translate-y-1 border-emerald-300 bg-white shadow-[0_26px_68px_rgba(15,23,42,0.13)] ring-1 ring-emerald-100"

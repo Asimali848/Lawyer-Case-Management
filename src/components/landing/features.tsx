@@ -1,6 +1,5 @@
 import { motion, useMotionTemplate, useMotionValue, useReducedMotion } from "framer-motion";
 import {
-  ArrowUpRight,
   Calculator,
   ChevronDown,
   ChevronUp,
@@ -128,7 +127,7 @@ const Features = () => {
                 key={feature.title}
                 initial={reduceMotion ? false : { opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ amount: 0.62, margin: "-6% 0px -6% 0px" }}
+                viewport={{ once: true, amount: 0.62, margin: "-6% 0px -6% 0px" }}
                 transition={{ duration: 0.58, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={reduceMotion ? undefined : { y: -6 }}
                 onFocus={() => setFocusedFeature(index)}
@@ -160,12 +159,9 @@ const Features = () => {
                   {feature.description}
                 </p>
 
-                <div className={`relative mt-auto flex items-center justify-between border-t pt-5 ${feature.featured ? "border-white/15" : "border-slate-200"}`}>
+                <div className={`relative mt-auto flex items-center justify-start border-t pt-5 ${feature.featured ? "border-white/15" : "border-slate-200"}`}>
                   <span className={`text-xs font-bold uppercase tracking-[0.12em] ${feature.featured ? "text-emerald-200" : "text-emerald-700"}`}>
                     Built into your workflow
-                  </span>
-                  <span className={`flex size-9 items-center justify-center rounded-full transition-all duration-300 group-hover:rotate-45 ${feature.featured ? "bg-white/10 text-white group-hover:bg-white group-hover:text-emerald-700" : "bg-slate-100 text-slate-500 group-hover:bg-emerald-50 group-hover:text-primary"}`}>
-                    <ArrowUpRight className="size-4" />
                   </span>
                 </div>
               </motion.article>

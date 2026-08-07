@@ -10,6 +10,7 @@ import Pricingplan from "@/components/landing/pricing";
 import WhyAttorneys from "@/components/landing/why-attorneys";
 import { Button } from "@/components/ui/button";
 import { getScrollBehavior } from "@/lib/utils";
+import { setMeta } from "@/lib/seo";
 
 const Landing = () => {
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -22,6 +23,12 @@ const Landing = () => {
   };
 
   useEffect(() => {
+    setMeta({
+      title: "Judgment Interest Software for Attorneys | JudgmentCalc",
+      description:
+        "Simplify judgment enforcement with JudgmentCalc. Calculate judgment interest, track payments and costs, generate payoff demand letters, and manage judgment cases with confidence.",
+    });
+
     if (window.location.hash) {
       window.setTimeout(() => {
         document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ behavior: getScrollBehavior(), block: "start" });

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
+import { setMeta } from "@/lib/seo";
 import { useNavigate } from "react-router-dom";
 
 type Block =
@@ -123,6 +124,12 @@ const TermsAndConditions = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
+    setMeta({
+      title: "Terms & Conditions | JudgmentCalc",
+      description:
+        "Read the JudgmentCalc Terms & Conditions to understand our website policies, subscription terms, billing, account responsibilities, and acceptable use of our platform.",
+    });
+
     const handleScroll = () => setShowBackToTop(window.scrollY > 900);
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();

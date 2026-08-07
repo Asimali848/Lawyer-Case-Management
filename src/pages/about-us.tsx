@@ -3,6 +3,8 @@ import { ArrowRight, BriefcaseBusiness, Calculator, Check, Cloud, FileSpreadshee
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { setMeta } from "@/lib/seo";
 
 const storyChapters = [
   {
@@ -47,6 +49,14 @@ const AboutUs = () => {
     viewport: { once: true, amount: 0.25 },
     transition: { duration: 0.72, delay, ease: [0.22, 1, 0.36, 1] as const },
   });
+
+  useEffect(() => {
+    setMeta({
+      title: "About Us | JudgmentCalc",
+      description:
+        "Learn the story behind JudgmentCalc, attorney-built judgment interest software designed to help attorneys calculate interest, manage judgment cases, and simplify judgment enforcement.",
+    });
+  }, []);
 
   return (
     <main>

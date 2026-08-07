@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://judgmentcalc.com/sitemap.xml

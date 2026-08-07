@@ -14,7 +14,7 @@ import {
   Sparkles,
   Wallet,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import setMeta from "@/lib/seo";
 
 const contactChannels = [
   {
@@ -67,6 +68,8 @@ const faqs = [
   },
 ];
 
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mjkbzdgp";
+
 const initialFormState = {
   fullName: "",
   email: "",
@@ -79,6 +82,13 @@ const initialFormState = {
 const ContactUs = () => {
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
+  useEffect(() => {
+    setMeta({
+      title: "Contact Us JudgmentCalc | Support & Consultation",
+      description:
+        "Contact Us JudgmentCalc for product questions, technical support, pricing, or to book a consultation. We're here to help attorneys and law firms",
+    });
+  }, []);
   const [formData, setFormData] = useState(initialFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isIntroExpanded, setIsIntroExpanded] = useState(false);
@@ -99,7 +109,7 @@ const ContactUs = () => {
     document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!formData.fullName || !formData.email || !formData.message) {
@@ -108,11 +118,38 @@ const ContactUs = () => {
     }
 
     setIsSubmitting(true);
-    window.setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          firmName: formData.firmName,
+          subject: formData.subject || "General inquiry",
+          message: formData.message,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        const message = errorData?.error || "Unable to send message right now. Please try again later.";
+        throw new Error(message);
+      }
+
       setFormData(initialFormState);
       toast.success("Message sent. Our team will be in touch shortly.");
-    }, 900);
+    } catch (error) {
+      console.error("Formspree error:", error);
+      toast.error("There was a problem sending your message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -259,29 +296,29 @@ const ContactUs = () => {
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="fullName">Full Name</Label>
-                      <Input id="fullName" required value={formData.fullName} onChange={(e) => handleChange("fullName", e.target.value)} placeholder="Jane Attorney" className="h-11 rounded-xl bg-white" />
+                      <Input name="name" id="fullName" required value={formData.fullName} onChange={(e) => handleChange("fullName", e.target.value)} placeholder="Jane Attorney" className="h-11 rounded-xl bg-white" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">Email Address</Label>
-                      <Input id="email" type="email" required value={formData.email} onChange={(e) => handleChange("email", e.target.value)} placeholder="jane@lawfirm.com" className="h-11 rounded-xl bg-white" />
+                      <Input name="email" id="email" type="email" required value={formData.email} onChange={(e) => handleChange("email", e.target.value)} placeholder="jane@lawfirm.com" className="h-11 rounded-xl bg-white" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">
                         Phone Number <span className="font-normal normal-case text-slate-400">(Optional)</span>
                       </Label>
-                      <Input id="phone" type="tel" value={formData.phone} onChange={(e) => handleChange("phone", e.target.value)} placeholder="(555) 123-4567" className="h-11 rounded-xl bg-white" />
+                      <Input name="phone" id="phone" type="tel" value={formData.phone} onChange={(e) => handleChange("phone", e.target.value)} placeholder="(555) 123-4567" className="h-11 rounded-xl bg-white" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="firmName">
                         Law Firm Name <span className="font-normal normal-case text-slate-400">(Optional)</span>
                       </Label>
-                      <Input id="firmName" value={formData.firmName} onChange={(e) => handleChange("firmName", e.target.value)} placeholder="Attorney & Associates" className="h-11 rounded-xl bg-white" />
+                      <Input name="firmName" id="firmName" value={formData.firmName} onChange={(e) => handleChange("firmName", e.target.value)} placeholder="Attorney & Associates" className="h-11 rounded-xl bg-white" />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="subject">Subject</Label>
-                    <Select value={formData.subject} onValueChange={(value) => handleChange("subject", value)}>
+                    <Select name="subject" value={formData.subject} onValueChange={(value) => handleChange("subject", value)}>
                       <SelectTrigger id="subject" className="h-11 w-full rounded-xl bg-white">
                         <SelectValue placeholder="What can we help with?" />
                       </SelectTrigger>
@@ -298,6 +335,7 @@ const ContactUs = () => {
                   <div className="space-y-2">
                     <Label htmlFor="message">Message</Label>
                     <Textarea
+                      name="message"
                       id="message"
                       required
                       value={formData.message}

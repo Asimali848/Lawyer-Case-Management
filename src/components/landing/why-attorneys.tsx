@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, Calculator, Check, ChevronDown, ChevronUp, FileCheck2, FolderClock } from "lucide-react";
-import { useState } from "react";
+import { Calculator, Check, ChevronDown, ChevronUp, FileCheck2, FolderClock } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const benefits = [
   {
@@ -29,7 +29,28 @@ const benefits = [
 const WhyAttorneys = () => {
   const [activeBenefit, setActiveBenefit] = useState<number | null>(null);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 1023px)");
+    const update = (event: MediaQueryListEvent | MediaQueryList) => setIsMobile(event.matches);
+
+    update(query);
+    if (query.addEventListener) {
+      query.addEventListener("change", update);
+    } else {
+      query.addListener(update);
+    }
+
+    return () => {
+      if (query.removeEventListener) {
+        query.removeEventListener("change", update);
+      } else {
+        query.removeListener(update);
+      }
+    };
+  }, []);
 
   return (
     <section className="relative w-full overflow-hidden border-y border-slate-200/80 bg-[#f8faf9] py-14 sm:py-16 lg:py-20">
@@ -75,30 +96,19 @@ const WhyAttorneys = () => {
           </button>
         </motion.div>
 
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.75, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-12 flex flex-col gap-4 lg:mt-14 lg:flex-row"
-          onMouseLeave={() => setActiveBenefit(null)}
-        >
+        <div className="mt-12 flex flex-col gap-4 lg:mt-14 lg:flex-row" onMouseLeave={() => setActiveBenefit(null)}>
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
-            const isActive = activeBenefit === index;
-            const hasActiveBenefit = activeBenefit !== null;
+            const isActive = !isMobile && activeBenefit === index;
+            const hasActiveBenefit = !isMobile && activeBenefit !== null;
 
             return (
-              <motion.button
+              <button
                 key={benefit.title}
                 type="button"
-                onClick={() => setActiveBenefit(isActive ? null : index)}
-                onMouseEnter={() => setActiveBenefit(index)}
-                onFocus={() => setActiveBenefit(index)}
-                viewport={{ amount: 0.62, margin: "-6% 0px -6% 0px" }}
-                whileInView={reduceMotion ? undefined : { y: -4 }}
-                layout
-                transition={{ layout: { type: "spring", stiffness: 260, damping: 30 }, y: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } }}
+                onClick={() => !isMobile && setActiveBenefit(isActive ? null : index)}
+                onMouseEnter={() => !isMobile && setActiveBenefit(index)}
+                onFocus={() => !isMobile && setActiveBenefit(index)}
                 className={`group relative min-h-60 overflow-hidden rounded-3xl border p-6 text-left transition-[background-color,border-color,box-shadow,flex] duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:p-7 lg:min-h-72 ${
                   isActive
                     ? "border-emerald-300 bg-slate-950 text-white shadow-[0_28px_70px_rgba(15,23,42,0.18)] lg:flex-[1.35]"
@@ -130,16 +140,16 @@ const WhyAttorneys = () => {
                         </span>
                         {benefit.outcome}
                       </span>
-                      <span className={`flex size-9 shrink-0 items-center justify-center rounded-full transition-transform duration-300 ${isActive ? "rotate-45 bg-white/10 text-white" : "bg-slate-100 text-slate-500 group-hover:bg-emerald-50 group-hover:text-primary"}`}>
-                        <ArrowUpRight className="size-4" />
+                      <span className={`flex size-9 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${isActive ? "bg-white/10 text-white" : "bg-slate-100 text-slate-500"}`}>
+                        <Check className="size-4" />
                       </span>
                     </div>
                   </div>
                 </div>
-              </motion.button>
+              </button>
             );
           })}
-        </motion.div>
+        </div>
 
         <p className="mt-5 text-center text-xs font-medium text-slate-500 sm:text-sm">
           Hover or select a benefit to explore

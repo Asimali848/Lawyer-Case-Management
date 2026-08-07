@@ -1,6 +1,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
+import { setMeta } from "@/lib/seo";
 import { useNavigate } from "react-router-dom";
 
 type Block =
@@ -112,6 +113,12 @@ const PrivacyPolicy = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
+    setMeta({
+      title: "Privacy Policy | JudgmentCalc",
+      description:
+        "Read the JudgmentCalc Privacy Policy to learn how we collect, use, store, and protect your personal information when using our website and services.",
+    });
+
     const handleScroll = () => setShowBackToTop(window.scrollY > 900);
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
