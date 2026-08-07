@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build-sitemap": "node scripts/generate-sitemap.cjs",
+    "build": "npm run build-sitemap && tsc -b && vite build",
     "lint": "biome check --write --unsafe .",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview"

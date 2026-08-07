@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, BriefcaseBusiness, Calculator, Check, Cloud, FileSpreadsheet, Infinity, Lightbulb, ReceiptText, RefreshCcw, Scale, Share2, ShieldCheck, Sparkles } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
@@ -82,11 +82,13 @@ const AboutUs = () => {
               </p>
 
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                <Button onClick={() => navigate("/signup")} className="group h-13 rounded-xl px-7 text-base font-bold text-white shadow-[0_14px_34px_rgba(5,150,105,0.24)]">
-                  Start your free trial <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                <Button asChild className="group h-13 rounded-xl px-7 text-base font-bold text-white shadow-[0_14px_34px_rgba(5,150,105,0.24)]">
+                  <Link to="/signup">
+                    Start your free trial <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
                 </Button>
-                <Button onClick={() => navigate("/contact-us")} variant="outline" className="h-13 rounded-xl border-slate-300 bg-white/80 px-7 text-base font-bold text-slate-800 shadow-sm backdrop-blur-sm">
-                  Talk to our team
+                <Button asChild variant="outline" className="h-13 rounded-xl border-slate-300 bg-white/80 px-7 text-base font-bold text-slate-800 shadow-sm backdrop-blur-sm">
+                  <Link to="/contact-us">Talk to our team</Link>
                 </Button>
               </div>
             </motion.div>
@@ -519,11 +521,11 @@ const AboutUs = () => {
                 <div className="mt-7 border-t border-slate-200 pt-7 sm:mt-8 sm:pt-8">
                   <p className="text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
                     To learn more about how we protect your information, please review our{" "}
-                    <button type="button" onClick={() => navigate("/privacy-policy")} className="font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-4 transition-colors hover:text-emerald-900">Privacy Policy</button>.
+                    <Link to="/privacy-policy" className="font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-4 transition-colors hover:text-emerald-900">Privacy Policy</Link>.
                     {" "}Before using our platform, we also encourage you to read our{" "}
-                    <button type="button" onClick={() => navigate("/terms-and-conditions")} className="font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-4 transition-colors hover:text-emerald-900">Terms &amp; Conditions</button>.
+                    <Link to="/terms-and-conditions" className="font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-4 transition-colors hover:text-emerald-900">Terms &amp; Conditions</Link>.
                     {" "}If you have any questions or would like to speak with our team, please visit our{" "}
-                    <button type="button" onClick={() => navigate("/contact-us")} className="font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-4 transition-colors hover:text-emerald-900">Contact Us</button> page.
+                    <Link to="/contact-us" className="font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-4 transition-colors hover:text-emerald-900">Contact Us</Link> page.
                   </p>
                 </div>
               </div>

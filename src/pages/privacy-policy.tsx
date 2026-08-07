@@ -1,8 +1,8 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { setMeta } from "@/lib/seo";
-import { useNavigate } from "react-router-dom";
 
 type Block =
   | { kind: "text"; text: string }
@@ -108,7 +108,7 @@ const sections: Section[] = [
 ];
 
 const PrivacyPolicy = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const [showBackToTop, setShowBackToTop] = useState(false);
 
@@ -147,13 +147,11 @@ const PrivacyPolicy = () => {
           <p className="text-base leading-8 text-slate-600">
             At JudgmentCalc, we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains what information we collect, how we use it, and the steps we take to help keep your information secure when you visit our website or use our judgment interest software.
           </p>
-          <p className="text-base leading-8 text-slate-600">
+          <p className="text-base leading-8 text-slate-600"></p>
             Whether you are exploring our services, starting a free trial, or contacting our team, we want you to understand how your information is handled. To learn more about our company and why JudgmentCalc was created, please visit our{" "}
-            <button type="button" onClick={() => navigate("/about-us")} className={linkClass}>
-              About Us
-            </button>{" "}
-            page.
-          </p>
+              <Link to="/about-us" className={linkClass}>
+                About Us
+              </Link>{" "}
 
           {sections.map(({ id, title, body }, index) => (
             <motion.section key={id} id={id} {...reveal(Math.min(index * 0.02, 0.1))} className="scroll-mt-8">
@@ -182,9 +180,9 @@ const PrivacyPolicy = () => {
                       return (
                         <p key={blockIndex} className="text-base leading-8 text-slate-600">
                           If you wish to exercise any of these rights, please contact us through our{" "}
-                          <button type="button" onClick={() => navigate("/contact-us")} className={linkClass}>
+                          <Link to="/contact-us" className={linkClass}>
                             Contact Us
-                          </button>{" "}
+                          </Link>{" "}
                           page.
                         </p>
                       );
@@ -193,13 +191,13 @@ const PrivacyPolicy = () => {
                       return (
                         <p key={blockIndex} className="text-base leading-8 text-slate-600">
                           Our website may contain links to other pages within JudgmentCalc to provide additional information and improve your experience. We encourage you to review our{" "}
-                          <button type="button" onClick={() => navigate("/terms-and-conditions")} className={linkClass}>
+                          <Link to="/terms-and-conditions" className={linkClass}>
                             Terms &amp; Conditions
-                          </button>{" "}
+                          </Link>{" "}
                           for information about using our website and our{" "}
-                          <button type="button" onClick={() => navigate("/about-us")} className={linkClass}>
+                          <Link to="/about-us" className={linkClass}>
                             About Us
-                          </button>{" "}
+                          </Link>{" "}
                           page to learn more about our mission and experience.
                         </p>
                       );
@@ -208,9 +206,9 @@ const PrivacyPolicy = () => {
                       return (
                         <p key={blockIndex} className="text-base leading-8 text-slate-600">
                           If you have any questions about this Privacy Policy, your personal information, or how we handle your data, please visit our{" "}
-                          <button type="button" onClick={() => navigate("/contact-us")} className={linkClass}>
+                          <Link to="/contact-us" className={linkClass}>
                             Contact Us
-                          </button>{" "}
+                          </Link>{" "}
                           page. Our team will be happy to assist you.
                         </p>
                       );

@@ -1,13 +1,13 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import heroImage from "@/assets/img/Depositphotos_221861706_XL.webp";
 import { Button } from "@/components/ui/button";
 import { getScrollBehavior } from "@/lib/utils";
 
 const Hero = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
 
   const reveal = (delay: number, distance = 24) => ({
@@ -80,14 +80,12 @@ const Hero = () => {
             </motion.p>
 
             <motion.div {...reveal(0.28)} className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:items-center">
-              <Button
-                type="button"
-                onClick={() => navigate("/signup")}
-                className="group h-12 w-full rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-700 px-5 text-sm font-bold text-white shadow-[0_14px_34px_rgba(5,150,105,0.25)] transition-all hover:-translate-y-0.5 hover:shadow-[0_18px_42px_rgba(5,150,105,0.32)] sm:h-14 sm:w-auto sm:px-8 sm:text-base"
-              >
+              <Button asChild className="group h-12 w-full rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-700 px-5 text-sm font-bold text-white shadow-[0_14px_34px_rgba(5,150,105,0.25)] transition-all hover:-translate-y-0.5 hover:shadow-[0_18px_42px_rgba(5,150,105,0.32)] sm:h-14 sm:w-auto sm:px-8 sm:text-base">
+              <Link to="/signup">
                 Start Your Free 30-Day Trial
                 <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
-              </Button>
+              </Link>
+            </Button>
               <Button
                 type="button"
                 variant="outline"

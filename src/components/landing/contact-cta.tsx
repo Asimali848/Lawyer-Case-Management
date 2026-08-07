@@ -1,11 +1,11 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 
 const ContactCta = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
 
   const reveal = (delay = 0) => ({
@@ -36,21 +36,14 @@ const ContactCta = () => {
           </p>
 
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Button
-              type="button"
-              onClick={() => navigate("/contact-us")}
-              className="group h-13 gap-2 rounded-xl bg-emerald-500 px-7 text-base font-bold text-white shadow-[0_14px_35px_rgba(16,185,129,0.25)] hover:bg-emerald-400"
-            >
-              Contact Our Team
-              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+            <Button asChild className="group h-13 gap-2 rounded-xl bg-emerald-500 px-7 text-base font-bold text-white shadow-[0_14px_35px_rgba(16,185,129,0.25)] hover:bg-emerald-400">
+              <Link to="/contact-us">
+                Contact Our Team
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              </Link>
             </Button>
-            <Button
-              type="button"
-              onClick={() => navigate("/signup")}
-              variant="outline"
-              className="h-13 rounded-xl border-white/20 bg-white/[0.06] px-7 text-base font-bold text-white backdrop-blur-sm hover:bg-white/10 hover:text-white"
-            >
-              Start Free Trial
+            <Button asChild variant="outline" className="h-13 rounded-xl border-white/20 bg-white/[0.06] px-7 text-base font-bold text-white backdrop-blur-sm hover:bg-white/10 hover:text-white">
+              <Link to="/signup">Start Free Trial</Link>
             </Button>
           </div>
         </motion.div>

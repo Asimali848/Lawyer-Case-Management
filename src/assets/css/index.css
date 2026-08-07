@@ -155,6 +155,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  a {
+    cursor: pointer;
+  }
 }
 
 ::-webkit-scrollbar {

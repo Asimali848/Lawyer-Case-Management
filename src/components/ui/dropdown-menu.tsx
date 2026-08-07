@@ -44,13 +44,16 @@ function DropdownMenuItem({
   className,
   inset,
   variant = "default",
+  asChild = false,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Item> & {
   inset?: boolean;
   variant?: "default" | "destructive";
+  asChild?: boolean;
 }) {
   return (
     <DropdownMenuPrimitive.Item
+      asChild={asChild}
       data-slot="dropdown-menu-item"
       data-inset={inset}
       data-variant={variant}

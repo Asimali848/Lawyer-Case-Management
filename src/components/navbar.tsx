@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Logo from "@/assets/img/logo.png";
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,17 +24,17 @@ const Navbar = () => {
   const [open, setOpen] = useState<boolean>(false);
   const user = useSelector((state: { global: GlobalState }) => state.global?.user);
 
-  const Profile = () => {
-    navigate("/profile");
-  };
+  // const Profile = () => {
+  //   navigate("/profile");
+  // };
 
-  const Home = () => {
-    navigate("/dashboard");
-  };
+  // const Home = () => {
+  //   navigate("/dashboard");
+  // };
 
-  const Membership = () => {
-    navigate("/billing");
-  };
+  // const Membership = () => {
+  //   navigate("/billing");
+  // };
 
   const logout = () => {
     dispatch(setToken(""));
@@ -90,20 +91,20 @@ const Navbar = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-40">
-                  <DropdownMenuItem>
-                    <Button className="w-full gap-3.5" variant="ghost" size="sm" onClick={() => Home()}>
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard" className="w-full inline-flex gap-3.5">
                       <HomeIcon className="size-4 text-primary" /> Home
-                    </Button>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Button className="w-full gap-3.5" variant="ghost" size="sm" onClick={() => Membership()}>
+                  <DropdownMenuItem asChild>
+                    <Link to="/billing" className="w-full inline-flex gap-3.5">
                       <CreditCardIcon className="size-4 text-primary" /> Billing
-                    </Button>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Button className="w-full gap-3.5" variant="ghost" size="sm" onClick={() => Profile()}>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="w-full inline-flex gap-3.5">
                       <UserIcon className="size-4 text-primary" /> Profile
-                    </Button>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <Button className="w-full" variant="destructive" size="sm" onClick={() => setOpen(true)}>

@@ -15,7 +15,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { useState, useEffect, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -80,7 +80,7 @@ const initialFormState = {
 };
 
 const ContactUs = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   useEffect(() => {
     setMeta({
@@ -194,8 +194,8 @@ const ContactUs = () => {
               <Button onClick={() => scrollToForm()} className="group h-13 rounded-xl px-7 text-base font-bold text-white shadow-[0_14px_34px_rgba(5,150,105,0.24)]">
                 Send us a message <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button onClick={() => navigate("/signup")} variant="outline" className="h-13 rounded-xl border-slate-300 bg-white/80 px-7 text-base font-bold text-slate-800 shadow-sm backdrop-blur-sm">
-                Start your free trial
+              <Button asChild variant="outline" className="h-13 rounded-xl border-slate-300 bg-white/80 px-7 text-base font-bold text-slate-800 shadow-sm backdrop-blur-sm">
+                <Link to="/signup">Start your free trial</Link>
               </Button>
             </div>
           </motion.div>
@@ -511,13 +511,11 @@ const ContactUs = () => {
             </p>
 
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <Button
-                type="button"
-                onClick={() => navigate("/signup")}
-                className="group h-13 gap-2 rounded-xl bg-emerald-500 px-7 text-base font-bold text-white shadow-[0_14px_35px_rgba(16,185,129,0.25)] hover:bg-emerald-400"
-              >
-                Start Your Free 30-Day Trial
-                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              <Button asChild className="group h-13 gap-2 rounded-xl bg-emerald-500 px-7 text-base font-bold text-white shadow-[0_14px_35px_rgba(16,185,129,0.25)] hover:bg-emerald-400">
+                <Link to="/signup" className="inline-flex items-center gap-2">
+                  Start Your Free 30-Day Trial
+                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                </Link>
               </Button>
               <Button
                 type="button"
@@ -531,17 +529,17 @@ const ContactUs = () => {
 
             <p className="mx-auto mt-8 max-w-2xl text-sm leading-7 text-slate-400">
               To learn more about the story behind JudgmentCalc, visit our{" "}
-              <button type="button" onClick={() => navigate("/about-us")} className="font-semibold text-emerald-400 underline decoration-emerald-500/50 underline-offset-4 transition-colors hover:text-emerald-300">
+              <Link to="/about-us" className="font-semibold text-emerald-400 underline decoration-emerald-500/50 underline-offset-4 transition-colors hover:text-emerald-300">
                 About Us
-              </button>{" "}
+              </Link>{" "}
               page. To understand how we collect and protect your information, please review our{" "}
-              <button type="button" onClick={() => navigate("/privacy-policy")} className="font-semibold text-emerald-400 underline decoration-emerald-500/50 underline-offset-4 transition-colors hover:text-emerald-300">
+              <Link to="/privacy-policy" className="font-semibold text-emerald-400 underline decoration-emerald-500/50 underline-offset-4 transition-colors hover:text-emerald-300">
                 Privacy Policy
-              </button>
+              </Link>
               . Before using our platform, we also encourage you to read our{" "}
-              <button type="button" onClick={() => navigate("/terms-and-conditions")} className="font-semibold text-emerald-400 underline decoration-emerald-500/50 underline-offset-4 transition-colors hover:text-emerald-300">
+              <Link to="/terms-and-conditions" className="font-semibold text-emerald-400 underline decoration-emerald-500/50 underline-offset-4 transition-colors hover:text-emerald-300">
                 Terms &amp; Conditions
-              </button>
+              </Link>
               .
             </p>
           </motion.div>

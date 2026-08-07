@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import logo from "@/assets/img/logo.png";
 import { getScrollBehavior } from "@/lib/utils";
@@ -39,11 +39,11 @@ const Footer = () => {
       <div className="relative mx-auto w-full max-w-[1280px] px-5 pb-7 pt-12 sm:px-8 sm:pt-14 lg:px-10 xl:px-12">
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 border-b border-white/10 pb-11 lg:grid-cols-[1.5fr_0.8fr_0.8fr_1fr] lg:gap-8">
           <div className="col-span-2 lg:col-span-1">
-            <button type="button" onClick={() => navigate("/")} className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
+            <Link to="/" className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 inline-block">
               <span className="inline-flex rounded-2xl bg-white px-3 py-2">
                 <img src={logo} alt="JudgmentCalc home" className="h-14 w-auto object-contain" />
               </span>
-            </button>
+            </Link>
             <p className="mt-5 max-w-md text-sm leading-7 text-slate-300">
               JudgmentCalc is a cloud-based judgment interest calculator and judgment enforcement software built for attorneys. Manage judgment cases, track payments, calculate accrued interest, and generate accurate payoff demand letters with confidence.
             </p>
@@ -54,9 +54,18 @@ const Footer = () => {
             <ul className="mt-5 space-y-3">
               {productLinks.map((link) => (
                 <li key={link.label}>
-                  <button type="button" onClick={() => scrollToSection(link.section)} className="text-sm text-slate-300 transition-colors hover:text-white">
+                  <a
+                    href={`/#${link.section}`}
+                    className="text-sm text-slate-300 transition-colors hover:text-white"
+                    onClick={(e) => {
+                      if (window.location.pathname === "/") {
+                        e.preventDefault();
+                        scrollToSection(link.section);
+                      }
+                    }}
+                  >
                     {link.label}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -67,9 +76,9 @@ const Footer = () => {
             <ul className="mt-5 space-y-3">
               {companyLinks.map((link) => (
                 <li key={link.label}>
-                  <button type="button" onClick={() => navigate(link.path)} className="text-sm text-slate-300 transition-colors hover:text-white">
+                  <Link to={link.path} className="text-sm text-slate-300 transition-colors hover:text-white">
                     {link.label}
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -80,9 +89,18 @@ const Footer = () => {
             <ul className="mt-5 space-y-3">
               {plans.map((plan) => (
                 <li key={plan}>
-                  <button type="button" onClick={() => scrollToSection("pricing")} className="flex items-start gap-2 text-left text-sm leading-5 text-slate-300 transition-colors hover:text-white">
+                  <a
+                    href="#pricing"
+                    className="flex items-start gap-2 text-left text-sm leading-5 text-slate-300 transition-colors hover:text-white"
+                    onClick={(e) => {
+                      if (window.location.pathname === "/") {
+                        e.preventDefault();
+                        scrollToSection("pricing");
+                      }
+                    }}
+                  >
                     <Check className="mt-0.5 size-4 shrink-0 text-emerald-400" /> {plan}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -92,12 +110,12 @@ const Footer = () => {
         <div className="flex flex-col gap-3 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} JudgmentCalc. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <button type="button" onClick={() => navigate("/privacy-policy")} className="shrink-0 whitespace-nowrap transition-colors hover:text-white">
+            <Link to="/privacy-policy" className="shrink-0 whitespace-nowrap transition-colors hover:text-white">
               Privacy Policy
-            </button>
-            <button type="button" onClick={() => navigate("/terms-and-conditions")} className="shrink-0 whitespace-nowrap transition-colors hover:text-white">
+            </Link>
+            <Link to="/terms-and-conditions" className="shrink-0 whitespace-nowrap transition-colors hover:text-white">
               Terms &amp; Conditions
-            </button>
+            </Link>
             <p>Built for attorneys managing post-judgment enforcement.</p>
           </div>
         </div>

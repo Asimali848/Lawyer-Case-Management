@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Check, Crown } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const plans = [
@@ -17,16 +17,15 @@ const planHighlights = [
 ];
 
 const Pricingplan = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const [selectedPlan, setSelectedPlan] = useState(1);
 
   const handlePlanAction = (planIndex: number) => {
     if (planIndex === 2) {
-      navigate("/contact-us");
-      return;
+      return "/contact-us";
     }
-    navigate("/signup");
+    return "/signup";
   };
 
   return (
@@ -104,13 +103,10 @@ const Pricingplan = () => {
               </div>
               <p className="mt-5 min-h-20 text-sm leading-7 text-slate-600 lg:text-base">{plan.description}</p>
 
-              <Button
-                type="button"
-                variant={plan.featured ? "default" : "outline"}
-                onClick={() => handlePlanAction(index)}
-                className={`mt-5 h-12 w-full rounded-xl text-sm font-bold ${plan.featured ? "text-white shadow-lg shadow-emerald-900/15" : "border-slate-300 bg-white text-slate-800"}`}
-              >
-                {plan.action} <ArrowRight className="size-4" />
+              <Button asChild variant={plan.featured ? "default" : "outline"} className={`mt-5 h-12 w-full rounded-xl text-sm font-bold ${plan.featured ? "text-white shadow-lg shadow-emerald-900/15" : "border-slate-300 bg-white text-slate-800"}`}>
+                <Link to={handlePlanAction(index)}>
+                  {plan.action} <ArrowRight className="size-4" />
+                </Link>
               </Button>
 
               <div className="my-7 h-px bg-slate-200" />

@@ -1,8 +1,8 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { setMeta } from "@/lib/seo";
-import { useNavigate } from "react-router-dom";
 
 type Block =
   | { kind: "text"; text: string }
@@ -119,7 +119,6 @@ const sections: Section[] = [
 ];
 
 const TermsAndConditions = () => {
-  const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const [showBackToTop, setShowBackToTop] = useState(false);
 
@@ -161,9 +160,9 @@ const TermsAndConditions = () => {
           </p>
           <p className="text-base leading-8 text-slate-600">
             To learn more about our company and the attorney behind JudgmentCalc, please visit our{" "}
-            <button type="button" onClick={() => navigate("/about-us")} className={linkClass}>
+            <Link to="/about-us" className={linkClass}>
               About Us
-            </button>{" "}
+            </Link>{" "}
             page.
           </p>
 
@@ -194,9 +193,9 @@ const TermsAndConditions = () => {
                       return (
                         <p key={blockIndex} className="text-base leading-8 text-slate-600">
                           By creating an account, starting a free trial, or using any part of JudgmentCalc, you confirm that you have read, understood, and agreed to these Terms &amp; Conditions and our{" "}
-                          <button type="button" onClick={() => navigate("/privacy-policy")} className={linkClass}>
+                          <Link to="/privacy-policy" className={linkClass}>
                             Privacy Policy
-                          </button>
+                          </Link>
                           .
                         </p>
                       );
@@ -205,9 +204,9 @@ const TermsAndConditions = () => {
                       return (
                         <p key={blockIndex} className="text-base leading-8 text-slate-600">
                           Your privacy is important to us. Please review our{" "}
-                          <button type="button" onClick={() => navigate("/privacy-policy")} className={linkClass}>
+                          <Link to="/privacy-policy" className={linkClass}>
                             Privacy Policy
-                          </button>{" "}
+                          </Link>{" "}
                           to understand how we collect, use, and protect your personal information.
                         </p>
                       );
@@ -216,9 +215,9 @@ const TermsAndConditions = () => {
                       return (
                         <p key={blockIndex} className="text-base leading-8 text-slate-600">
                           If you have any questions regarding these Terms &amp; Conditions, your subscription, or your account, please visit our{" "}
-                          <button type="button" onClick={() => navigate("/contact-us")} className={linkClass}>
+                          <Link to="/contact-us" className={linkClass}>
                             Contact Us
-                          </button>{" "}
+                          </Link>{" "}
                           page. Our team will be happy to assist you.
                         </p>
                       );
