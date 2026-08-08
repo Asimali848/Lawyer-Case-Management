@@ -7,13 +7,11 @@ import { Button } from "@/components/ui/button";
 const plans = [
   { name: "Free Trial", price: "$0", period: "for 30 days", action: "Start Free Trial", description: "Explore the essential judgment tools with no credit card required." },
   { name: "Professional", price: "$12.50", period: "/ month", action: "Choose Professional", description: "A complete, unlimited workflow for active judgment-enforcement practices.", featured: true },
-  { name: "Enterprise", price: "$20", period: "/ month", action: "Contact Our Team", description: "Advanced support, onboarding, and consultation for larger legal teams." },
 ];
 
 const planHighlights = [
   ["30-day free trial", "No credit card required", "Judgment interest calculator", "Up to 5 judgment cases", "Unlimited transactions", "Payment & cost tracking", "Payoff demand letters", "Client share feature", "Secure cloud platform", "Automatic balance updates", "Regular software updates"],
   ["Judgment interest calculator", "Unlimited judgment cases", "Unlimited transactions", "Payment & cost tracking", "Payoff demand letters", "Client share feature", "Secure cloud platform", "Automatic balance updates", "Regular software updates", "Priority email support"],
-  ["Everything in Professional", "Phone support", "Priority feature requests", "Dedicated account manager", "Personalized onboarding", "Recorded training session", "Custom workflow consultation","Legal Assistant with AI"],
 ];
 
 const Pricingplan = () => {
@@ -54,7 +52,7 @@ const Pricingplan = () => {
           </p>
         </motion.div>
 
-        <div className="sticky top-20 z-20 mt-10 grid grid-cols-3 rounded-2xl border border-slate-200/90 bg-slate-100/90 p-1.5 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl md:hidden">
+        <div className="sticky top-20 z-20 mt-10 grid grid-cols-2 rounded-2xl border border-slate-200/90 bg-slate-100/90 p-1.5 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl md:hidden">
           {plans.map((plan, index) => (
             <button
               key={plan.name}
@@ -76,7 +74,7 @@ const Pricingplan = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.75, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-5 grid gap-5 md:mt-12 md:grid-cols-3 lg:mt-16"
+          className="mt-5 grid gap-5 md:mt-12 md:grid-cols-2 lg:mt-16 "
         >
           {plans.map((plan, index) => (
             <motion.article

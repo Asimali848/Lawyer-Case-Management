@@ -17,7 +17,7 @@ const companyLinks = [
   { label: "Log in", path: "/login" },
 ];
 
-const plans = ["Free 30-Day Trial", "Professional — $12.50/mo", "Enterprise — $20/mo"];
+const plans = ["Free 30-Day Trial", "Professional - $12.50/mo"];
 
 const Footer = () => {
   const navigate = useNavigate();
