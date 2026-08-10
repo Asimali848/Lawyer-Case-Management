@@ -52,9 +52,10 @@ const AboutUs = () => {
 
   useEffect(() => {
     setMeta({
-      title: "About Us | JudgmentCalc",
+      title: "About Us",
       description:
         "Learn the story behind JudgmentCalc, attorney-built judgment interest software designed to help attorneys calculate interest, manage judgment cases, and simplify judgment enforcement.",
+      url: "https://judgmentcalc.com/about-us/",
     });
   }, []);
 

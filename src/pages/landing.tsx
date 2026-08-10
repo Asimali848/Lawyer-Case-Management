@@ -27,6 +27,7 @@ const Landing = () => {
       title: "Judgment Interest Software for Attorneys | JudgmentCalc",
       description:
         "Simplify judgment enforcement with JudgmentCalc. Calculate judgment interest, track payments and costs, generate payoff demand letters, and manage judgment cases with confidence.",
+      url: "https://judgmentcalc.com/",
     });
 
     if (window.location.hash) {

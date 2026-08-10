@@ -17,6 +17,16 @@ function upsertMeta(attr: "name" | "property", key: string, content: string) {
   el.setAttribute("content", content);
 }
 
+function upsertCanonical(url: string) {
+  let el = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  if (!el) {
+    el = document.createElement("link");
+    el.rel = "canonical";
+    document.head.appendChild(el);
+  }
+  el.href = url;
+}
+
 export function setMeta({ title, description, url, image }: MetaOptions) {
   if (typeof document === "undefined") return;
 
@@ -33,6 +43,7 @@ export function setMeta({ title, description, url, image }: MetaOptions) {
   }
 
   if (url) {
+    upsertCanonical(url);
     upsertMeta("property", "og:url", url);
     upsertMeta("name", "twitter:url", url);
   }

@@ -127,6 +127,7 @@ const TermsAndConditions = () => {
       title: "Terms & Conditions | JudgmentCalc",
       description:
         "Read the JudgmentCalc Terms & Conditions to understand our website policies, subscription terms, billing, account responsibilities, and acceptable use of our platform.",
+      url: "https://judgmentcalc.com/terms-and-conditions/",
     });
 
     const handleScroll = () => setShowBackToTop(window.scrollY > 900);

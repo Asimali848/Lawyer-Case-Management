@@ -6,6 +6,7 @@ const projectRoot = process.cwd();
 const publicDir = path.join(projectRoot, 'public');
 const srcDir = path.join(projectRoot, 'src');
 const appFile = path.join(srcDir, 'app.tsx');
+const excludedRoutes = new Set(['/interest-rate']);
 
 function ensurePublic() {
   if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
@@ -36,7 +37,7 @@ function findPublicRoutes(appSource) {
 
   // Also capture standalone public routes that might be outside the block but are public (e.g., root)
   // For simplicity, include any route where element references a page component and the path does not contain ':' and isn't clearly internal.
-  return routes.filter((r) => !r.path.includes(':'));
+  return routes.filter((r) => !r.path.includes(':') && !excludedRoutes.has(r.path));
 }
 
 function listPageFiles() {

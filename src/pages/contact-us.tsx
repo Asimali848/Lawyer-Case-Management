@@ -86,7 +86,8 @@ const ContactUs = () => {
     setMeta({
       title: "Contact Us JudgmentCalc | Support & Consultation",
       description:
-        "Contact Us JudgmentCalc for product questions, technical support, pricing, or to book a consultation. We're here to help attorneys and law firms",
+        "Contact Us JudgmentCalc for product questions, technical support, pricing, or to book a consultation. We're here to help attorneys and law firms.",
+      url: "https://judgmentcalc.com/contact-us/",
     });
   }, []);
   const [formData, setFormData] = useState(initialFormState);

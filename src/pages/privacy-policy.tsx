@@ -117,6 +117,7 @@ const PrivacyPolicy = () => {
       title: "Privacy Policy | JudgmentCalc",
       description:
         "Read the JudgmentCalc Privacy Policy to learn how we collect, use, store, and protect your personal information when using our website and services.",
+      url: "https://judgmentcalc.com/privacy-policy/",
     });
 
     const handleScroll = () => setShowBackToTop(window.scrollY > 900);

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build-sitemap": "node scripts/generate-sitemap.cjs",
-    "build": "npm run build-sitemap && tsc -b && vite build",
+    "build": "npm run build-sitemap && tsc -b && vite build && node scripts/generate-seo-pages.cjs",
     "lint": "biome check --write --unsafe .",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview"
