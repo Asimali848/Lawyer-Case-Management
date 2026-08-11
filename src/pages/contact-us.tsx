@@ -177,7 +177,15 @@ const ContactUs = () => {
               layout
               className={`mx-auto mt-7 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg sm:leading-8 ${isIntroExpanded ? "line-clamp-none" : "line-clamp-4 sm:line-clamp-none"}`}
             >
-              Have questions about JudgmentCalc? Need help with your account, pricing, free trial, or technical support? Our team is here to help. Whether you&apos;re exploring our judgment interest software for the first time or you&apos;re already using the platform, we&apos;re committed to providing fast, friendly, and professional support for attorneys and law firms.
+              Have questions about{" "}
+              <Link
+                to="/"
+                className="group relative inline-block font-medium text-slate-700 transition-colors duration-300 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+              >
+                JudgmentCalc
+                <span aria-hidden="true" className="absolute inset-x-0 -bottom-0.5 h-0.5 origin-left scale-x-0 rounded-full bg-emerald-500 transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100" />
+              </Link>
+              ? Need help with your account, pricing, free trial, or technical support? Our team is here to help. Whether you&apos;re exploring our judgment interest software for the first time or you&apos;re already using the platform, we&apos;re committed to providing fast, friendly, and professional support for attorneys and law firms.
             </motion.p>
             <button
               type="button"

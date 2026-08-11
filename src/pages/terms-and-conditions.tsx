@@ -157,7 +157,15 @@ const TermsAndConditions = () => {
 
         <div className="mt-10 space-y-8">
           <p className="text-base leading-8 text-slate-600">
-            Welcome to JudgmentCalc. These Terms &amp; Conditions govern your access to and use of our website, software, and related services. By accessing or using JudgmentCalc, you agree to comply with these Terms. If you do not agree with any part of these Terms, please do not use our website or services.
+            Welcome to{" "}
+            <Link
+              to="/"
+              className="group relative inline-block font-medium text-slate-700 transition-colors duration-300 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+            >
+              JudgmentCalc
+              <span aria-hidden="true" className="absolute inset-x-0 -bottom-0.5 h-0.5 origin-left scale-x-0 rounded-full bg-emerald-500 transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100" />
+            </Link>
+            . These Terms &amp; Conditions govern your access to and use of our website, software, and related services. By accessing or using JudgmentCalc, you agree to comply with these Terms. If you do not agree with any part of these Terms, please do not use our website or services.
           </p>
           <p className="text-base leading-8 text-slate-600">
             To learn more about our company and the attorney behind JudgmentCalc, please visit our{" "}

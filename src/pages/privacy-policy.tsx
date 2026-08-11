@@ -146,7 +146,15 @@ const PrivacyPolicy = () => {
 
         <div className="mt-10 space-y-8">
           <p className="text-base leading-8 text-slate-600">
-            At JudgmentCalc, we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains what information we collect, how we use it, and the steps we take to help keep your information secure when you visit our website or use our judgment interest software.
+            At{" "}
+            <Link
+              to="/"
+              className="group relative inline-block font-medium text-slate-700 transition-colors duration-300 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+            >
+              JudgmentCalc
+              <span aria-hidden="true" className="absolute inset-x-0 -bottom-0.5 h-0.5 origin-left scale-x-0 rounded-full bg-emerald-500 transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100" />
+            </Link>
+            , we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains what information we collect, how we use it, and the steps we take to help keep your information secure when you visit our website or use our judgment interest software.
           </p>
           <p className="text-base leading-8 text-slate-600"></p>
             Whether you are exploring our services, starting a free trial, or contacting our team, we want you to understand how your information is handled. To learn more about our company and why JudgmentCalc was created, please visit our{" "}

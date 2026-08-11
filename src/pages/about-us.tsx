@@ -79,7 +79,18 @@ const AboutUs = () => {
               </h1>
 
               <p className="mx-auto mt-7 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg sm:leading-8 lg:text-xl lg:leading-9">
-                At JudgmentCalc, we believe legal professionals deserve software that understands the real challenges of judgment enforcement. That&apos;s why JudgmentCalc was created by an attorney—not a software company.
+                At{" "}
+                <Link
+                  to="/"
+                  className="group relative inline-block font-medium text-slate-700 transition-colors duration-300 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+                >
+                  JudgmentCalc
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-0 -bottom-0.5 h-0.5 origin-left scale-x-0 rounded-full bg-emerald-500 transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100"
+                  />
+                </Link>
+                , we believe legal professionals deserve software that understands the real challenges of judgment enforcement. That&apos;s why JudgmentCalc was created by an attorney—not a software company.
               </p>
 
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
